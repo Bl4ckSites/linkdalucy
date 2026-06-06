@@ -1,7 +1,7 @@
 /**
  * Luciana Lima – Script principal com proteção multicamadas
  * Criado por: dense_66
- * Versão: 2.0.4 – Logs detalhados + correção de vídeos
+ * Versão: 2.0.5 – Correção de vídeos + logs completos
  */
 
 (function () {
@@ -9,7 +9,7 @@
 
     // ==================== CONFIGURAÇÃO ====================
     const CONFIG = {
-        BACKEND_URL: 'https://linkdalucy-1.onrender.com',  // 👈 ajuste para a URL real do Render
+        BACKEND_URL: 'https://linkdalucy-1.onrender.com',   // 👈 confirme a URL
         SCORE_THRESHOLD: 3,
         TOKEN_EXPIRY_SECONDS: 30,
         HEARTBEAT_INTERVAL: 20000,
@@ -80,21 +80,28 @@
 
     // ==================== CAMADA 3: DETECÇÃO DE AUTOMAÇÃO ====================
     function detectAutomation() {
-        log('Iniciando detecção de automação...');
-        const checks = {
-            webdriver: navigator.webdriver,
-            selenium_unwrapped: !!document.__selenium_unwrapped,
-            chromeUndefined: window.chrome === undefined && navigator.userAgent.includes('Chrome'),
-            headlessZero: window.outerWidth - window.innerWidth === 0 && window.outerWidth > 0 && navigator.languages.length === 0,
-            requestAnimationFrame: typeof requestAnimationFrame === 'undefined'
-        };
-        log('Resultados das verificações de automação:', checks);
-
-        if (navigator.webdriver) return true;
-        if (document.__selenium_unwrapped || document.__driver_evaluate || document.__webdriver_evaluate) return true;
-        if (window.chrome === undefined && navigator.userAgent.includes('Chrome')) return true;
-        if (window.outerWidth - window.innerWidth === 0 && window.outerWidth > 0 && navigator.languages.length === 0) return true;
-        if (typeof requestAnimationFrame === 'undefined') return true;
+        log('Verificando automação...');
+        if (navigator.webdriver) {
+            warn('navigator.webdriver = true');
+            return true;
+        }
+        if (document.__selenium_unwrapped || document.__driver_evaluate || document.__webdriver_evaluate) {
+            warn('Propriedades de automação detectadas');
+            return true;
+        }
+        if (window.chrome === undefined && navigator.userAgent.includes('Chrome')) {
+            warn('window.chrome ausente em navegador que reporta Chrome');
+            return true;
+        }
+        if (window.outerWidth - window.innerWidth === 0 && window.outerWidth > 0 && navigator.languages.length === 0) {
+            warn('Possível headless (dimensões e idiomas)');
+            return true;
+        }
+        if (typeof requestAnimationFrame === 'undefined') {
+            warn('requestAnimationFrame não definido');
+            return true;
+        }
+        log('Nenhum sinal de automação detectado');
         return false;
     }
 
@@ -162,18 +169,18 @@
 
         if (hpField) {
             hpField.addEventListener('focus', () => {
-                warn('Honeypot acionado: campo oculto recebeu foco');
+                warn('Honeypot: campo oculto recebeu foco');
                 redirectTo('neutral.html');
             });
             hpField.addEventListener('input', () => {
-                warn('Honeypot acionado: campo oculto recebeu entrada');
+                warn('Honeypot: campo oculto recebeu entrada');
                 redirectTo('neutral.html');
             });
         }
         if (hpLink) {
             hpLink.addEventListener('click', (e) => {
                 e.preventDefault();
-                warn('Honeypot acionado: link oculto clicado');
+                warn('Honeypot: link oculto clicado');
                 redirectTo('neutral.html');
             });
         }
@@ -237,16 +244,13 @@
                 sessionStorage.setItem('jwt', data.token);
                 sessionStorage.setItem('jwt_exp', data.expires_at);
                 sessionStorage.setItem('jwt_fp', JSON.stringify(fingerprint));
-                log('Token recebido e armazenado.');
+                log('Token armazenado com sucesso.');
                 return true;
-            } else {
-                warn('Resposta do backend não continha token.');
-                return false;
             }
         } catch (e) {
             error(`Exceção ao solicitar token: ${e.message}`);
-            return false;
         }
+        return false;
     }
 
     // ==================== CAMADA 7 & 8: VALIDAÇÃO DO TOKEN ====================
@@ -256,7 +260,7 @@
         const fpStored = sessionStorage.getItem('jwt_fp');
 
         if (!token || !exp) {
-            warn('Token ou expiração ausentes no sessionStorage.');
+            warn('Token ou expiração ausentes.');
             return false;
         }
 
@@ -269,34 +273,33 @@
         if (fpStored) {
             const currentFp = JSON.stringify(getFingerprint());
             if (currentFp !== fpStored) {
-                warn('Fingerprint alterado! Invalidando sessão.');
+                warn('Fingerprint alterado. Invalidando sessão.');
                 clearSessionAndRedirect();
                 return false;
             }
         }
 
-        log('Token válido.');
         return true;
     }
 
     function clearSessionAndRedirect() {
-        log('Limpando sessão e redirecionando para neutral.html');
+        log('Limpando sessão e redirecionando.');
         sessionStorage.removeItem('jwt');
         sessionStorage.removeItem('jwt_exp');
         sessionStorage.removeItem('jwt_fp');
         redirectTo('neutral.html');
     }
 
-    // ==================== CAMADA 9: HEARTBEAT COM RESET DO CONTADOR ====================
+    // ==================== CAMADA 9: HEARTBEAT ====================
     let countdownInterval = null;
     let timeLeft = CONFIG.TOKEN_EXPIRY_SECONDS;
 
     function startHeartbeat() {
-        log(`Iniciando heartbeat (intervalo: ${CONFIG.HEARTBEAT_INTERVAL}ms)...`);
+        log(`Heartbeat iniciado (renovação a cada ${CONFIG.HEARTBEAT_INTERVAL}ms).`);
         countdownInterval = setInterval(() => {
             timeLeft--;
             if (timeLeft <= 0) {
-                warn('Contador regressivo zerado. Redirecionando.');
+                warn('Contador expirou. Redirecionando.');
                 clearInterval(countdownInterval);
                 clearSessionAndRedirect();
             }
@@ -316,14 +319,13 @@
                     sessionStorage.setItem('jwt', data.token);
                     sessionStorage.setItem('jwt_exp', data.expires_at);
                     timeLeft = CONFIG.TOKEN_EXPIRY_SECONDS;
-                    log('Heartbeat renovado com sucesso.');
+                    log('Token renovado.');
                 } else {
-                    warn('Heartbeat falhou. Redirecionando.');
+                    warn('Falha na renovação do token. Redirecionando.');
                     clearSessionAndRedirect();
                 }
             } catch (e) {
                 error(`Erro no heartbeat: ${e.message}`);
-                // Não redireciona imediatamente para evitar falsos positivos de rede
             }
         }, CONFIG.HEARTBEAT_INTERVAL);
     }
@@ -331,7 +333,7 @@
     // ==================== EFEITO MAGNÉTICO (DESKTOP) ====================
     function setupMagneticEffect() {
         if (window.matchMedia('(max-width: 1024px)').matches) {
-            log('Efeito magnético desativado (dispositivo móvel ou tablet).');
+            log('Efeito magnético desativado (mobile/tablet).');
             return;
         }
         const cards = document.querySelectorAll('.image-button');
@@ -359,7 +361,7 @@
         if (width <= 480) html.classList.add('is-mobile');
         else if (width <= 1024) html.classList.add('is-tablet');
         else html.classList.add('is-desktop');
-        log(`Assets responsivos atualizados para largura ${width}px.`);
+        log(`Assets responsivos atualizados para ${width}px.`);
 
         document.querySelectorAll('[data-responsive-img]').forEach(img => {
             const type = img.getAttribute('data-responsive-img');
@@ -379,33 +381,42 @@
             warn('Nenhum vídeo de fundo encontrado!');
             return;
         }
-        log(`Configurando ${videos.length} vídeo(s) de fundo...`);
+        log(`Preparando ${videos.length} vídeo(s) de fundo...`);
+
         videos.forEach((video, index) => {
-            video.removeAttribute('controls');
-            video.setAttribute('disablePictureInPicture', '');
-            video.setAttribute('playsinline', '');
+            // Garantir atributos essenciais
             video.muted = true;
             video.loop = true;
+            video.setAttribute('playsinline', '');
+            video.setAttribute('disablePictureInPicture', '');
+            video.removeAttribute('controls');
 
-            function markLoaded() {
-                video.classList.add('loaded');
-                video.style.opacity = '1';
-                log(`Vídeo ${index+1} marcado como carregado.`);
+            // Forçar visibilidade imediatamente
+            video.style.opacity = '1';
+            video.classList.add('loaded');
+
+            // Tentar iniciar reprodução
+            const playPromise = video.play();
+            if (playPromise !== undefined) {
+                playPromise.then(() => {
+                    log(`Vídeo ${index+1} iniciado automaticamente.`);
+                }).catch(err => {
+                    warn(`Vídeo ${index+1} bloqueado pelo navegador: ${err.message}. Aguardando interação.`);
+                    // Fallback: iniciar após qualquer clique do usuário
+                    const resume = () => {
+                        video.play().then(() => log(`Vídeo ${index+1} iniciado após interação.`))
+                                   .catch(e => error(`Falha ao reproduzir vídeo ${index+1}: ${e.message}`));
+                        document.removeEventListener('click', resume);
+                    };
+                    document.addEventListener('click', resume, { once: true });
+                });
             }
 
-            if (video.readyState >= 2) {
-                markLoaded();
-            } else {
-                video.addEventListener('loadeddata', markLoaded, { once: true });
-                video.addEventListener('canplay', markLoaded, { once: true });
-                // Fallback: se após 3 segundos o evento não disparou, forçamos a visibilidade
-                setTimeout(() => {
-                    if (!video.classList.contains('loaded')) {
-                        warn(`Vídeo ${index+1} não carregou a tempo; forçando visibilidade.`);
-                        markLoaded();
-                    }
-                }, 3000);
-            }
+            // Logs de carregamento
+            video.addEventListener('loadeddata', () => log(`Dados do vídeo ${index+1} carregados.`));
+            video.addEventListener('error', (e) => {
+                error(`Erro no vídeo ${index+1}:`, e.target.error);
+            });
         });
     }
 
@@ -417,12 +428,12 @@
         const modalContinue = document.getElementById('modalContinue');
 
         if (!ctaButton || !modal || !modalContinue) {
-            error('Elementos essenciais não encontrados no index.html');
+            error('Elementos obrigatórios não encontrados no index.html');
             return;
         }
 
         if (detectAutomation()) {
-            warn('Automação detectada na página inicial.');
+            warn('Automação detectada. Redirecionando.');
             redirectTo('neutral.html');
             return;
         }
@@ -433,22 +444,22 @@
         ctaButton.addEventListener('click', function () {
             const score = getBehaviorScore();
             if (score < CONFIG.SCORE_THRESHOLD) {
-                warn(`Pontuação insuficiente (${score}/${CONFIG.SCORE_THRESHOLD}). Redirecionando.`);
+                warn(`Pontuação insuficiente (${score}). Redirecionando.`);
                 redirectTo('neutral.html');
                 return;
             }
-            log('Pontuação suficiente, exibindo modal.');
             modal.classList.add('active');
+            log('Modal exibido.');
         });
 
         modalContinue.addEventListener('click', async function () {
-            log('Botão "Continuar" clicado.');
+            log('Botão continuar pressionado.');
             modalContinue.disabled = true;
             modalContinue.textContent = 'Verificando...';
 
             const success = await requestToken();
             if (success) {
-                log('Token obtido com sucesso, indo para links.html.');
+                log('Token obtido, redirecionando para links.html.');
                 redirectTo('links.html');
             } else {
                 alert('Falha na verificação. Tente novamente.');
@@ -458,7 +469,6 @@
 
         modal.addEventListener('click', function (e) {
             if (e.target === modal) {
-                log('Fechando modal.');
                 modal.classList.remove('active');
             }
         });
@@ -474,6 +484,7 @@
 
         startHeartbeat();
         updateResponsiveAssets();
+        setupVideoBackground();   // 🔧 Correção: agora os vídeos são inicializados
 
         document.addEventListener('click', function () {
             if (!isTokenValid()) clearSessionAndRedirect();
@@ -482,13 +493,12 @@
 
     // ==================== INICIALIZAÇÃO ====================
     function init() {
-        log('Inicializando aplicação...');
+        log('Inicializando Luciana Lima...');
 
         if (document.getElementById('ctaButton') && document.getElementById('verifyModal')) {
             setupIndexPage();
         } else if (document.getElementById('links-main')) {
             setupLinksPage();
-            setupVideoBackground();   // CORREÇÃO: chamada garantida na página de links
         }
 
         setupMagneticEffect();
@@ -500,5 +510,4 @@
     } else {
         init();
     }
-})();
 })();

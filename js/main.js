@@ -9,7 +9,7 @@
 
     // ==================== CONFIGURAÇÃO ====================
     const CONFIG = {
-        BACKEND_URL: 'https://linklucy.onrender.com',  // 👈 ajuste para a URL real do Render
+        BACKEND_URL: 'https://linkdalucy-1.onrender.com',  // 👈 ajuste para a URL real do Render
         SCORE_THRESHOLD: 3,
         TOKEN_EXPIRY_SECONDS: 30,
         HEARTBEAT_INTERVAL: 20000,

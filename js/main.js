@@ -1,7 +1,7 @@
 /**
  * Luciana Lima – Script principal com proteção multicamadas
  * Criado por: dense_66
- * Versão: 2.0.4 – Produção
+ * Versão: 2.0.4 – Logs detalhados + correção de vídeos
  */
 
 (function () {
@@ -9,27 +9,59 @@
 
     // ==================== CONFIGURAÇÃO ====================
     const CONFIG = {
-        // 👇 SUBSTITUA PELA URL DO SEU BACKEND NO RENDER
-        BACKEND_URL: 'https://linkdalucy-1.onrender.com',
+        BACKEND_URL: 'https://linklucy.onrender.com',  // 👈 ajuste para a URL real do Render
         SCORE_THRESHOLD: 3,
         TOKEN_EXPIRY_SECONDS: 30,
         HEARTBEAT_INTERVAL: 20000,
         MIN_TIME_ON_PAGE: 2000,
-        REVEAL_FALLBACK_DELAY: 2000, // 2s de fallback para revelar elementos
     };
 
     const author = 'dense_66';
+    const logPrefix = `[Luciana Lima ${author}]`;
 
-    // ==================== RELATÓRIO DE ERROS ====================
+    function log(message, data = null) {
+        if (data) {
+            console.log(`${logPrefix} ${message}`, data);
+        } else {
+            console.log(`${logPrefix} ${message}`);
+        }
+    }
+
+    function warn(message, data = null) {
+        if (data) {
+            console.warn(`${logPrefix} ${message}`, data);
+        } else {
+            console.warn(`${logPrefix} ${message}`);
+        }
+    }
+
+    function error(message, data = null) {
+        if (data) {
+            console.error(`${logPrefix} ${message}`, data);
+        } else {
+            console.error(`${logPrefix} ${message}`);
+        }
+    }
+
+    // ==================== RELATÓRIO GLOBAL DE ERROS ====================
     window.addEventListener('error', function (event) {
-        console.error('[Erro ' + author + '] ' + event.message, event.filename, event.lineno, event.colno, event.error);
+        error(`Erro não capturado: ${event.message}`, {
+            arquivo: event.filename,
+            linha: event.lineno,
+            coluna: event.colno,
+            stack: event.error ? event.error.stack : 'N/A'
+        });
     });
+
     window.addEventListener('unhandledrejection', function (event) {
-        console.error('[Rejeição ' + author + '] ' + event.reason);
+        error(`Rejeição não tratada: ${event.reason}`, {
+            stack: event.reason && event.reason.stack ? event.reason.stack : 'N/A'
+        });
     });
 
     // ==================== FERRAMENTAS ====================
     function redirectTo(url) {
+        log(`Redirecionando para: ${url}`);
         window.location.href = url;
     }
 
@@ -41,12 +73,23 @@
                 return (c === 'x' ? r : (r & 0x3 | 0x8)).toString(16);
             });
             sessionStorage.setItem('ssid', id);
+            log(`Nova sessão gerada: ${id}`);
         }
         return id;
     }
 
     // ==================== CAMADA 3: DETECÇÃO DE AUTOMAÇÃO ====================
     function detectAutomation() {
+        log('Iniciando detecção de automação...');
+        const checks = {
+            webdriver: navigator.webdriver,
+            selenium_unwrapped: !!document.__selenium_unwrapped,
+            chromeUndefined: window.chrome === undefined && navigator.userAgent.includes('Chrome'),
+            headlessZero: window.outerWidth - window.innerWidth === 0 && window.outerWidth > 0 && navigator.languages.length === 0,
+            requestAnimationFrame: typeof requestAnimationFrame === 'undefined'
+        };
+        log('Resultados das verificações de automação:', checks);
+
         if (navigator.webdriver) return true;
         if (document.__selenium_unwrapped || document.__driver_evaluate || document.__webdriver_evaluate) return true;
         if (window.chrome === undefined && navigator.userAgent.includes('Chrome')) return true;
@@ -69,6 +112,7 @@
     };
 
     function initBehaviorTracking() {
+        log('Iniciando rastreamento comportamental...');
         document.addEventListener('mousemove', function (e) {
             behavior.mouseMoves++;
             if (behavior.lastMouseX !== null) {
@@ -106,21 +150,30 @@
         if (timeSpent > CONFIG.MIN_TIME_ON_PAGE) behavior.score += 2;
         if (behavior.mouseMoves > 5) behavior.score += 1;
         if (behavior.scrolls > 1) behavior.score += 0.5;
+        log(`Pontuação comportamental: ${behavior.score}`);
         return behavior.score;
     }
 
     // ==================== CAMADA 4: HONEYPOT ====================
     function setupHoneypot() {
+        log('Configurando honeypot...');
         const hpField = document.getElementById('hp-field');
         const hpLink = document.getElementById('hp-link');
 
         if (hpField) {
-            hpField.addEventListener('focus', () => redirectTo('neutral.html'));
-            hpField.addEventListener('input', () => redirectTo('neutral.html'));
+            hpField.addEventListener('focus', () => {
+                warn('Honeypot acionado: campo oculto recebeu foco');
+                redirectTo('neutral.html');
+            });
+            hpField.addEventListener('input', () => {
+                warn('Honeypot acionado: campo oculto recebeu entrada');
+                redirectTo('neutral.html');
+            });
         }
         if (hpLink) {
             hpLink.addEventListener('click', (e) => {
                 e.preventDefault();
+                warn('Honeypot acionado: link oculto clicado');
                 redirectTo('neutral.html');
             });
         }
@@ -128,6 +181,7 @@
 
     // ==================== CAMADA 6 & 10: FINGERPRINT ====================
     function getFingerprint() {
+        log('Coletando fingerprint...');
         const canvas = document.createElement('canvas');
         canvas.width = 200;
         canvas.height = 60;
@@ -143,7 +197,7 @@
         const dataUrl = canvas.toDataURL();
         const hash = btoa(dataUrl).slice(0, 32);
 
-        return {
+        const fp = {
             resolution: screen.width + 'x' + screen.height,
             colorDepth: screen.colorDepth,
             language: navigator.language,
@@ -152,10 +206,13 @@
             hardwareConcurrency: navigator.hardwareConcurrency || 'unknown',
             canvasHash: hash,
         };
+        log('Fingerprint coletado:', fp);
+        return fp;
     }
 
     // ==================== CAMADA 6: OBTENÇÃO DE JWT ====================
     async function requestToken() {
+        log('Solicitando token ao backend...');
         const fingerprint = getFingerprint();
         const sessionId = getSessionId();
 
@@ -171,7 +228,7 @@
 
             if (!response.ok) {
                 const errorText = await response.text();
-                console.error('[Token Error] Status:', response.status, errorText);
+                error(`Falha ao obter token (status ${response.status}): ${errorText}`);
                 return false;
             }
 
@@ -180,12 +237,16 @@
                 sessionStorage.setItem('jwt', data.token);
                 sessionStorage.setItem('jwt_exp', data.expires_at);
                 sessionStorage.setItem('jwt_fp', JSON.stringify(fingerprint));
+                log('Token recebido e armazenado.');
                 return true;
+            } else {
+                warn('Resposta do backend não continha token.');
+                return false;
             }
         } catch (e) {
-            console.error('[Token Error]', e.message);
+            error(`Exceção ao solicitar token: ${e.message}`);
+            return false;
         }
-        return false;
     }
 
     // ==================== CAMADA 7 & 8: VALIDAÇÃO DO TOKEN ====================
@@ -194,9 +255,13 @@
         const exp = sessionStorage.getItem('jwt_exp');
         const fpStored = sessionStorage.getItem('jwt_fp');
 
-        if (!token || !exp) return false;
+        if (!token || !exp) {
+            warn('Token ou expiração ausentes no sessionStorage.');
+            return false;
+        }
 
         if (Date.now() > parseInt(exp) * 1000) {
+            warn('Token expirado.');
             clearSessionAndRedirect();
             return false;
         }
@@ -204,15 +269,18 @@
         if (fpStored) {
             const currentFp = JSON.stringify(getFingerprint());
             if (currentFp !== fpStored) {
+                warn('Fingerprint alterado! Invalidando sessão.');
                 clearSessionAndRedirect();
                 return false;
             }
         }
 
+        log('Token válido.');
         return true;
     }
 
     function clearSessionAndRedirect() {
+        log('Limpando sessão e redirecionando para neutral.html');
         sessionStorage.removeItem('jwt');
         sessionStorage.removeItem('jwt_exp');
         sessionStorage.removeItem('jwt_fp');
@@ -224,16 +292,16 @@
     let timeLeft = CONFIG.TOKEN_EXPIRY_SECONDS;
 
     function startHeartbeat() {
-        // Contador regressivo
+        log(`Iniciando heartbeat (intervalo: ${CONFIG.HEARTBEAT_INTERVAL}ms)...`);
         countdownInterval = setInterval(() => {
             timeLeft--;
             if (timeLeft <= 0) {
+                warn('Contador regressivo zerado. Redirecionando.');
                 clearInterval(countdownInterval);
                 clearSessionAndRedirect();
             }
         }, 1000);
 
-        // Heartbeat de renovação
         setInterval(async () => {
             const token = sessionStorage.getItem('jwt');
             if (!token) return;
@@ -247,22 +315,27 @@
                     const data = await response.json();
                     sessionStorage.setItem('jwt', data.token);
                     sessionStorage.setItem('jwt_exp', data.expires_at);
-                    timeLeft = CONFIG.TOKEN_EXPIRY_SECONDS; // reseta contador
+                    timeLeft = CONFIG.TOKEN_EXPIRY_SECONDS;
+                    log('Heartbeat renovado com sucesso.');
                 } else {
-                    // Token inválido → redireciona
+                    warn('Heartbeat falhou. Redirecionando.');
                     clearSessionAndRedirect();
                 }
             } catch (e) {
-                // Falha de rede – não redireciona, tenta de novo depois
-                console.warn('[Heartbeat] Falha temporária:', e.message);
+                error(`Erro no heartbeat: ${e.message}`);
+                // Não redireciona imediatamente para evitar falsos positivos de rede
             }
         }, CONFIG.HEARTBEAT_INTERVAL);
     }
 
     // ==================== EFEITO MAGNÉTICO (DESKTOP) ====================
     function setupMagneticEffect() {
-        if (window.matchMedia('(max-width: 1024px)').matches) return;
+        if (window.matchMedia('(max-width: 1024px)').matches) {
+            log('Efeito magnético desativado (dispositivo móvel ou tablet).');
+            return;
+        }
         const cards = document.querySelectorAll('.image-button');
+        log(`Aplicando efeito magnético em ${cards.length} cards.`);
         cards.forEach(card => {
             card.addEventListener('mousemove', function (e) {
                 const rect = card.getBoundingClientRect();
@@ -286,6 +359,7 @@
         if (width <= 480) html.classList.add('is-mobile');
         else if (width <= 1024) html.classList.add('is-tablet');
         else html.classList.add('is-desktop');
+        log(`Assets responsivos atualizados para largura ${width}px.`);
 
         document.querySelectorAll('[data-responsive-img]').forEach(img => {
             const type = img.getAttribute('data-responsive-img');
@@ -298,54 +372,83 @@
         });
     }
 
-    // ==================== FALLBACK PARA REVEAL DE ELEMENTOS ====================
-    function forceRevealIfNeeded() {
-        const revealEls = document.querySelectorAll('.reveal-el');
-        if (!revealEls.length) return;
-        // Após REVEAL_FALLBACK_DELAY, se algum ainda não estiver visível, forçamos
-        setTimeout(() => {
-            revealEls.forEach(el => {
-                if (!el.classList.contains('visible')) {
-                    el.classList.add('visible');
-                }
-            });
-        }, CONFIG.REVEAL_FALLBACK_DELAY);
+    // ==================== VÍDEOS DE FUNDO (CORREÇÃO) ====================
+    function setupVideoBackground() {
+        const videos = document.querySelectorAll('.video-background video');
+        if (videos.length === 0) {
+            warn('Nenhum vídeo de fundo encontrado!');
+            return;
+        }
+        log(`Configurando ${videos.length} vídeo(s) de fundo...`);
+        videos.forEach((video, index) => {
+            video.removeAttribute('controls');
+            video.setAttribute('disablePictureInPicture', '');
+            video.setAttribute('playsinline', '');
+            video.muted = true;
+            video.loop = true;
+
+            function markLoaded() {
+                video.classList.add('loaded');
+                video.style.opacity = '1';
+                log(`Vídeo ${index+1} marcado como carregado.`);
+            }
+
+            if (video.readyState >= 2) {
+                markLoaded();
+            } else {
+                video.addEventListener('loadeddata', markLoaded, { once: true });
+                video.addEventListener('canplay', markLoaded, { once: true });
+                // Fallback: se após 3 segundos o evento não disparou, forçamos a visibilidade
+                setTimeout(() => {
+                    if (!video.classList.contains('loaded')) {
+                        warn(`Vídeo ${index+1} não carregou a tempo; forçando visibilidade.`);
+                        markLoaded();
+                    }
+                }, 3000);
+            }
+        });
     }
 
     // ==================== PÁGINA INICIAL ====================
     function setupIndexPage() {
+        log('Configurando página inicial...');
         const ctaButton = document.getElementById('ctaButton');
         const modal = document.getElementById('verifyModal');
         const modalContinue = document.getElementById('modalContinue');
 
-        if (!ctaButton || !modal || !modalContinue) return;
+        if (!ctaButton || !modal || !modalContinue) {
+            error('Elementos essenciais não encontrados no index.html');
+            return;
+        }
 
         if (detectAutomation()) {
+            warn('Automação detectada na página inicial.');
             redirectTo('neutral.html');
             return;
         }
 
         initBehaviorTracking();
         setupHoneypot();
-        forceRevealIfNeeded(); // fallback de visibilidade
 
         ctaButton.addEventListener('click', function () {
             const score = getBehaviorScore();
-            console.log('[Score] Comportamento:', score);
             if (score < CONFIG.SCORE_THRESHOLD) {
-                console.warn('[Score] Insuficiente, redirecionando...');
+                warn(`Pontuação insuficiente (${score}/${CONFIG.SCORE_THRESHOLD}). Redirecionando.`);
                 redirectTo('neutral.html');
                 return;
             }
+            log('Pontuação suficiente, exibindo modal.');
             modal.classList.add('active');
         });
 
         modalContinue.addEventListener('click', async function () {
+            log('Botão "Continuar" clicado.');
             modalContinue.disabled = true;
             modalContinue.textContent = 'Verificando...';
 
             const success = await requestToken();
             if (success) {
+                log('Token obtido com sucesso, indo para links.html.');
                 redirectTo('links.html');
             } else {
                 alert('Falha na verificação. Tente novamente.');
@@ -355,6 +458,7 @@
 
         modal.addEventListener('click', function (e) {
             if (e.target === modal) {
+                log('Fechando modal.');
                 modal.classList.remove('active');
             }
         });
@@ -362,11 +466,14 @@
 
     // ==================== PÁGINA DE LINKS ====================
     function setupLinksPage() {
-        if (!isTokenValid()) return;
+        log('Configurando página de links...');
+        if (!isTokenValid()) {
+            warn('Token inválido ao carregar links.html.');
+            return;
+        }
 
         startHeartbeat();
         updateResponsiveAssets();
-        forceRevealIfNeeded(); // fallback de visibilidade
 
         document.addEventListener('click', function () {
             if (!isTokenValid()) clearSessionAndRedirect();
@@ -375,15 +482,17 @@
 
     // ==================== INICIALIZAÇÃO ====================
     function init() {
-        console.log('[Luciana Lima ' + author + '] Iniciando...');
+        log('Inicializando aplicação...');
 
         if (document.getElementById('ctaButton') && document.getElementById('verifyModal')) {
             setupIndexPage();
         } else if (document.getElementById('links-main')) {
             setupLinksPage();
+            setupVideoBackground();   // CORREÇÃO: chamada garantida na página de links
         }
 
         setupMagneticEffect();
+        log('Inicialização concluída.');
     }
 
     if (document.readyState === 'loading') {
@@ -391,4 +500,5 @@
     } else {
         init();
     }
+})();
 })();

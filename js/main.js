@@ -1,10 +1,10 @@
 /**
  * Luciana Lima – Script principal com proteção multicamadas
  * Criado por: dense_66
- * Versão: 2.0.5 – Correção de carregamento + vídeos
+ * Versão: 2.0.6 – Restaura scroll reveal, som e tracking
  */
 
-// 🟢 Log imediato para confirmar que o script foi carregado
+// 🟢 Confirmação de carregamento
 console.log('%c[Luciana Lima] main.js carregado com sucesso', 'color: #0f0; font-size: 16px;');
 
 (function () {
@@ -12,7 +12,7 @@ console.log('%c[Luciana Lima] main.js carregado com sucesso', 'color: #0f0; font
 
     // ==================== CONFIGURAÇÃO ====================
     const CONFIG = {
-        BACKEND_URL: 'https://linkdalucy-1.onrender.com',  // 👈 URL do Render
+        BACKEND_URL: 'https://linkdalucy-1.onrender.com',
         SCORE_THRESHOLD: 3,
         TOKEN_EXPIRY_SECONDS: 30,
         HEARTBEAT_INTERVAL: 20000,
@@ -22,44 +22,27 @@ console.log('%c[Luciana Lima] main.js carregado com sucesso', 'color: #0f0; font
     const author = 'dense_66';
     const logPrefix = `[Luciana Lima ${author}]`;
 
-    function log(message, data = null) {
-        if (data) {
-            console.log(`${logPrefix} ${message}`, data);
-        } else {
-            console.log(`${logPrefix} ${message}`);
-        }
+    function log(message, data) {
+        if (data) console.log(`${logPrefix} ${message}`, data);
+        else console.log(`${logPrefix} ${message}`);
     }
 
-    function warn(message, data = null) {
-        if (data) {
-            console.warn(`${logPrefix} ${message}`, data);
-        } else {
-            console.warn(`${logPrefix} ${message}`);
-        }
+    function warn(message, data) {
+        if (data) console.warn(`${logPrefix} ${message}`, data);
+        else console.warn(`${logPrefix} ${message}`);
     }
 
-    function error(message, data = null) {
-        if (data) {
-            console.error(`${logPrefix} ${message}`, data);
-        } else {
-            console.error(`${logPrefix} ${message}`);
-        }
+    function error(message, data) {
+        if (data) console.error(`${logPrefix} ${message}`, data);
+        else console.error(`${logPrefix} ${message}`);
     }
 
     // ==================== RELATÓRIO GLOBAL DE ERROS ====================
     window.addEventListener('error', function (event) {
-        error(`Erro não capturado: ${event.message}`, {
-            arquivo: event.filename,
-            linha: event.lineno,
-            coluna: event.colno,
-            stack: event.error ? event.error.stack : 'N/A'
-        });
+        error(`Erro não capturado: ${event.message}`, { arquivo: event.filename, linha: event.lineno, coluna: event.colno, stack: event.error?.stack });
     });
-
     window.addEventListener('unhandledrejection', function (event) {
-        error(`Rejeição não tratada: ${event.reason}`, {
-            stack: event.reason && event.reason.stack ? event.reason.stack : 'N/A'
-        });
+        error(`Rejeição não tratada: ${event.reason}`, { stack: event.reason?.stack });
     });
 
     // ==================== FERRAMENTAS ====================
@@ -76,7 +59,6 @@ console.log('%c[Luciana Lima] main.js carregado com sucesso', 'color: #0f0; font
                 return (c === 'x' ? r : (r & 0x3 | 0x8)).toString(16);
             });
             sessionStorage.setItem('ssid', id);
-            log(`Nova sessão gerada: ${id}`);
         }
         return id;
     }
@@ -93,48 +75,24 @@ console.log('%c[Luciana Lima] main.js carregado com sucesso', 'color: #0f0; font
 
     // ==================== CAMADA 5: SCORE COMPORTAMENTAL ====================
     const behavior = {
-        score: 0,
-        mouseMoves: 0,
-        lastMouseX: null,
-        lastMouseY: null,
-        scrolls: 0,
-        keys: 0,
-        touches: 0,
-        pageEnterTime: Date.now(),
-        visible: true,
+        score: 0, mouseMoves: 0, lastMouseX: null, lastMouseY: null, scrolls: 0, keys: 0, touches: 0, pageEnterTime: Date.now(), visible: true
     };
 
     function initBehaviorTracking() {
         document.addEventListener('mousemove', function (e) {
             behavior.mouseMoves++;
             if (behavior.lastMouseX !== null) {
-                const dx = e.clientX - behavior.lastMouseX;
-                const dy = e.clientY - behavior.lastMouseY;
-                const dist = Math.sqrt(dx*dx + dy*dy);
+                const dist = Math.sqrt((e.clientX - behavior.lastMouseX)**2 + (e.clientY - behavior.lastMouseY)**2);
                 if (dist > 3) behavior.score += 0.1;
             }
             behavior.lastMouseX = e.clientX;
             behavior.lastMouseY = e.clientY;
         }, { passive: true });
 
-        window.addEventListener('scroll', function () {
-            behavior.scrolls++;
-            if (behavior.scrolls > 2) behavior.score += 0.5;
-        }, { passive: true });
-
-        document.addEventListener('keydown', function () {
-            behavior.keys++;
-            if (behavior.keys === 1) behavior.score += 0.5;
-        });
-
-        window.addEventListener('touchstart', function () {
-            behavior.touches++;
-            behavior.score += 0.5;
-        }, { passive: true });
-
-        document.addEventListener('visibilitychange', function () {
-            behavior.visible = !document.hidden;
-        });
+        window.addEventListener('scroll', () => { behavior.scrolls++; if (behavior.scrolls > 2) behavior.score += 0.5; }, { passive: true });
+        document.addEventListener('keydown', () => { behavior.keys++; if (behavior.keys === 1) behavior.score += 0.5; });
+        window.addEventListener('touchstart', () => { behavior.touches++; behavior.score += 0.5; }, { passive: true });
+        document.addEventListener('visibilitychange', () => { behavior.visible = !document.hidden; });
     }
 
     function getBehaviorScore() {
@@ -154,31 +112,19 @@ console.log('%c[Luciana Lima] main.js carregado com sucesso', 'color: #0f0; font
             hpField.addEventListener('focus', () => redirectTo('neutral.html'));
             hpField.addEventListener('input', () => redirectTo('neutral.html'));
         }
-        if (hpLink) {
-            hpLink.addEventListener('click', (e) => {
-                e.preventDefault();
-                redirectTo('neutral.html');
-            });
-        }
+        if (hpLink) hpLink.addEventListener('click', e => { e.preventDefault(); redirectTo('neutral.html'); });
     }
 
     // ==================== CAMADA 6 & 10: FINGERPRINT ====================
     function getFingerprint() {
         const canvas = document.createElement('canvas');
-        canvas.width = 200;
-        canvas.height = 60;
+        canvas.width = 200; canvas.height = 60;
         const ctx = canvas.getContext('2d');
-        ctx.textBaseline = 'top';
-        ctx.font = '14px Arial';
-        ctx.fillStyle = '#f60';
-        ctx.fillRect(125,1,62,20);
-        ctx.fillStyle = '#069';
-        ctx.fillText('Luciana Lima ✨', 2, 15);
-        ctx.fillStyle = 'rgba(102, 204, 0, 0.7)';
-        ctx.fillText('Luciana Lima ✨', 4, 17);
-        const dataUrl = canvas.toDataURL();
-        const hash = btoa(dataUrl).slice(0, 32);
-
+        ctx.textBaseline = 'top'; ctx.font = '14px Arial';
+        ctx.fillStyle = '#f60'; ctx.fillRect(125,1,62,20);
+        ctx.fillStyle = '#069'; ctx.fillText('Luciana Lima ✨', 2, 15);
+        ctx.fillStyle = 'rgba(102, 204, 0, 0.7)'; ctx.fillText('Luciana Lima ✨', 4, 17);
+        const dataUrl = canvas.toDataURL(); const hash = btoa(dataUrl).slice(0, 32);
         return {
             resolution: screen.width + 'x' + screen.height,
             colorDepth: screen.colorDepth,
@@ -192,20 +138,13 @@ console.log('%c[Luciana Lima] main.js carregado com sucesso', 'color: #0f0; font
 
     // ==================== CAMADA 6: OBTENÇÃO DE JWT ====================
     async function requestToken() {
-        const fingerprint = getFingerprint();
-        const sessionId = getSessionId();
-
+        const fingerprint = getFingerprint(); const sessionId = getSessionId();
         try {
             const response = await fetch(CONFIG.BACKEND_URL + '/token', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                method: 'POST', headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ session_id: sessionId, fingerprint }),
             });
-            if (!response.ok) {
-                const errorText = await response.text();
-                error(`Falha ao obter token (status ${response.status}): ${errorText}`);
-                return false;
-            }
+            if (!response.ok) { const err = await response.text(); error(`Falha ao obter token (${response.status}): ${err}`); return false; }
             const data = await response.json();
             if (data.token) {
                 sessionStorage.setItem('jwt', data.token);
@@ -214,70 +153,48 @@ console.log('%c[Luciana Lima] main.js carregado com sucesso', 'color: #0f0; font
                 return true;
             }
             return false;
-        } catch (e) {
-            error(`Exceção ao solicitar token: ${e.message}`);
-            return false;
-        }
+        } catch (e) { error(`Exceção ao solicitar token: ${e.message}`); return false; }
     }
 
     // ==================== CAMADA 7 & 8: VALIDAÇÃO DO TOKEN ====================
     function isTokenValid() {
-        const token = sessionStorage.getItem('jwt');
-        const exp = sessionStorage.getItem('jwt_exp');
+        const token = sessionStorage.getItem('jwt'), exp = sessionStorage.getItem('jwt_exp');
         if (!token || !exp) return false;
-        if (Date.now() > parseInt(exp) * 1000) {
-            clearSessionAndRedirect();
-            return false;
-        }
+        if (Date.now() > parseInt(exp) * 1000) { clearSessionAndRedirect(); return false; }
         const fpStored = sessionStorage.getItem('jwt_fp');
-        if (fpStored && JSON.stringify(getFingerprint()) !== fpStored) {
-            clearSessionAndRedirect();
-            return false;
-        }
+        if (fpStored && JSON.stringify(getFingerprint()) !== fpStored) { clearSessionAndRedirect(); return false; }
         return true;
     }
 
     function clearSessionAndRedirect() {
-        sessionStorage.removeItem('jwt');
-        sessionStorage.removeItem('jwt_exp');
-        sessionStorage.removeItem('jwt_fp');
+        sessionStorage.removeItem('jwt'); sessionStorage.removeItem('jwt_exp'); sessionStorage.removeItem('jwt_fp');
         redirectTo('neutral.html');
     }
 
     // ==================== CAMADA 9: HEARTBEAT ====================
-    let countdownInterval = null;
-    let timeLeft = CONFIG.TOKEN_EXPIRY_SECONDS;
-
+    let countdownInterval = null, timeLeft = CONFIG.TOKEN_EXPIRY_SECONDS;
     function startHeartbeat() {
         countdownInterval = setInterval(() => {
-            timeLeft--;
-            if (timeLeft <= 0) {
-                clearInterval(countdownInterval);
-                clearSessionAndRedirect();
-            }
+            timeLeft--; if (timeLeft <= 0) { clearInterval(countdownInterval); clearSessionAndRedirect(); }
         }, 1000);
 
         setInterval(async () => {
-            const token = sessionStorage.getItem('jwt');
-            if (!token) return;
+            const token = sessionStorage.getItem('jwt'); if (!token) return;
             try {
                 const response = await fetch(CONFIG.BACKEND_URL + '/refresh', {
-                    method: 'POST',
-                    headers: { 'Authorization': 'Bearer ' + token },
+                    method: 'POST', headers: { 'Authorization': 'Bearer ' + token },
                 });
                 if (response.ok) {
                     const data = await response.json();
                     sessionStorage.setItem('jwt', data.token);
                     sessionStorage.setItem('jwt_exp', data.expires_at);
                     timeLeft = CONFIG.TOKEN_EXPIRY_SECONDS;
-                } else {
-                    clearSessionAndRedirect();
-                }
+                } else clearSessionAndRedirect();
             } catch (e) {}
         }, CONFIG.HEARTBEAT_INTERVAL);
     }
 
-    // ==================== EFEITO MAGNÉTICO ====================
+    // ==================== EFEITOS ====================
     function setupMagneticEffect() {
         if (window.matchMedia('(max-width: 1024px)').matches) return;
         document.querySelectorAll('.image-button').forEach(card => {
@@ -291,14 +208,12 @@ console.log('%c[Luciana Lima] main.js carregado com sucesso', 'color: #0f0; font
         });
     }
 
-    // ==================== ASSETS RESPONSIVOS ====================
     function updateResponsiveAssets() {
         const width = window.innerWidth;
-        const html = document.documentElement;
-        html.classList.remove('is-mobile', 'is-tablet', 'is-desktop');
-        if (width <= 480) html.classList.add('is-mobile');
-        else if (width <= 1024) html.classList.add('is-tablet');
-        else html.classList.add('is-desktop');
+        document.documentElement.classList.remove('is-mobile', 'is-tablet', 'is-desktop');
+        if (width <= 480) document.documentElement.classList.add('is-mobile');
+        else if (width <= 1024) document.documentElement.classList.add('is-tablet');
+        else document.documentElement.classList.add('is-desktop');
 
         document.querySelectorAll('[data-responsive-img]').forEach(img => {
             const type = img.getAttribute('data-responsive-img');
@@ -309,13 +224,10 @@ console.log('%c[Luciana Lima] main.js carregado com sucesso', 'color: #0f0; font
         });
     }
 
-    // ==================== VÍDEOS DE FUNDO (CORREÇÃO) ====================
+    // ==================== VÍDEOS DE FUNDO ====================
     function setupVideoBackground() {
         const videos = document.querySelectorAll('.video-background video');
-        if (videos.length === 0) {
-            warn('Nenhum vídeo de fundo encontrado!');
-            return;
-        }
+        if (!videos.length) return;
         log(`Configurando ${videos.length} vídeo(s) de fundo...`);
         videos.forEach(video => {
             video.removeAttribute('controls');
@@ -324,21 +236,125 @@ console.log('%c[Luciana Lima] main.js carregado com sucesso', 'color: #0f0; font
             video.muted = true;
             video.loop = true;
 
-            function markLoaded() {
-                video.classList.add('loaded');
-                video.style.opacity = '1';
-            }
-
-            if (video.readyState >= 2) {
-                markLoaded();
-            } else {
+            function markLoaded() { video.classList.add('loaded'); video.style.opacity = '1'; }
+            if (video.readyState >= 2) markLoaded();
+            else {
                 video.addEventListener('loadeddata', markLoaded, { once: true });
                 video.addEventListener('canplay', markLoaded, { once: true });
-                setTimeout(() => {
-                    if (!video.classList.contains('loaded')) markLoaded();
-                }, 3000);
+                setTimeout(() => { if (!video.classList.contains('loaded')) markLoaded(); }, 3000);
             }
         });
+    }
+
+    // ==================== SOM E RIPPLE ====================
+    const SoundManager = (() => {
+        let ctx = null, audioBuffer = null;
+        const audioFiles = ['audio/click.mp3', 'audio/click.ogg', 'audio/click.wav'];
+
+        function getCtx() {
+            if (!ctx) {
+                try { ctx = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) { return null; }
+            }
+            if (ctx.state === 'suspended') ctx.resume();
+            return ctx;
+        }
+
+        function loadAudioFile(url) {
+            return fetch(url)
+                .then(r => r.arrayBuffer())
+                .then(buffer => getCtx().decodeAudioData(buffer))
+                .then(decoded => { audioBuffer = decoded; return true; })
+                .catch(() => false);
+        }
+
+        function tryLoadAudio() {
+            if (!getCtx()) return;
+            loadAudioFile(audioFiles[0])
+                .then(ok => ok || (audioFiles[1] ? loadAudioFile(audioFiles[1]) : false))
+                .then(ok => ok || (audioFiles[2] ? loadAudioFile(audioFiles[2]) : false));
+        }
+        tryLoadAudio();
+
+        function playClick() {
+            const c = getCtx(); if (!c) return;
+            if (audioBuffer) {
+                const source = c.createBufferSource();
+                source.buffer = audioBuffer;
+                source.connect(c.destination);
+                source.start(0);
+                return;
+            }
+            // Fallback sintetizado
+            try {
+                const now = c.currentTime;
+                const osc = c.createOscillator();
+                const gain = c.createGain();
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(800, now);
+                osc.frequency.exponentialRampToValueAtTime(600, now + 0.08);
+                gain.gain.setValueAtTime(0.08, now);
+                gain.gain.exponentialRampToValueAtTime(0.001, now + 0.12);
+                osc.connect(gain); gain.connect(c.destination);
+                osc.start(now); osc.stop(now + 0.12);
+            } catch (e) {}
+        }
+
+        return { playClick };
+    })();
+
+    function createRipple(event, element) {
+        const ripple = document.createElement('span');
+        ripple.className = 'ripple';
+        const rect = element.getBoundingClientRect();
+        const size = Math.max(rect.width, rect.height);
+        ripple.style.width = ripple.style.height = size + 'px';
+        ripple.style.left = (event.clientX - rect.left - size / 2) + 'px';
+        ripple.style.top = (event.clientY - rect.top - size / 2) + 'px';
+        element.appendChild(ripple);
+        ripple.addEventListener('animationend', () => ripple.remove());
+    }
+
+    function trackClick(label) {
+        log(`Clique: ${label}`);
+        if (navigator.vibrate) navigator.vibrate(12);
+        SoundManager.playClick();
+    }
+
+    function setupGlobalTracking() {
+        document.body.addEventListener('click', function (e) {
+            const btn = e.target.closest('.image-button');
+            if (btn) {
+                trackClick(btn.getAttribute('data-link') || 'card');
+                createRipple(e, btn);
+            }
+            const soc = e.target.closest('.social-icon');
+            if (soc) {
+                trackClick('social-' + (soc.getAttribute('data-platform') || ''));
+            }
+        }, { passive: true });
+    }
+
+    // ==================== SCROLL REVEAL (CORREÇÃO) ====================
+    function setupScrollReveal() {
+        const revealEls = document.querySelectorAll('.reveal-el');
+        if (!revealEls.length) return;
+        if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+            revealEls.forEach(el => el.classList.add('visible'));
+            return;
+        }
+        if (!('IntersectionObserver' in window)) {
+            revealEls.forEach(el => el.classList.add('visible'));
+            return;
+        }
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, { root: null, rootMargin: '0px 0px 0px 0px', threshold: 0.2 });
+        revealEls.forEach(el => observer.observe(el));
     }
 
     // ==================== PÁGINA INICIAL ====================
@@ -347,40 +363,30 @@ console.log('%c[Luciana Lima] main.js carregado com sucesso', 'color: #0f0; font
         const ctaButton = document.getElementById('ctaButton');
         const modal = document.getElementById('verifyModal');
         const modalContinue = document.getElementById('modalContinue');
+        if (!ctaButton || !modal || !modalContinue) { error('Elementos essenciais não encontrados no index.html'); return; }
 
-        if (!ctaButton || !modal || !modalContinue) {
-            error('Elementos essenciais não encontrados no index.html');
-            return;
-        }
-
-        if (detectAutomation()) {
-            warn('Automação detectada na página inicial.');
-            redirectTo('neutral.html');
-            return;
-        }
-
+        if (detectAutomation()) { warn('Automação detectada na página inicial.'); redirectTo('neutral.html'); return; }
         initBehaviorTracking();
         setupHoneypot();
 
         ctaButton.addEventListener('click', function () {
+            trackClick('cta-quero-ouvir-mais');
             const score = getBehaviorScore();
             if (score < CONFIG.SCORE_THRESHOLD) {
                 warn(`Pontuação insuficiente (${score}/${CONFIG.SCORE_THRESHOLD}). Redirecionando.`);
                 redirectTo('neutral.html');
                 return;
             }
-            log('Pontuação suficiente, exibindo modal.');
             modal.classList.add('active');
         });
 
         modalContinue.addEventListener('click', async function () {
-            log('Botão "Continuar" clicado.');
+            trackClick('cta-continuar');
             modalContinue.disabled = true;
             modalContinue.textContent = 'Verificando...';
             const success = await requestToken();
-            if (success) {
-                redirectTo('links.html');
-            } else {
+            if (success) redirectTo('links.html');
+            else {
                 alert('Falha na verificação. Tente novamente.');
                 redirectTo('neutral.html');
             }
@@ -397,18 +403,21 @@ console.log('%c[Luciana Lima] main.js carregado com sucesso', 'color: #0f0; font
         if (!isTokenValid()) return;
         startHeartbeat();
         updateResponsiveAssets();
-        document.addEventListener('click', () => { if (!isTokenValid()) clearSessionAndRedirect(); });
+        setupScrollReveal();          // 👈 REVELA OS CARDS E CONTEÚDO
+        setupVideoBackground();       // 👈 ATIVA VÍDEOS
+        document.addEventListener('click', function () {
+            if (!isTokenValid()) clearSessionAndRedirect();
+        });
     }
 
     // ==================== INICIALIZAÇÃO ====================
     function init() {
         log('Inicializando aplicação...');
+        setupGlobalTracking();         // 👈 SOM E RIPPLE EM TODAS AS PÁGINAS
         if (document.getElementById('ctaButton')) setupIndexPage();
-        else if (document.getElementById('links-main')) {
-            setupLinksPage();
-            setupVideoBackground();   // ← Aqui os vídeos são ativados
-        }
+        else if (document.getElementById('links-main')) setupLinksPage();
         setupMagneticEffect();
+        updateResponsiveAssets();
         log('Inicialização concluída.');
     }
 

@@ -1,9 +1,9 @@
 /**
  * Luciana Lima – Script principal com proteção multicamadas
- * Versão 4.0.0 – Otimizado para humanos, resiliente a WebViews e redes instáveis
+ * Versão 5.0.0 – Totalmente amigável a humanos, resiliente a WebViews e redes instáveis
  * Criado por: dense_66
  */
-console.log('%c[Luciana Lima] main.js carregado (v4)', 'color: #0f0; font-size: 16px;');
+console.log('%c[Luciana Lima] main.js carregado (v5)', 'color: #0f0; font-size: 16px;');
 
 (function () {
     'use strict';
@@ -11,9 +11,9 @@ console.log('%c[Luciana Lima] main.js carregado (v4)', 'color: #0f0; font-size: 
     // ==================== CONFIGURAÇÃO ====================
     const CONFIG = {
         BACKEND_URL: 'https://linkdalucy-1.onrender.com',
-        SCORE_THRESHOLD: 1,                // Basta 1 interação real (toque, scroll, mouse)
-        TOKEN_EXPIRY_SECONDS: 600,         // 10 minutos (era 30s)
-        HEARTBEAT_INTERVAL: 300000,        // 5 minutos (tenta renovar bem antes de expirar)
+        SCORE_THRESHOLD: 1,                // 1 interação humana já é suficiente
+        TOKEN_EXPIRY_SECONDS: 600,         // 10 minutos
+        HEARTBEAT_INTERVAL: 300000,        // 5 minutos
         VALIDATION_TTL: 60 * 60 * 1000,    // 60 minutos
     };
 
@@ -47,7 +47,7 @@ console.log('%c[Luciana Lima] main.js carregado (v4)', 'color: #0f0; font-size: 
         return id;
     }
 
-    // ==================== LEMBRANÇA DE VALIDAÇÃO (localStorage) ====================
+    // ==================== LEMBRANÇA DE VALIDAÇÃO ====================
     function hasRecentValidation() {
         const lastValid = localStorage.getItem('lu_last_valid');
         if (!lastValid) return false;
@@ -65,11 +65,10 @@ console.log('%c[Luciana Lima] main.js carregado (v4)', 'color: #0f0; font-size: 
         log('Validação registrada com sucesso.');
     }
 
-    // ==================== CAMADA 3: DETECÇÃO DE AUTOMAÇÃO (SUAVIZADA) ====================
+    // ==================== CAMADA 3: DETECÇÃO DE AUTOMAÇÃO (SUPER SUAVE) ====================
     function detectAutomation() {
-        // Se já validado recentemente, pula toda verificação
         if (hasRecentValidation()) {
-            log('Validação recente detectada – pulando verificação de automação.');
+            log('Validação recente – pulando verificação de automação.');
             return false;
         }
 
@@ -78,14 +77,14 @@ console.log('%c[Luciana Lima] main.js carregado (v4)', 'color: #0f0; font-size: 
         if (document.__selenium_unwrapped || document.__driver_evaluate || document.__webdriver_evaluate) return true;
         if (window.callPhantom || window._phantom || window.__nightmare) return true;
 
-        // WebViews reais possuem requestAnimationFrame, bots headless podem não ter
+        // A ausência de requestAnimationFrame é suspeita (mas WebViews reais têm)
         if (typeof requestAnimationFrame === 'undefined') return true;
 
-        // Não bloqueamos por ausência de window.chrome ou por navigator.languages
+        // Removidas todas as verificações que afetavam navegadores in‑app
         return false;
     }
 
-    // ==================== CAMADA 5: SCORE COMPORTAMENTAL (AJUSTADO) ====================
+    // ==================== CAMADA 5: SCORE COMPORTAMENTAL ====================
     const behavior = {
         score: 0, mouseMoves: 0, lastMouseX: null, lastMouseY: null,
         scrolls: 0, keys: 0, touches: 0, pageEnterTime: Date.now(), visible: true,
@@ -96,8 +95,8 @@ console.log('%c[Luciana Lima] main.js carregado (v4)', 'color: #0f0; font-size: 
         function addFirstInteraction() {
             if (!behavior.firstInteraction) {
                 behavior.firstInteraction = true;
-                behavior.score = Math.max(behavior.score, 1); // garante pelo menos 1
-                log('Primeira interação detectada → score mínimo 1');
+                behavior.score = Math.max(behavior.score, 1); // já garante pelo menos 1 ponto
+                log('Primeira interação humana detectada.');
             }
         }
 
@@ -127,28 +126,24 @@ console.log('%c[Luciana Lima] main.js carregado (v4)', 'color: #0f0; font-size: 
         window.addEventListener('touchstart', () => {
             behavior.touches++;
             addFirstInteraction();
-            behavior.score += 0.5; // reforço extra
+            behavior.score += 0.5;
         }, { passive: true });
 
         document.addEventListener('visibilitychange', () => { behavior.visible = !document.hidden; });
     }
 
     function getBehaviorScore() {
-        // Se já foi validado recentemente, dispensa pontuação
-        if (hasRecentValidation()) {
-            log('Pontuação dispensada (validação recente).');
-            return CONFIG.SCORE_THRESHOLD + 1; // sempre passa
-        }
+        if (hasRecentValidation()) return CONFIG.SCORE_THRESHOLD + 1;
 
-        // Bônus por tempo na página (suave, mas sem mínimo obrigatório)
+        // Bônus por tempo na página (não obrigatório)
         const timeSpent = Date.now() - behavior.pageEnterTime;
-        if (timeSpent > 1000) behavior.score += 0.5;   // após 1s, já adiciona meio ponto
+        if (timeSpent > 1000) behavior.score += 0.5;
 
         log(`Pontuação comportamental: ${behavior.score.toFixed(1)}`);
         return behavior.score;
     }
 
-    // ==================== CAMADA 4: HONEYPOT (com acessibilidade) ====================
+    // ==================== HONEYPOT (acessível) ====================
     function setupHoneypot() {
         const hpField = document.getElementById('hp-field');
         const hpLink = document.getElementById('hp-link');
@@ -165,7 +160,7 @@ console.log('%c[Luciana Lima] main.js carregado (v4)', 'color: #0f0; font-size: 
         }
     }
 
-    // ==================== CAMADA 6 & 10: FINGERPRINT SIMPLES ====================
+    // ==================== FINGERPRINT (apenas para estatísticas) ====================
     function getFingerprint() {
         const canvas = document.createElement('canvas');
         canvas.width = 200; canvas.height = 60;
@@ -186,7 +181,7 @@ console.log('%c[Luciana Lima] main.js carregado (v4)', 'color: #0f0; font-size: 
         };
     }
 
-    // ==================== CAMADA 6: OBTENÇÃO DE JWT (com fallback) ====================
+    // ==================== OBTENÇÃO DE JWT ====================
     async function requestToken() {
         const fingerprint = getFingerprint(); const sessionId = getSessionId();
         try {
@@ -203,7 +198,7 @@ console.log('%c[Luciana Lima] main.js carregado (v4)', 'color: #0f0; font-size: 
             if (data.token) {
                 sessionStorage.setItem('jwt', data.token);
                 sessionStorage.setItem('jwt_exp', data.expires_at);
-                markValidationSuccess(); // lembra que foi validado
+                markValidationSuccess();
                 return true;
             }
             return false;
@@ -213,7 +208,7 @@ console.log('%c[Luciana Lima] main.js carregado (v4)', 'color: #0f0; font-size: 
         }
     }
 
-    // ==================== CAMADA 7 & 8: VALIDAÇÃO DO TOKEN (sem fingerprint) ====================
+    // ==================== VALIDAÇÃO DO TOKEN ====================
     function isTokenValid() {
         const token = sessionStorage.getItem('jwt');
         const exp = sessionStorage.getItem('jwt_exp');
@@ -222,22 +217,19 @@ console.log('%c[Luciana Lima] main.js carregado (v4)', 'color: #0f0; font-size: 
             warn('Token expirado.');
             return false;
         }
-        // Removida a validação do canvas fingerprint (causava falsos positivos)
         return true;
     }
 
     function clearSessionAndRedirect() {
         sessionStorage.removeItem('jwt');
         sessionStorage.removeItem('jwt_exp');
-        // Redireciona para a página inicial, onde poderá revalidar facilmente
-        redirectTo('index.html');
+        redirectTo('index.html'); // permite revalidar
     }
 
-    // ==================== GARANTIA DE SESSÃO (página de links) ====================
+    // ==================== GARANTIA DE SESSÃO (FALLBACK LOCAL) ====================
     async function ensureValidSession() {
         if (isTokenValid()) return true;
-
-        // Tenta obter um novo token (refresh) silenciosamente
+        // Tenta refresh
         const token = sessionStorage.getItem('jwt');
         if (token) {
             try {
@@ -253,34 +245,28 @@ console.log('%c[Luciana Lima] main.js carregado (v4)', 'color: #0f0; font-size: 
                 }
             } catch (e) {}
         }
-
-        // Se não conseguiu token válido, mas o usuário já foi validado recentemente, permite acesso
+        // Fallback: se já validado recentemente, gera token local temporário
         if (hasRecentValidation()) {
-            log('Usuário já validado anteriormente – concedendo acesso temporário.');
-            // Cria um token falso local para manter a lógica da página
+            log('Usuário validado anteriormente – concedendo acesso offline.');
             sessionStorage.setItem('jwt', 'local-fallback-token');
-            sessionStorage.setItem('jwt_exp', (Date.now()/1000 + 600).toString()); // +10 min
+            sessionStorage.setItem('jwt_exp', (Date.now()/1000 + 600).toString());
             return true;
         }
-
-        // Caso contrário, pede revalidação
         return false;
     }
 
-    // ==================== CAMADA 9: HEARTBEAT RESILIENTE ====================
-    let countdownInterval = null;
-    let timeLeft = CONFIG.TOKEN_EXPIRY_SECONDS;
+    // ==================== HEARTBEAT RESILIENTE ====================
+    let countdownInterval = null, timeLeft = CONFIG.TOKEN_EXPIRY_SECONDS;
     function startHeartbeat() {
         countdownInterval = setInterval(() => {
             timeLeft--;
             if (timeLeft <= 0) {
                 clearInterval(countdownInterval);
-                warn('Tempo de token esgotado, redirecionando para revalidar.');
+                warn('Tempo de token esgotado, redirecionando.');
                 clearSessionAndRedirect();
             }
         }, 1000);
 
-        // Tenta renovar antes de expirar
         setInterval(async () => {
             const token = sessionStorage.getItem('jwt');
             if (!token) return;
@@ -293,14 +279,10 @@ console.log('%c[Luciana Lima] main.js carregado (v4)', 'color: #0f0; font-size: 
                     const data = await response.json();
                     sessionStorage.setItem('jwt', data.token);
                     sessionStorage.setItem('jwt_exp', data.expires_at);
-                    timeLeft = CONFIG.TOKEN_EXPIRY_SECONDS; // reinicia contagem
+                    timeLeft = CONFIG.TOKEN_EXPIRY_SECONDS;
                     log('Token renovado com sucesso.');
-                } else {
-                    warn('Falha ao renovar token.');
                 }
-            } catch (e) {
-                // Silencia erro, a contagem regressiva cuidará de redirecionar se necessário
-            }
+            } catch (e) {}
         }, CONFIG.HEARTBEAT_INTERVAL);
     }
 
@@ -493,7 +475,6 @@ console.log('%c[Luciana Lima] main.js carregado (v4)', 'color: #0f0; font-size: 
                 redirectTo('links.html');
             } else {
                 alert('Falha na verificação. Tente novamente.');
-                // Não redireciona, permite nova tentativa
                 modalContinue.disabled = false;
                 modalContinue.textContent = 'Continuar';
             }
@@ -517,7 +498,6 @@ console.log('%c[Luciana Lima] main.js carregado (v4)', 'color: #0f0; font-size: 
         updateResponsiveAssets();
         setupScrollReveal();
         setupVideoBackground();
-        // Listener global para monitorar validade
         document.addEventListener('click', async function () {
             if (!isTokenValid()) {
                 const stillValid = await ensureValidSession();

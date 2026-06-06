@@ -313,3 +313,12 @@ video::-webkit-media-controls-panel { display: none !important; }
     .links-container { max-width: 1100px; }
     .image-button { --card-max-width: 420px; }
 }
+
+/* Fallback para mostrar o vídeo mesmo se o JavaScript falhar */
+.video-background video {
+    animation: videoEmergency 0.1s 1.5s forwards;
+    opacity: 0;
+}
+@keyframes videoEmergency {
+    to { opacity: 1; }
+}

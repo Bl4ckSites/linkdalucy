@@ -13,7 +13,7 @@ from pydantic import BaseModel
 import uvicorn
 
 SECRET_KEY = os.environ.get("SECRET_KEY", "change-me-in-production")
-ALLOWED_ORIGIN = os.environ.get("ALLOWED_ORIGIN", "https://seu-usuario.github.io")
+ALLOWED_ORIGIN = os.environ.get("ALLOWED_ORIGIN", "https://linkdalucy.com")
 ENV = os.environ.get("ENV", "development")
 TOKEN_EXPIRY_SECONDS = 30
 RATE_LIMIT = 10

@@ -1,5 +1,5 @@
 /* ============================================================
-   LINKS.CSS – Página de Links (links.html)
+   LINKS.CSS – Página de Links (links.html) – REFINADO
    Luciana Lima – Cards de imagem com grid responsivo – por dense_66
    ============================================================ */
 
@@ -12,6 +12,10 @@
     --name-size: clamp(2.8rem, 10vw, 3.5rem);
     --card-border-radius: 28px;
     --card-max-width: 380px;
+    
+    /* NOVO – cor principal para glow e unificação */
+    --color-primary: rgba(120, 90, 255, 1);
+    --color-primary-soft: rgba(120, 90, 255, 0.35);
 }
 
 *,
@@ -41,10 +45,26 @@ body {
     background: #000;
 }
 
-.video-background {
+/* NOVO – fundo com respiração sutil (gradiente radial animado) */
+body::after {
+    content: '';
     position: fixed;
     inset: 0;
     z-index: -1;
+    background: radial-gradient(ellipse at 50% 30%, rgba(120,90,255,0.12) 0%, transparent 60%);
+    animation: bgBreathe 30s ease-in-out infinite;
+    pointer-events: none;
+}
+
+@keyframes bgBreathe {
+    0%, 100% { opacity: 0.6; transform: scale(1); }
+    50% { opacity: 1; transform: scale(1.05); }
+}
+
+.video-background {
+    position: fixed;
+    inset: 0;
+    z-index: -2;
     overflow: hidden;
 }
 
@@ -195,17 +215,21 @@ body::before {
     border: 1px solid rgba(255,255,255,.12);
     color: #fff;
     text-decoration: none;
-    transition: var(--transition-card);
+    transition: transform 0.3s cubic-bezier(0.16,1,0.3,1), 
+                background 0.3s ease, 
+                box-shadow 0.3s ease, 
+                color 0.3s ease;
     box-shadow: 0 4px 12px rgba(0,0,0,0.08);
     -webkit-tap-highlight-color: transparent;
     opacity: 0.9;
 }
 .social-icon svg { width: 22px; height: 22px; }
+/* NOVO – hover com glow da cor principal */
 .social-icon:hover {
-    transform: translateY(-3px);
-    background: rgba(255,255,255,.2);
-    color: var(--color-name);
-    box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+    transform: translateY(-3px) scale(1.1);
+    background: rgba(120, 90, 255, 0.25);
+    color: #fff;
+    box-shadow: 0 8px 20px rgba(120, 90, 255, 0.4);
     opacity: 1;
 }
 .social-icon:focus-visible {
@@ -222,6 +246,7 @@ body::before {
     align-items: start;
 }
 
+/* NOVO – card de imagem refinado com glassmorphism e véu cromático */
 .image-button {
     display: block;
     width: 100%;
@@ -229,14 +254,33 @@ body::before {
     border-radius: var(--card-border-radius);
     overflow: hidden;
     box-shadow: 0 8px 24px rgba(0,0,0,0.12);
-    transition: var(--transition-card), filter 0.12s ease;
+    transition: transform 0.4s cubic-bezier(0.16,1,0.3,1), 
+                box-shadow 0.4s ease,
+                border-color 0.3s ease;
     text-decoration: none;
     cursor: pointer;
     position: relative;
     -webkit-tap-highlight-color: transparent;
     user-select: none;
     aspect-ratio: 2.45 / 1;
-    border: 1px solid rgba(255,255,255,0.12);
+    border: 1px solid rgba(255,255,255,0.1);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+}
+
+/* NOVO – overlay de integração com o roxo dominante */
+.image-button::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+        180deg,
+        rgba(120,90,255,0.08) 0%,
+        rgba(0,0,0,0) 100%
+    );
+    z-index: 1;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
 }
 
 .image-button img {
@@ -246,21 +290,33 @@ body::before {
     object-fit: cover;
     border-radius: inherit;
     opacity: 0.8;
-    transition: opacity 0.3s ease;
+    transition: opacity 0.3s ease, transform 0.4s cubic-bezier(0.16,1,0.3,1);
+    /* NOVO – redução de saturação e contraste para unificar a paleta */
+    filter: saturate(0.8) contrast(0.9) brightness(0.95);
 }
 
 html.is-desktop .image-button img {
     opacity: 1 !important;
 }
 
-.image-button:hover img { opacity: 1; }
+.image-button:hover img { 
+    opacity: 1; 
+    filter: saturate(1) contrast(1) brightness(1);
+    transform: scale(1.05); /* microparallax interno */
+}
 
+/* NOVO – hover premium com glow roxo e borda acendendo */
+.image-button:hover {
+    transform: translateY(-4px) scale(1.02);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.3), 
+                0 0 25px var(--color-primary-soft);
+    border-color: rgba(120, 90, 255, 0.5);
+}
 .image-button:active {
     transform: scale(0.97);
     filter: brightness(0.95);
     transition: transform 0.12s ease, filter 0.12s ease;
 }
-
 .image-button:focus-visible {
     outline: 3px solid #fff;
     outline-offset: 4px;
@@ -314,7 +370,6 @@ video::-webkit-media-controls-panel { display: none !important; }
     .image-button { --card-max-width: 420px; }
 }
 
-/* Fallback para mostrar o vídeo mesmo se o JavaScript falhar */
 .video-background video {
     animation: videoEmergency 0.1s 1.5s forwards;
     opacity: 0;

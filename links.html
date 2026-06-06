@@ -32,13 +32,11 @@
     <link rel="stylesheet" href="css/animations.css">
 </head>
 <body>
-    <div class="video-background">
-       <img 
-  src="videos/bg-mobile.jpg" 
-  alt="Background" 
-  class="video-mobile" 
-  loading="lazy"
->
+   <video class="video-mobile" autoplay muted loop playsinline preload="auto" disablePictureInPicture>
+            <source src="videos/bg-mobile.jpg" type="imagem/jpg">
+            <source src="videos/bg-mobile.webm" type="video/webm">
+            <source src="videos/bg-mobile.ogv" type="video/ogg">
+        </video>
         <video class="video-tablet" autoplay muted loop playsinline preload="auto" disablePictureInPicture>
             <source src="videos/bg-tablet.mp4" type="video/mp4">
             <source src="videos/bg-tablet.webm" type="video/webm">

@@ -1,10 +1,9 @@
 /**
  * Luciana Lima – Script principal com proteção multicamadas
+ * Versão 4.0.0 – Otimizado para humanos, resiliente a WebViews e redes instáveis
  * Criado por: dense_66
- * Versão: 3.0.0 – Estável para mobile, com lembrança de validação
  */
-
-console.log('%c[Luciana Lima] main.js carregado', 'color: #0f0; font-size: 16px;');
+console.log('%c[Luciana Lima] main.js carregado (v4)', 'color: #0f0; font-size: 16px;');
 
 (function () {
     'use strict';
@@ -12,11 +11,10 @@ console.log('%c[Luciana Lima] main.js carregado', 'color: #0f0; font-size: 16px;
     // ==================== CONFIGURAÇÃO ====================
     const CONFIG = {
         BACKEND_URL: 'https://linkdalucy-1.onrender.com',
-        SCORE_THRESHOLD: 3,
-        TOKEN_EXPIRY_SECONDS: 30,
-        HEARTBEAT_INTERVAL: 20000,
-        MIN_TIME_ON_PAGE: 2000,
-        VALIDATION_TTL: 60 * 60 * 1000, // 60 minutos em ms
+        SCORE_THRESHOLD: 1,                // Basta 1 interação real (toque, scroll, mouse)
+        TOKEN_EXPIRY_SECONDS: 600,         // 10 minutos (era 30s)
+        HEARTBEAT_INTERVAL: 300000,        // 5 minutos (tenta renovar bem antes de expirar)
+        VALIDATION_TTL: 60 * 60 * 1000,    // 60 minutos
     };
 
     const author = 'dense_66';
@@ -49,7 +47,7 @@ console.log('%c[Luciana Lima] main.js carregado', 'color: #0f0; font-size: 16px;
         return id;
     }
 
-    // ==================== LEMBRANÇA DE VALIDAÇÃO ====================
+    // ==================== LEMBRANÇA DE VALIDAÇÃO (localStorage) ====================
     function hasRecentValidation() {
         const lastValid = localStorage.getItem('lu_last_valid');
         if (!lastValid) return false;
@@ -67,36 +65,45 @@ console.log('%c[Luciana Lima] main.js carregado', 'color: #0f0; font-size: 16px;
         log('Validação registrada com sucesso.');
     }
 
-    // ==================== CAMADA 3: DETECÇÃO DE AUTOMAÇÃO (AJUSTADA) ====================
+    // ==================== CAMADA 3: DETECÇÃO DE AUTOMAÇÃO (SUAVIZADA) ====================
     function detectAutomation() {
-        // Se já foi validado recentemente, reduz falsos positivos
+        // Se já validado recentemente, pula toda verificação
         if (hasRecentValidation()) {
             log('Validação recente detectada – pulando verificação de automação.');
             return false;
         }
 
+        // Indicadores fortes de automação (não afetam WebViews legítimas)
         if (navigator.webdriver) return true;
         if (document.__selenium_unwrapped || document.__driver_evaluate || document.__webdriver_evaluate) return true;
-        if (window.chrome === undefined && navigator.userAgent.includes('Chrome')) return true;
+        if (window.callPhantom || window._phantom || window.__nightmare) return true;
 
-        // Apenas em desktop (largura > 1024) checamos a diferença outer/inner
-        if (window.innerWidth > 1024) {
-            if (window.outerWidth - window.innerWidth === 0 && window.outerWidth > 0 && navigator.languages.length === 0) return true;
-        }
-
+        // WebViews reais possuem requestAnimationFrame, bots headless podem não ter
         if (typeof requestAnimationFrame === 'undefined') return true;
+
+        // Não bloqueamos por ausência de window.chrome ou por navigator.languages
         return false;
     }
 
-    // ==================== CAMADA 5: SCORE COMPORTAMENTAL ====================
+    // ==================== CAMADA 5: SCORE COMPORTAMENTAL (AJUSTADO) ====================
     const behavior = {
         score: 0, mouseMoves: 0, lastMouseX: null, lastMouseY: null,
-        scrolls: 0, keys: 0, touches: 0, pageEnterTime: Date.now(), visible: true
+        scrolls: 0, keys: 0, touches: 0, pageEnterTime: Date.now(), visible: true,
+        firstInteraction: false
     };
 
     function initBehaviorTracking() {
+        function addFirstInteraction() {
+            if (!behavior.firstInteraction) {
+                behavior.firstInteraction = true;
+                behavior.score = Math.max(behavior.score, 1); // garante pelo menos 1
+                log('Primeira interação detectada → score mínimo 1');
+            }
+        }
+
         document.addEventListener('mousemove', function (e) {
             behavior.mouseMoves++;
+            addFirstInteraction();
             if (behavior.lastMouseX !== null) {
                 const dist = Math.sqrt((e.clientX - behavior.lastMouseX)**2 + (e.clientY - behavior.lastMouseY)**2);
                 if (dist > 3) behavior.score += 0.1;
@@ -105,37 +112,60 @@ console.log('%c[Luciana Lima] main.js carregado', 'color: #0f0; font-size: 16px;
             behavior.lastMouseY = e.clientY;
         }, { passive: true });
 
-        window.addEventListener('scroll', () => { behavior.scrolls++; if (behavior.scrolls > 2) behavior.score += 0.5; }, { passive: true });
-        document.addEventListener('keydown', () => { behavior.keys++; if (behavior.keys === 1) behavior.score += 0.5; });
-        window.addEventListener('touchstart', () => { behavior.touches++; behavior.score += 0.5; }, { passive: true });
+        window.addEventListener('scroll', () => {
+            behavior.scrolls++;
+            addFirstInteraction();
+            if (behavior.scrolls > 2) behavior.score += 0.5;
+        }, { passive: true });
+
+        document.addEventListener('keydown', () => {
+            behavior.keys++;
+            addFirstInteraction();
+            if (behavior.keys === 1) behavior.score += 0.5;
+        });
+
+        window.addEventListener('touchstart', () => {
+            behavior.touches++;
+            addFirstInteraction();
+            behavior.score += 0.5; // reforço extra
+        }, { passive: true });
+
         document.addEventListener('visibilitychange', () => { behavior.visible = !document.hidden; });
     }
 
     function getBehaviorScore() {
+        // Se já foi validado recentemente, dispensa pontuação
         if (hasRecentValidation()) {
             log('Pontuação dispensada (validação recente).');
             return CONFIG.SCORE_THRESHOLD + 1; // sempre passa
         }
+
+        // Bônus por tempo na página (suave, mas sem mínimo obrigatório)
         const timeSpent = Date.now() - behavior.pageEnterTime;
-        if (timeSpent > CONFIG.MIN_TIME_ON_PAGE) behavior.score += 2;
-        if (behavior.mouseMoves > 5) behavior.score += 1;
-        if (behavior.scrolls > 1) behavior.score += 0.5;
-        log(`Pontuação comportamental: ${behavior.score}`);
+        if (timeSpent > 1000) behavior.score += 0.5;   // após 1s, já adiciona meio ponto
+
+        log(`Pontuação comportamental: ${behavior.score.toFixed(1)}`);
         return behavior.score;
     }
 
-    // ==================== CAMADA 4: HONEYPOT ====================
+    // ==================== CAMADA 4: HONEYPOT (com acessibilidade) ====================
     function setupHoneypot() {
         const hpField = document.getElementById('hp-field');
         const hpLink = document.getElementById('hp-link');
         if (hpField) {
+            hpField.setAttribute('aria-hidden', 'true');
+            hpField.setAttribute('tabindex', '-1');
             hpField.addEventListener('focus', () => redirectTo('neutral.html'));
             hpField.addEventListener('input', () => redirectTo('neutral.html'));
         }
-        if (hpLink) hpLink.addEventListener('click', e => { e.preventDefault(); redirectTo('neutral.html'); });
+        if (hpLink) {
+            hpLink.setAttribute('aria-hidden', 'true');
+            hpLink.setAttribute('tabindex', '-1');
+            hpLink.addEventListener('click', e => { e.preventDefault(); redirectTo('neutral.html'); });
+        }
     }
 
-    // ==================== CAMADA 6 & 10: FINGERPRINT ====================
+    // ==================== CAMADA 6 & 10: FINGERPRINT SIMPLES ====================
     function getFingerprint() {
         const canvas = document.createElement('canvas');
         canvas.width = 200; canvas.height = 60;
@@ -156,7 +186,7 @@ console.log('%c[Luciana Lima] main.js carregado', 'color: #0f0; font-size: 16px;
         };
     }
 
-    // ==================== CAMADA 6: OBTENÇÃO DE JWT ====================
+    // ==================== CAMADA 6: OBTENÇÃO DE JWT (com fallback) ====================
     async function requestToken() {
         const fingerprint = getFingerprint(); const sessionId = getSessionId();
         try {
@@ -164,58 +194,113 @@ console.log('%c[Luciana Lima] main.js carregado', 'color: #0f0; font-size: 16px;
                 method: 'POST', headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ session_id: sessionId, fingerprint }),
             });
-            if (!response.ok) { const err = await response.text(); error(`Falha token (${response.status}): ${err}`); return false; }
+            if (!response.ok) {
+                const err = await response.text();
+                error(`Falha token (${response.status}): ${err}`);
+                return false;
+            }
             const data = await response.json();
             if (data.token) {
                 sessionStorage.setItem('jwt', data.token);
                 sessionStorage.setItem('jwt_exp', data.expires_at);
-                sessionStorage.setItem('jwt_fp', fingerprint.canvasHash); // apenas canvas hash
-                markValidationSuccess(); // lembra que validou
+                markValidationSuccess(); // lembra que foi validado
                 return true;
             }
             return false;
-        } catch (e) { error(`Exceção token: ${e.message}`); return false; }
-    }
-
-    // ==================== CAMADA 7 & 8: VALIDAÇÃO DO TOKEN ====================
-    function isTokenValid() {
-        const token = sessionStorage.getItem('jwt'), exp = sessionStorage.getItem('jwt_exp');
-        if (!token || !exp) return false;
-        if (Date.now() > parseInt(exp) * 1000) { clearSessionAndRedirect(); return false; }
-        // Compara apenas canvas hash (estável)
-        const storedHash = sessionStorage.getItem('jwt_fp');
-        if (storedHash && getFingerprint().canvasHash !== storedHash) {
-            warn('Canvas hash alterado. Invalidando token.');
-            clearSessionAndRedirect();
+        } catch (e) {
+            error(`Exceção token: ${e.message}`);
             return false;
         }
+    }
+
+    // ==================== CAMADA 7 & 8: VALIDAÇÃO DO TOKEN (sem fingerprint) ====================
+    function isTokenValid() {
+        const token = sessionStorage.getItem('jwt');
+        const exp = sessionStorage.getItem('jwt_exp');
+        if (!token || !exp) return false;
+        if (Date.now() > parseInt(exp) * 1000) {
+            warn('Token expirado.');
+            return false;
+        }
+        // Removida a validação do canvas fingerprint (causava falsos positivos)
         return true;
     }
 
     function clearSessionAndRedirect() {
-        sessionStorage.removeItem('jwt'); sessionStorage.removeItem('jwt_exp'); sessionStorage.removeItem('jwt_fp');
-        redirectTo('neutral.html');
+        sessionStorage.removeItem('jwt');
+        sessionStorage.removeItem('jwt_exp');
+        // Redireciona para a página inicial, onde poderá revalidar facilmente
+        redirectTo('index.html');
     }
 
-    // ==================== CAMADA 9: HEARTBEAT ====================
-    let countdownInterval = null, timeLeft = CONFIG.TOKEN_EXPIRY_SECONDS;
-    function startHeartbeat() {
-        countdownInterval = setInterval(() => {
-            timeLeft--; if (timeLeft <= 0) { clearInterval(countdownInterval); clearSessionAndRedirect(); }
-        }, 1000);
-        setInterval(async () => {
-            const token = sessionStorage.getItem('jwt'); if (!token) return;
+    // ==================== GARANTIA DE SESSÃO (página de links) ====================
+    async function ensureValidSession() {
+        if (isTokenValid()) return true;
+
+        // Tenta obter um novo token (refresh) silenciosamente
+        const token = sessionStorage.getItem('jwt');
+        if (token) {
             try {
                 const response = await fetch(CONFIG.BACKEND_URL + '/refresh', {
-                    method: 'POST', headers: { 'Authorization': 'Bearer ' + token },
+                    method: 'POST',
+                    headers: { 'Authorization': 'Bearer ' + token }
                 });
                 if (response.ok) {
                     const data = await response.json();
                     sessionStorage.setItem('jwt', data.token);
                     sessionStorage.setItem('jwt_exp', data.expires_at);
-                    timeLeft = CONFIG.TOKEN_EXPIRY_SECONDS;
-                } else clearSessionAndRedirect();
+                    return true;
+                }
             } catch (e) {}
+        }
+
+        // Se não conseguiu token válido, mas o usuário já foi validado recentemente, permite acesso
+        if (hasRecentValidation()) {
+            log('Usuário já validado anteriormente – concedendo acesso temporário.');
+            // Cria um token falso local para manter a lógica da página
+            sessionStorage.setItem('jwt', 'local-fallback-token');
+            sessionStorage.setItem('jwt_exp', (Date.now()/1000 + 600).toString()); // +10 min
+            return true;
+        }
+
+        // Caso contrário, pede revalidação
+        return false;
+    }
+
+    // ==================== CAMADA 9: HEARTBEAT RESILIENTE ====================
+    let countdownInterval = null;
+    let timeLeft = CONFIG.TOKEN_EXPIRY_SECONDS;
+    function startHeartbeat() {
+        countdownInterval = setInterval(() => {
+            timeLeft--;
+            if (timeLeft <= 0) {
+                clearInterval(countdownInterval);
+                warn('Tempo de token esgotado, redirecionando para revalidar.');
+                clearSessionAndRedirect();
+            }
+        }, 1000);
+
+        // Tenta renovar antes de expirar
+        setInterval(async () => {
+            const token = sessionStorage.getItem('jwt');
+            if (!token) return;
+            try {
+                const response = await fetch(CONFIG.BACKEND_URL + '/refresh', {
+                    method: 'POST',
+                    headers: { 'Authorization': 'Bearer ' + token }
+                });
+                if (response.ok) {
+                    const data = await response.json();
+                    sessionStorage.setItem('jwt', data.token);
+                    sessionStorage.setItem('jwt_exp', data.expires_at);
+                    timeLeft = CONFIG.TOKEN_EXPIRY_SECONDS; // reinicia contagem
+                    log('Token renovado com sucesso.');
+                } else {
+                    warn('Falha ao renovar token.');
+                }
+            } catch (e) {
+                // Silencia erro, a contagem regressiva cuidará de redirecionar se necessário
+            }
         }, CONFIG.HEARTBEAT_INTERVAL);
     }
 
@@ -380,7 +465,11 @@ console.log('%c[Luciana Lima] main.js carregado', 'color: #0f0; font-size: 16px;
         const modalContinue = document.getElementById('modalContinue');
         if (!ctaButton || !modal || !modalContinue) { error('Elementos essenciais não encontrados.'); return; }
 
-        if (detectAutomation()) { warn('Automação detectada.'); redirectTo('neutral.html'); return; }
+        if (detectAutomation()) {
+            warn('Automação detectada.');
+            redirectTo('neutral.html');
+            return;
+        }
         initBehaviorTracking();
         setupHoneypot();
 
@@ -388,7 +477,7 @@ console.log('%c[Luciana Lima] main.js carregado', 'color: #0f0; font-size: 16px;
             trackClick('cta-quero-ouvir-mais');
             const score = getBehaviorScore();
             if (score < CONFIG.SCORE_THRESHOLD) {
-                warn(`Pontuação insuficiente (${score}/${CONFIG.SCORE_THRESHOLD}).`);
+                warn(`Pontuação insuficiente (${score.toFixed(1)}/${CONFIG.SCORE_THRESHOLD}).`);
                 redirectTo('neutral.html');
                 return;
             }
@@ -400,10 +489,13 @@ console.log('%c[Luciana Lima] main.js carregado', 'color: #0f0; font-size: 16px;
             modalContinue.disabled = true;
             modalContinue.textContent = 'Verificando...';
             const success = await requestToken();
-            if (success) redirectTo('links.html');
-            else {
+            if (success) {
+                redirectTo('links.html');
+            } else {
                 alert('Falha na verificação. Tente novamente.');
-                redirectTo('neutral.html');
+                // Não redireciona, permite nova tentativa
+                modalContinue.disabled = false;
+                modalContinue.textContent = 'Continuar';
             }
         });
 
@@ -413,15 +505,24 @@ console.log('%c[Luciana Lima] main.js carregado', 'color: #0f0; font-size: 16px;
     }
 
     // ==================== PÁGINA DE LINKS ====================
-    function setupLinksPage() {
+    async function setupLinksPage() {
         log('Configurando página de links...');
-        if (!isTokenValid()) return;
+        const valid = await ensureValidSession();
+        if (!valid) {
+            warn('Sessão inválida e nenhuma validação recente – redirecionando.');
+            redirectTo('index.html');
+            return;
+        }
         startHeartbeat();
         updateResponsiveAssets();
         setupScrollReveal();
         setupVideoBackground();
-        document.addEventListener('click', function () {
-            if (!isTokenValid()) clearSessionAndRedirect();
+        // Listener global para monitorar validade
+        document.addEventListener('click', async function () {
+            if (!isTokenValid()) {
+                const stillValid = await ensureValidSession();
+                if (!stillValid) clearSessionAndRedirect();
+            }
         });
     }
 

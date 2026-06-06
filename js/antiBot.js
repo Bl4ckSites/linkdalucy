@@ -1,52 +1,83 @@
 /**
- * antiBot.js – Proteção contra bots e crawlers (sem bloquear navegadores in‑app)
- * Versão 4.0.1 – Corrigida remoção do estilo de bloqueio
+ * antiBot.js — Proteção total contra bots + ofuscação de conteúdo +18
+ * Versão 5.0 — Bloqueia crawlers, headless e impede leitura do fonte.
+ * Compatível com navegadores normais e in‑app (Instagram, Facebook, etc.)
  */
-(function () {
+(function() {
     'use strict';
 
+    // ===================== 1. Detecção robusta de bots =====================
     const ua = navigator.userAgent.toLowerCase();
 
-    // 1. Detecta bots e headless reais
-    const isBot = /bot|crawler|spider|googlebot|bingbot|duckduckbot|slurp|yandex|baidu|facebot|twitterbot|rogerbot|linkedinbot|embedly|quora link preview|outbrain|pinterest|prerender|whatsapp|telegrambot|discordbot/i.test(ua);
+    // Padrões de bots conhecidos (incluindo previews de redes sociais)
+    const botPattern = /bot|crawler|spider|googlebot|bingbot|duckduckbot|slurp|yandex|baidu|facebot|twitterbot|rogerbot|linkedinbot|embedly|quora link preview|outbrain|pinterest|prerender|whatsapp|telegrambot|discordbot|slackbot|google-structured-data-testing-tool/i;
+    const isBotUA = botPattern.test(ua);
 
-    const isHeadless = /headless|phantom|selenium|webdriver|puppeteer|playwright/i.test(ua) || navigator.webdriver === true;
+    // Headless browsers / automação
+    const isHeadless = /headless|phantom|selenium|webdriver|puppeteer|playwright/i.test(ua) ||
+                       navigator.webdriver === true;
 
-    // 2. Se for bot/headless, bloqueia e não remove o estilo (continua oculto)
-    if (isBot || isHeadless) {
-        console.log('[AntiBot] Bot/Headless detectado – conteúdo ocultado.');
-        // Não remove o block-style, mantendo a página escondida
+    // Verificações complementares (sem impacto visual)
+    const hasMissingPlugins = (navigator.plugins && navigator.plugins.length === 0) &&
+                              !/safari/i.test(ua); // Safari pode ter 0 plugins, ignoramos
+    const hasNoLanguages = navigator.languages && navigator.languages.length === 0;
+    const suspiciousChrome = !!window.chrome && !navigator.plugins.length; // Chrome sem plugins é estranho
+
+    const isBot = isBotUA || isHeadless || hasMissingPlugins || hasNoLanguages || suspiciousChrome;
+
+    // Se for bot, limpa a página completamente
+    if (isBot) {
+        console.log('[AntiBot] Bot detectado – página ocultada.');
         if (document.body) {
             document.body.innerHTML = '';
-            document.body.style.visibility = 'hidden';
+            document.body.style.display = 'none';
         }
+        // Para garantir: remove também qualquer elemento visível
+        document.documentElement.style.display = 'none';
         throw new Error('Acesso negado: bot detectado');
     }
 
-    // 3. Se for humano (navegador normal ou in‑app), remove o estilo bloqueador
+    // ===================== 2. Remover estilo bloqueador (se existir) =====================
     var blockStyle = document.getElementById('block-style');
-    if (blockStyle) {
-        blockStyle.remove();
-        console.log('[AntiBot] Estilo de bloqueio removido – conteúdo liberado.');
+    if (blockStyle) blockStyle.remove();
+
+    // ===================== 3. Descriptografar e exibir conteúdo +18 =====================
+    // O conteúdo real está em um elemento oculto com dados cifrados.
+    // Exemplo no HTML: <div id="enc-data" style="display:none;" data-cipher="..."></div>
+    var encDiv = document.getElementById('enc-data');
+    if (encDiv) {
+        var cipher = encDiv.getAttribute('data-cipher');
+        if (cipher) {
+            try {
+                // Decifrar (XOR com chave, depois Base64)
+                var decrypted = decryptContent(cipher, 'MinhaChaveSecreta2024!');
+                // Injetar no container de destino
+                var target = document.getElementById('adult-content');
+                if (target) {
+                    target.innerHTML = decrypted;
+                    console.log('[AntiBot] Conteúdo +18 liberado apenas para humanos.');
+                }
+            } catch (e) {
+                console.error('[AntiBot] Falha ao descriptografar conteúdo:', e);
+            }
+        }
     }
 
-    // 4. Aviso amigável para navegadores in‑app (opcional, não bloqueia)
-    const isInApp = /instagram|fban|fbav|threads/i.test(ua);
+    // ===================== 4. Função de descriptografia (XOR + Base64) =====================
+    function decryptContent(encStr, key) {
+        // Decodifica Base64
+        var raw = atob(encStr);
+        var result = '';
+        for (var i = 0; i < raw.length; i++) {
+            result += String.fromCharCode(raw.charCodeAt(i) ^ key.charCodeAt(i % key.length));
+        }
+        return result;
+    }
+
+    // ===================== 5. Logs para debug (opcional, remova em produção) =====================
+    var isInApp = /instagram|fban|fbav|threads/i.test(ua);
     if (isInApp) {
-        console.log('[AntiBot] Navegador in‑app detectado – exibindo aviso.');
-        document.addEventListener('DOMContentLoaded', function () {
-            const banner = document.createElement('div');
-            banner.id = 'inapp-banner';
-            banner.style.cssText = 'background:#ff7b00;color:#fff;padding:10px;text-align:center;font-family:sans-serif;position:sticky;top:0;z-index:9999;font-size:14px;';
-            banner.innerHTML = '📱 Para uma experiência ainda melhor, <a href="#" id="open-external" style="color:#fff;text-decoration:underline;font-weight:bold;">abra no navegador</a>.';
-            document.body.prepend(banner);
-
-            document.getElementById('open-external').addEventListener('click', function (e) {
-                e.preventDefault();
-                window.open(window.location.href, '_blank', 'noopener,noreferrer');
-            });
-        });
+        console.log('[AntiBot] Navegador in‑app – acesso liberado sem bloqueio.');
     }
-
-    console.log('[AntiBot] Usuário legítimo – página liberada.');
+    console.log('[AntiBot] Verificação concluída – humano confirmado.');
 })();

@@ -1,9 +1,9 @@
 /**
  * Luciana Lima – Script principal com proteção multicamadas
- * Versão 5.0.0 – Totalmente amigável a humanos, resiliente a WebViews e redes instáveis
+ * Versão 5.1.0 – Com fallback de visibilidade para garantir exibição do conteúdo
  * Criado por: dense_66
  */
-console.log('%c[Luciana Lima] main.js carregado (v5)', 'color: #0f0; font-size: 16px;');
+console.log('%c[Luciana Lima] main.js carregado (v5.1)', 'color: #0f0; font-size: 16px;');
 
 (function () {
     'use strict';
@@ -416,28 +416,25 @@ console.log('%c[Luciana Lima] main.js carregado (v5)', 'color: #0f0; font-size: 
         }, { passive: true });
     }
 
-    // ==================== SCROLL REVEAL ====================
-    function setupScrollReveal() {
-        const revealEls = document.querySelectorAll('.reveal-el');
-        if (!revealEls.length) return;
-        if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-            revealEls.forEach(el => el.classList.add('visible'));
-            return;
-        }
-        if (!('IntersectionObserver' in window)) {
-            revealEls.forEach(el => el.classList.add('visible'));
-            return;
-        }
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('visible');
-                    observer.unobserve(entry.target);
-                }
-            });
-        }, { root: null, rootMargin: '0px 0px 0px 0px', threshold: 0.2 });
-        revealEls.forEach(el => observer.observe(el));
+    // ==================== FALLBACK DE VISIBILIDADE ====================
+    function forceVisibility() {
+        log('Aplicando fallback de visibilidade...');
+        // Torna visíveis elementos que deveriam ter animado
+        document.querySelectorAll('.reveal-el, .fade-in-scale, .fade-in-up, .fade-in-down, .page-transition-in').forEach(el => {
+            el.style.opacity = '1';
+            el.style.transform = 'none';
+            el.style.filter = 'none';
+            el.classList.add('visible'); // para reveal-el
+            // Remove classes de animação para evitar conflitos
+            el.classList.remove('fade-in-scale', 'fade-in-up', 'fade-in-down', 'page-transition-in');
+        });
+        // Garante que o modal possa ser exibido se necessário
+        const modal = document.getElementById('verifyModal');
+        if (modal) modal.style.display = ''; // remove inline display se houver
     }
+
+    // Executa o fallback após 2 segundos, garantindo que mesmo se as animações CSS falharem, o conteúdo apareça
+    setTimeout(forceVisibility, 2000);
 
     // ==================== PÁGINA INICIAL ====================
     function setupIndexPage() {
@@ -504,6 +501,29 @@ console.log('%c[Luciana Lima] main.js carregado (v5)', 'color: #0f0; font-size: 
                 if (!stillValid) clearSessionAndRedirect();
             }
         });
+    }
+
+    // ==================== SCROLL REVEAL (COM FALLBACK) ====================
+    function setupScrollReveal() {
+        const revealEls = document.querySelectorAll('.reveal-el');
+        if (!revealEls.length) return;
+        if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+            revealEls.forEach(el => el.classList.add('visible'));
+            return;
+        }
+        if (!('IntersectionObserver' in window)) {
+            revealEls.forEach(el => el.classList.add('visible'));
+            return;
+        }
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, { root: null, rootMargin: '0px 0px 0px 0px', threshold: 0.1 });
+        revealEls.forEach(el => observer.observe(el));
     }
 
     // ==================== INICIALIZAÇÃO ====================

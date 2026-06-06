@@ -449,3 +449,51 @@ transition-duration: 0.01ms !important;
 scroll-behavior: auto !important;
 }
 }
+
+
+/* ============================================================
+   NOVAS ANIMAÇÕES – POLIMENTO PREMIUM (adicione ao final do animations.css)
+   ============================================================ */
+
+/* Stagger fade-up para os banners (substitui o reveal-el padrão se quiser usar) */
+.stagger-fade-up {
+    opacity: 0;
+    transform: translateY(30px);
+    animation: staggerFadeUp 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+.stagger-fade-up:nth-child(1) { animation-delay: 0.1s; }
+.stagger-fade-up:nth-child(2) { animation-delay: 0.2s; }
+.stagger-fade-up:nth-child(3) { animation-delay: 0.3s; }
+.stagger-fade-up:nth-child(4) { animation-delay: 0.4s; }
+.stagger-fade-up:nth-child(5) { animation-delay: 0.5s; }
+.stagger-fade-up:nth-child(6) { animation-delay: 0.6s; }
+.stagger-fade-up:nth-child(7) { animation-delay: 0.7s; }
+.stagger-fade-up:nth-child(8) { animation-delay: 0.8s; }
+
+@keyframes staggerFadeUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* NOVO – microparallax no container (aplica nos cards) */
+.parallax-hover {
+    transition: transform 0.4s cubic-bezier(0.16,1,0.3,1);
+}
+.parallax-hover:hover {
+    transform: translateY(-4px);
+}
+.parallax-hover:hover img {
+    transform: scale(1.05);
+}
+
+/* NOVO – respiração do fundo (já no body::after do links.css) */
+@keyframes bgBreathe {
+    0%, 100% { opacity: 0.6; transform: scale(1); }
+    50% { opacity: 1; transform: scale(1.05); }
+}

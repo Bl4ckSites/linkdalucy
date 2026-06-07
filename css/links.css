@@ -1,10 +1,9 @@
 /* ============================================================
    LINKS.CSS – Página de Links (links.html)
    Estética: Vitrines Holográficas / Reflexos Neon
-   Correção: animações partem de opacity:1, fallback seguro
+   Blur extremamente reduzido, destaque restaurado
    ============================================================ */
 
-/* Controle de ocultação removido pelo script inline */
 .no-js-hide body {
     visibility: hidden;
 }
@@ -15,7 +14,7 @@
     --color-brand-blue: #1f78d1;
     --color-brand-purple: #3f1a8f;
     --color-cyan-glow: #00e5ff;
-    --glass-surface: rgba(15, 15, 20, 0.4);
+    --glass-surface: rgba(15, 15, 20, 0.3);
     --transition-holographic: 0.6s cubic-bezier(0.16, 1, 0.3, 1);
     --profile-size: clamp(120px, 20vw, 180px);
     --name-size: clamp(2.8rem, 10vw, 4rem);
@@ -33,7 +32,7 @@ body {
     background: #000;
     display: flex; align-items: flex-start; justify-content: center;
     overflow-x: hidden;
-    opacity: 1; /* visível por padrão */
+    opacity: 1;
     visibility: visible;
 }
 
@@ -57,10 +56,10 @@ body {
 
 body::before {
     content: ''; position: fixed; inset: 0;
-    background: radial-gradient(ellipse at top, rgba(31,120,209,0.15) 0%, transparent 60%),
-                linear-gradient(to bottom, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0.85) 100%);
-    backdrop-filter: blur(10px) saturate(110%);
-    -webkit-backdrop-filter: blur(10px) saturate(110%);
+    background: radial-gradient(ellipse at top, rgba(31,120,209,0.1) 0%, transparent 60%),
+                linear-gradient(to bottom, rgba(0,0,0,0.2) 0%, rgba(0,0,0,0.7) 100%);
+    backdrop-filter: blur(3px) saturate(100%);
+    -webkit-backdrop-filter: blur(3px) saturate(100%);
     z-index: -1; pointer-events: none;
 }
 
@@ -74,7 +73,7 @@ body::before {
 
 .profile-card-glass {
     background: linear-gradient(180deg, rgba(255,255,255,0.04), transparent);
-    backdrop-filter: blur(20px);
+    backdrop-filter: blur(8px);
     border-radius: 36px; padding: 30px;
     display: flex; flex-direction: column; align-items: center; gap: 16px; width: 100%;
     border-top: 1px solid rgba(255,255,255,0.1);
@@ -98,15 +97,15 @@ body::before {
 
 .name-links {
     font-family: var(--font-display); font-size: var(--name-size);
-    background: linear-gradient(to bottom right, #fff, var(--color-cyan-glow));
+    background: linear-gradient(to bottom right, #ffffff, #a0d0ff);
     -webkit-background-clip: text; color: transparent;
     text-shadow: 0 10px 30px rgba(0,229,255,0.2);
 }
 
 .desc-glass {
-    background: rgba(255,255,255,.08);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
+    background: rgba(255,255,255,.06);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
     border: 1px solid rgba(255,255,255,.08);
     border-radius: 16px;
     padding: 12px 18px;
@@ -129,7 +128,7 @@ body::before {
     display: flex; align-items: center; justify-content: center;
     width: 56px; height: 56px; border-radius: 50%;
     background: rgba(255,255,255,0.03);
-    backdrop-filter: blur(15px);
+    backdrop-filter: blur(6px);
     border: 1px solid rgba(255,255,255,0.1);
     color: #fff; text-decoration: none;
     box-shadow: 0 5px 15px rgba(0,0,0,0.3), inset 0 2px 5px rgba(255,255,255,0.05);
@@ -157,11 +156,11 @@ body::before {
     aspect-ratio: 2.2 / 1;
     border-radius: var(--card-radius);
     text-decoration: none; position: relative; overflow: hidden;
-    background: var(--glass-surface);
-    backdrop-filter: blur(12px);
+    background: rgba(15, 15, 20, 0.2);
+    backdrop-filter: blur(4px);
     border: 1px solid rgba(255,255,255,0.06);
-    border-top-color: rgba(255,255,255,0.2);
-    box-shadow: 0 15px 35px rgba(0,0,0,0.4), inset 0 0 20px rgba(0,0,0,0.5);
+    border-top-color: rgba(255,255,255,0.15);
+    box-shadow: 0 15px 35px rgba(0,0,0,0.4);
     transition: all var(--transition-holographic);
 }
 
@@ -175,13 +174,14 @@ body::before {
 
 .image-button::after {
     content: ''; position: absolute; inset: 0; z-index: 1;
-    background: linear-gradient(0deg, rgba(31,120,209,0.3) 0%, rgba(0,0,0,0.6) 100%);
+    background: linear-gradient(0deg, rgba(31,120,209,0.15) 0%, rgba(0,0,0,0.3) 100%);
     transition: opacity var(--transition-holographic);
 }
 
 .image-button img {
     width: 100%; height: 100%; object-fit: cover;
-    filter: saturate(0.5) blur(2px); transform: scale(1.05);
+    filter: saturate(0.8) brightness(0.9);
+    transform: scale(1.02);
     transition: all var(--transition-holographic);
 }
 
@@ -193,7 +193,7 @@ body::before {
 
 .image-button:hover::before { background-position: 100% 0; }
 .image-button:hover::after { opacity: 0; }
-.image-button:hover img { filter: saturate(1.1) blur(0); transform: scale(1); }
+.image-button:hover img { filter: saturate(1.1) brightness(1); transform: scale(1); }
 
 .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); border: 0; }
 
@@ -207,7 +207,6 @@ body::before {
     .image-button { max-width: 100%; aspect-ratio: 16/9; }
 }
 
-/* Respeito à preferência de redução de movimento – sem quebrar visibilidade */
 @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after {
         animation: none !important;

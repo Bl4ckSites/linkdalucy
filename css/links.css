@@ -1,721 +1,206 @@
 /* ============================================================
    LINKS.CSS – Página de Links (links.html)
-   Vanguarda: Interface Líquida & Cartões Refratários
-   Cores Mestra: Azul (#1f78d1) | Roxo Escuro (#3f1a8f)
+   Estética: Vitrines Holográficas / Reflexos Neon
+   Decisões criativas:
+   - Os vídeos rodam em segundo plano criando um fluxo cinético sob um véu escuro.
+   - Os cards de imagem parecem placas de vidro físicas; o hover revela a imagem por completo através do embaçamento.
+   - Ícones sociais agem como gotas de metal líquido.
    ============================================================ */
 
 :root {
     --font-body: 'Montserrat', sans-serif;
     --font-display: 'Cormorant Garamond', serif;
     
-    --color-electric-blue: #1f78d1;
-    --color-deep-purple: #3f1a8f;
-    --color-glass-surface: rgba(20, 15, 30, 0.4);
+    --color-brand-blue: #1f78d1;
+    --color-brand-purple: #3f1a8f;
+    --color-cyan-glow: #00e5ff;
     
-    --profile-size: clamp(110px, 20vw, 180px);
-    --name-size: clamp(2.6rem, 9vw, 4rem);
+    --glass-surface: rgba(15, 15, 20, 0.4);
+    --transition-holographic: 0.6s cubic-bezier(0.16, 1, 0.3, 1);
     
-    --ease-liquid: 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
-    --ease-spring: 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+    --profile-size: clamp(120px, 20vw, 180px);
+    --name-size: clamp(2.8rem, 10vw, 4rem);
+    --card-radius: 28px;
 }
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-html {
-    font-size: 16px;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-    scroll-behavior: smooth;
-}
+html { font-size: 16px; scroll-behavior: smooth; }
 
 body {
     font-family: var(--font-body);
     min-height: 100vh;
     min-height: 100dvh;
-    background: #05020a;
-    position: relative;
-    display: flex;
-    align-items: flex-start;
-    justify-content: center;
-    overflow-x: hidden;
-    color: #fff;
-}
-
-/* --- VÉU & FUNDO (Preservando os vídeos) --- */
-.video-background {
-    position: fixed;
-    inset: 0;
-    z-index: -2;
-    overflow: hidden;
-    /* Adiciona um tom escurecido direto no contêiner do vídeo para contraste base */
     background: #000;
+    display: flex; align-items: flex-start; justify-content: center;
+    overflow-x: hidden;
 }
 
-/* Este é o véu inegociável. Cobre o vídeo sem apagá-lo, transformando-o em textura */
-body::before {
-    content: '';
-    position: fixed;
-    inset: 0;
-    background: linear-gradient(180deg, rgba(5,2,15,0.4) 0%, rgba(63,26,143,0.15) 50%, rgba(0,0,0,0.8) 100%);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    z-index: 0;
-    pointer-events: none;
+/* =========================================
+   O VÉU DO VÍDEO (Preservando a Mídia)
+   ========================================= */
+.video-background {
+    position: fixed; inset: 0; z-index: -2; overflow: hidden;
 }
-
-/* Poeira estelar / partículas atmosféricas subtis */
-body::after {
-    content: '';
-    position: fixed;
-    inset: 0;
-    background-image: radial-gradient(rgba(255,255,255,0.1) 1px, transparent 1px);
-    background-size: 40px 40px;
-    opacity: 0.2;
-    z-index: 0;
-    pointer-events: none;
-    mask-image: radial-gradient(circle at center, black, transparent 80%);
-    -webkit-mask-image: radial-gradient(circle at center, black, transparent 80%);
-}
-
-@keyframes emergencyVisible { to { visibility: visible; } }
-body { animation: emergencyVisible 0.1s 3s forwards; }
-
 .video-mobile, .video-tablet, .video-desktop {
     display: none; position: absolute;
-    top: 50%; left: 50%;
-    min-width: 100%; min-height: 100%;
-    width: auto; height: auto;
-    transform: translate(-50%, -50%);
-    object-fit: cover;
-    opacity: 0;
-    transition: opacity 1.2s ease;
+    top: 50%; left: 50%; min-width: 100%; min-height: 100%;
+    transform: translate(-50%, -50%) scale(1.05); /* Escala sutil para evitar bordas */
+    object-fit: cover; opacity: 0;
+    transition: opacity 1s ease;
 }
-.video-mobile.loaded, .video-tablet.loaded, .video-desktop.loaded { opacity: 0.6; /* Deixa o vídeo suave */ }
+.video-mobile.loaded, .video-tablet.loaded, .video-desktop.loaded { opacity: 1; }
 
 @media (max-width: 480px) { .video-mobile { display: block; } }
 @media (min-width: 481px) and (max-width: 1024px) { .video-tablet { display: block; } }
 @media (min-width: 1025px) { .video-desktop { display: block; } }
 
-/* Navegação acessível */
-.skip-link {
-    position: absolute; top: -100px; left: 20px;
-    background: var(--color-electric-blue); color: #fff;
-    padding: 10px 20px; z-index: 9999; border-radius: 8px;
-    text-decoration: none; font-weight: bold;
-    transition: top var(--ease-spring);
-}
-.skip-link:focus { top: 20px; }
-
-/* --- CONTÊINER PRINCIPAL --- */
-.links-container {
-    position: relative;
-    z-index: 1;
-    width: 92%;
-    max-width: 1100px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: clamp(1.5rem, 3vw, 2.5rem);
-    padding: 6vh 0 10vh;
-}
-
-/* --- HEADER: CRISTAL FLUTUANTE --- */
-.profile-card-glass {
-    background: var(--color-glass-surface);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    border-radius: 36px;
-    padding: 25px 30px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 15px;
-    width: 100%;
-    max-width: 600px; /* Impede que estique demais no grid largo */
-    box-shadow: 0 20px 40px rgba(0,0,0,0.5), inset 0 1px 1px rgba(255,255,255,0.1);
-    border: 1px solid rgba(63, 26, 143, 0.4);
-    position: relative;
-}
-
-.profile-img-links {
-    width: var(--profile-size);
-    height: var(--profile-size);
-    border-radius: 50%;
-    object-fit: cover;
-    background: #000;
-    /* Escultura de luz para a foto de perfil */
-    box-shadow: 
-        0 0 0 2px rgba(255,255,255,0.1),
-        0 10px 25px rgba(31, 120, 209, 0.5),
-        0 0 40px rgba(63, 26, 143, 0.3);
-    border: 2px solid rgba(255,255,255,0.05);
-    transition: transform var(--ease-spring);
-}
-.profile-img-links:hover { transform: scale(1.06) rotate(2deg); }
-
-.title-glass-wrapper { padding: 5px 0; }
-
-.name-links {
-    font-family: var(--font-display);
-    font-size: var(--name-size);
-    color: #ffffff;
-    line-height: 1;
-    background: linear-gradient(180deg, #fff 0%, #c8d2f0 100%);
-    -webkit-background-clip: text;
-    color: transparent;
-    text-shadow: 0 4px 15px rgba(0,0,0,0.5);
-    letter-spacing: -0.01em;
-}
-
-.desc-glass {
-    background: rgba(0,0,0,0.25);
-    border-radius: 12px;
-    padding: 8px 16px;
-    border-bottom: 1px solid rgba(255,255,255,0.08);
-}
-.desc-text {
-    font-size: 0.95rem;
-    color: rgba(255,255,255,0.8);
-    font-weight: 400;
-    letter-spacing: 0.05em;
-}
-
-/* --- ÍCONES SOCIAIS (Gotas Metálicas) --- */
-.social-icons {
-    display: flex; gap: 15px; justify-content: center; flex-wrap: wrap; margin-top: 5px;
-}
-.social-icon {
-    display: flex; align-items: center; justify-content: center;
-    width: 50px; height: 50px;
-    border-radius: 50%;
-    background: linear-gradient(145deg, rgba(255,255,255,0.08), rgba(0,0,0,0.2));
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    border: 1px solid rgba(255,255,255,0.1);
-    color: #fff;
-    box-shadow: 5px 5px 15px rgba(0,0,0,0.3), inset 1px 1px 2px rgba(255,255,255,0.15);
-    transition: all var(--ease-spring);
-    text-decoration: none;
-}
-.social-icon svg { width: 20px; height: 20px; transition: transform var(--ease-liquid); }
-
-.social-icon:hover {
-    transform: translateY(-5px);
-    background: var(--color-electric-blue);
-    border-color: rgba(255,255,255,0.4);
-    box-shadow: 0 10px 25px rgba(31, 120, 209, 0.5), 0 0 15px var(--color-deep-purple);
-}
-.social-icon:hover svg { transform: scale(1.15); }
-.social-icon:active { transform: scale(0.9) translateY(0); }
-.social-icon:focus-visible { outline: 2px solid #fff; outline-offset: 4px; }
-
-.sr-only {
-    position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
-    overflow: hidden; clip: rect(0,0,0,0); border: 0;
-}
-
-/* --- GRID DE CARDS (Galeria Interativa) --- */
-.image-buttons-list {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 25px;
-    width: 100%;
-}
-
-/* A Superfície Esculpida */
-.image-button {
-    display: block;
-    width: 100%;
-    border-radius: 28px;
-    overflow: hidden;
-    position: relative;
-    text-decoration: none;
-    aspect-ratio: 2.2 / 1;
-    background: rgba(10, 5, 20, 0.6);
-    border: 1px solid rgba(63, 26, 143, 0.5);
-    box-shadow: 0 15px 35px rgba(0,0,0,0.4);
-    transition: transform var(--ease-spring), box-shadow var(--ease-liquid), border-color var(--ease-liquid);
-    /* Força o hardware a suavizar as bordas durante o scale */
-    transform: translateZ(0); 
-}
-
-/* Gradiente overlay interno */
-.image-button::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(to top, rgba(5,2,15,0.8) 0%, rgba(31,120,209,0.1) 100%);
-    z-index: 1;
-    transition: opacity var(--ease-liquid);
-}
-
-/* Brilho dinâmico varrendo o card (revelado no hover) */
-.image-button::after {
-    content: '';
-    position: absolute;
-    top: 0; left: -100%;
-    width: 50%; height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent);
-    transform: skewX(-25deg);
-    z-index: 2;
-    transition: left 0.6s ease;
-    pointer-events: none;
-}
-
-.image-button img {
-    width: 100%; height: 100%;
-    display: block;
-    object-fit: cover;
-    border-radius: inherit;
-    opacity: 0.65;
-    filter: saturate(0.5) contrast(1.1);
-    transition: all 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
-    transform: scale(1.02); /* Previne margens brancas ao animar */
-}
-
-/* Exceção mobile onde o hover não existe perfeitamente */
-html.is-desktop .image-button img { opacity: 0.7; }
-
-/* Interação Mágica */
-.image-button:hover {
-    transform: translateY(-8px) scale(1.02);
-    box-shadow: 0 25px 50px rgba(0,0,0,0.6), 0 0 40px rgba(31,120,209,0.3);
-    border-color: rgba(31,120,209,0.6);
-    z-index: 10;
-}
-.image-button:hover::before { opacity: 0.6; }
-.image-button:hover::after { left: 150%; }
-.image-button:hover img {
-    opacity: 1;
-    filter: saturate(1.1) contrast(1);
-    transform: scale(1.08);
-}
-.image-button:active { transform: scale(0.98); }
-
-.image-button .ripple {
-    position: absolute; border-radius: 50%;
-    background: radial-gradient(circle, rgba(255,255,255,0.6) 0%, transparent 60%);
-    transform: scale(0); animation: ripple-animation 0.6s ease-out;
-    pointer-events: none; z-index: 3; mix-blend-mode: overlay;
-}
-@keyframes ripple-animation { to { transform: scale(4); opacity: 0; } }
-
-/* --- BOTÃO INFERIOR (CTA Index adaptado) --- */
-.cta-button {
-    display: flex; align-items: center; justify-content: center;
-    width: 100%; max-width: 400px; height: 68px; margin-top: 10px;
-    background: linear-gradient(135deg, var(--color-electric-blue), var(--color-deep-purple));
-    color: #fff; font-weight: 700; font-size: 1.05rem; letter-spacing: 0.15em;
-    text-transform: uppercase; text-decoration: none;
-    border-radius: 100px;
-    box-shadow: 0 15px 30px rgba(31,120,209,0.2), inset 0 2px 5px rgba(255,255,255,0.2);
-    border: 1px solid rgba(255,255,255,0.1);
-    transition: all var(--ease-spring);
-    position: relative; overflow: hidden;
-}
-.cta-button::before {
-    content: ''; position: absolute; inset: 0;
-    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
-    transform: translateX(-100%); transition: transform 0.6s ease;
-}
-.cta-button:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 20px 40px rgba(31,120,209,0.4), 0 0 20px rgba(63,26,143,0.5);
-    letter-spacing: 0.2em;
-}
-.cta-button:hover::before { transform: translateX(100%); }
-.cta-button:active { transform: scale(0.96); }
-
-/* --- CONTROLES DE VÍDEO (Esconder nativos) --- */
-video::-webkit-media-controls { display: none !important; }
-video::-webkit-media-controls-panel { display: none !important; }
-.video-background video { animation: videoEmergency 0.1s 1.5s forwards; opacity: 0; }
-@keyframes videoEmergency { to { opacity: 0.5; } }
-
-/* --- RESPONSIVIDADE EM GRID --- */
-@media (max-width: 480px) {
-    .links-container { padding: 4vh 16px 8vh; width: 100%; }
-    .image-button { aspect-ratio: 2.5 / 1; border-radius: 20px; }
-    .social-icon { width: 44px; height: 44px; }
-}
-
-@media (min-width: 481px) and (max-width: 1024px) {
-    .image-buttons-list { grid-template-columns: repeat(2, 1fr); gap: 24px; }
-}
-
-@media (min-width: 1025px) {
-    .image-buttons-list { grid-template-columns: repeat(3, 1fr); gap: 30px; }
-    .image-button { aspect-ratio: 16 / 9; /* Mais elegante em telas grandes */ border-radius: 24px; }
-    .social-icon { width: 54px; height: 54px; }
-    .social-icon svg { width: 22px; height: 22px; }
-}
-
-/* Acessibilidade */
-@media (prefers-reduced-motion: reduce) {
-    *, ::before, ::after {
-        animation-duration: 0.01ms !important;
-        animation-iteration-count: 1 !important;
-        transition-duration: 0.01ms !important;
-        scroll-behavior: auto !important;
-    }
-}/* ============================================================
-   LINKS.CSS – Página de Links (links.html)
-   Vanguarda: Interface Líquida & Cartões Refratários
-   Cores Mestra: Azul (#1f78d1) | Roxo Escuro (#3f1a8f)
-   ============================================================ */
-
-:root {
-    --font-body: 'Montserrat', sans-serif;
-    --font-display: 'Cormorant Garamond', serif;
-    
-    --color-electric-blue: #1f78d1;
-    --color-deep-purple: #3f1a8f;
-    --color-glass-surface: rgba(20, 15, 30, 0.4);
-    
-    --profile-size: clamp(110px, 20vw, 180px);
-    --name-size: clamp(2.6rem, 9vw, 4rem);
-    
-    --ease-liquid: 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
-    --ease-spring: 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
-}
-
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-html {
-    font-size: 16px;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-    scroll-behavior: smooth;
-}
-
-body {
-    font-family: var(--font-body);
-    min-height: 100vh;
-    min-height: 100dvh;
-    background: #05020a;
-    position: relative;
-    display: flex;
-    align-items: flex-start;
-    justify-content: center;
-    overflow-x: hidden;
-    color: #fff;
-}
-
-/* --- VÉU & FUNDO (Preservando os vídeos) --- */
-.video-background {
-    position: fixed;
-    inset: 0;
-    z-index: -2;
-    overflow: hidden;
-    /* Adiciona um tom escurecido direto no contêiner do vídeo para contraste base */
-    background: #000;
-}
-
-/* Este é o véu inegociável. Cobre o vídeo sem apagá-lo, transformando-o em textura */
+/* A névoa sobre o vídeo - Dá o tom luxuoso */
 body::before {
-    content: '';
-    position: fixed;
-    inset: 0;
-    background: linear-gradient(180deg, rgba(5,2,15,0.4) 0%, rgba(63,26,143,0.15) 50%, rgba(0,0,0,0.8) 100%);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    z-index: 0;
-    pointer-events: none;
+    content: ''; position: fixed; inset: 0;
+    background: radial-gradient(ellipse at top, rgba(31,120,209,0.15) 0%, transparent 60%),
+                linear-gradient(to bottom, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0.85) 100%);
+    backdrop-filter: blur(10px) saturate(110%);
+    -webkit-backdrop-filter: blur(10px) saturate(110%);
+    z-index: -1; pointer-events: none;
 }
 
-/* Poeira estelar / partículas atmosféricas subtis */
-body::after {
-    content: '';
-    position: fixed;
-    inset: 0;
-    background-image: radial-gradient(rgba(255,255,255,0.1) 1px, transparent 1px);
-    background-size: 40px 40px;
-    opacity: 0.2;
-    z-index: 0;
-    pointer-events: none;
-    mask-image: radial-gradient(circle at center, black, transparent 80%);
-    -webkit-mask-image: radial-gradient(circle at center, black, transparent 80%);
-}
-
-@keyframes emergencyVisible { to { visibility: visible; } }
-body { animation: emergencyVisible 0.1s 3s forwards; }
-
-.video-mobile, .video-tablet, .video-desktop {
-    display: none; position: absolute;
-    top: 50%; left: 50%;
-    min-width: 100%; min-height: 100%;
-    width: auto; height: auto;
-    transform: translate(-50%, -50%);
-    object-fit: cover;
-    opacity: 0;
-    transition: opacity 1.2s ease;
-}
-.video-mobile.loaded, .video-tablet.loaded, .video-desktop.loaded { opacity: 0.6; /* Deixa o vídeo suave */ }
-
-@media (max-width: 480px) { .video-mobile { display: block; } }
-@media (min-width: 481px) and (max-width: 1024px) { .video-tablet { display: block; } }
-@media (min-width: 1025px) { .video-desktop { display: block; } }
-
-/* Navegação acessível */
-.skip-link {
-    position: absolute; top: -100px; left: 20px;
-    background: var(--color-electric-blue); color: #fff;
-    padding: 10px 20px; z-index: 9999; border-radius: 8px;
-    text-decoration: none; font-weight: bold;
-    transition: top var(--ease-spring);
-}
-.skip-link:focus { top: 20px; }
-
-/* --- CONTÊINER PRINCIPAL --- */
 .links-container {
-    position: relative;
-    z-index: 1;
-    width: 92%;
-    max-width: 1100px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+    position: relative; z-index: 1;
+    width: 95%; max-width: 1100px;
+    display: flex; flex-direction: column; align-items: center;
     gap: clamp(1.5rem, 3vw, 2.5rem);
-    padding: 6vh 0 10vh;
+    padding: clamp(2rem, 5vh, 4rem) 20px 80px;
 }
 
-/* --- HEADER: CRISTAL FLUTUANTE --- */
+/* =========================================
+   HEADER DE LINKS: VIDRO E LUZ
+   ========================================= */
 .profile-card-glass {
-    background: var(--color-glass-surface);
+    background: linear-gradient(180deg, rgba(255,255,255,0.04), transparent);
     backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    border-radius: 36px;
-    padding: 25px 30px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 15px;
-    width: 100%;
-    max-width: 600px; /* Impede que estique demais no grid largo */
-    box-shadow: 0 20px 40px rgba(0,0,0,0.5), inset 0 1px 1px rgba(255,255,255,0.1);
-    border: 1px solid rgba(63, 26, 143, 0.4);
-    position: relative;
+    border-radius: 36px; padding: 30px;
+    display: flex; flex-direction: column; align-items: center; gap: 16px; width: 100%;
+    border-top: 1px solid rgba(255,255,255,0.1);
+    border-bottom: 1px solid rgba(63,26,143,0.3);
+    box-shadow: 0 20px 50px rgba(0,0,0,0.5);
 }
 
 .profile-img-links {
-    width: var(--profile-size);
-    height: var(--profile-size);
-    border-radius: 50%;
-    object-fit: cover;
-    background: #000;
-    /* Escultura de luz para a foto de perfil */
-    box-shadow: 
-        0 0 0 2px rgba(255,255,255,0.1),
-        0 10px 25px rgba(31, 120, 209, 0.5),
-        0 0 40px rgba(63, 26, 143, 0.3);
-    border: 2px solid rgba(255,255,255,0.05);
-    transition: transform var(--ease-spring);
+    width: var(--profile-size); height: var(--profile-size);
+    border-radius: 50%; object-fit: cover;
+    box-shadow: 0 0 0 1px rgba(255,255,255,0.1), 0 10px 30px rgba(0,0,0,0.6);
+    animation: floatHologram 7s ease-in-out infinite;
 }
-.profile-img-links:hover { transform: scale(1.06) rotate(2deg); }
 
-.title-glass-wrapper { padding: 5px 0; }
+@keyframes floatHologram {
+    0%, 100% { transform: translateY(0) scale(1); filter: drop-shadow(0 0 15px rgba(31,120,209,0.2)); }
+    50% { transform: translateY(-5px) scale(1.02); filter: drop-shadow(0 0 25px rgba(0,229,255,0.4)); }
+}
 
+.title-glass-wrapper {
+    background: transparent;
+}
 .name-links {
-    font-family: var(--font-display);
-    font-size: var(--name-size);
-    color: #ffffff;
-    line-height: 1;
-    background: linear-gradient(180deg, #fff 0%, #c8d2f0 100%);
-    -webkit-background-clip: text;
-    color: transparent;
-    text-shadow: 0 4px 15px rgba(0,0,0,0.5);
-    letter-spacing: -0.01em;
+    font-family: var(--font-display); font-size: var(--name-size);
+    background: linear-gradient(to bottom right, #fff, var(--color-cyan-glow));
+    -webkit-background-clip: text; color: transparent;
+    text-shadow: 0 10px 30px rgba(0,229,255,0.2);
 }
 
-.desc-glass {
-    background: rgba(0,0,0,0.25);
-    border-radius: 12px;
-    padding: 8px 16px;
-    border-bottom: 1px solid rgba(255,255,255,0.08);
-}
-.desc-text {
-    font-size: 0.95rem;
-    color: rgba(255,255,255,0.8);
-    font-weight: 400;
-    letter-spacing: 0.05em;
-}
+.desc-glass { display: none; /* Mantendo minimalista caso vazio, se houver texto, usar estilo da index */ }
 
-/* --- ÍCONES SOCIAIS (Gotas Metálicas) --- */
-.social-icons {
-    display: flex; gap: 15px; justify-content: center; flex-wrap: wrap; margin-top: 5px;
-}
+/* =========================================
+   ÍCONES SOCIAIS: GOTAS DE METAL LÍQUIDO
+   ========================================= */
+.social-icons { display: flex; gap: 20px; justify-content: center; flex-wrap: wrap; margin-top: 8px; }
 .social-icon {
     display: flex; align-items: center; justify-content: center;
-    width: 50px; height: 50px;
-    border-radius: 50%;
-    background: linear-gradient(145deg, rgba(255,255,255,0.08), rgba(0,0,0,0.2));
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
+    width: 56px; height: 56px; border-radius: 50%;
+    background: rgba(255,255,255,0.03);
+    backdrop-filter: blur(15px);
     border: 1px solid rgba(255,255,255,0.1);
-    color: #fff;
-    box-shadow: 5px 5px 15px rgba(0,0,0,0.3), inset 1px 1px 2px rgba(255,255,255,0.15);
-    transition: all var(--ease-spring);
-    text-decoration: none;
+    color: #fff; text-decoration: none;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3), inset 0 2px 5px rgba(255,255,255,0.05);
+    transition: all var(--transition-holographic);
 }
-.social-icon svg { width: 20px; height: 20px; transition: transform var(--ease-liquid); }
+.social-icon svg { width: 22px; height: 22px; transition: transform 0.3s; }
 
 .social-icon:hover {
     transform: translateY(-5px);
-    background: var(--color-electric-blue);
+    background: linear-gradient(135deg, var(--color-brand-blue), var(--color-brand-purple));
     border-color: rgba(255,255,255,0.4);
-    box-shadow: 0 10px 25px rgba(31, 120, 209, 0.5), 0 0 15px var(--color-deep-purple);
+    box-shadow: 0 10px 25px rgba(0, 229, 255, 0.4), inset 0 2px 2px rgba(255,255,255,0.4);
 }
 .social-icon:hover svg { transform: scale(1.15); }
-.social-icon:active { transform: scale(0.9) translateY(0); }
-.social-icon:focus-visible { outline: 2px solid #fff; outline-offset: 4px; }
 
-.sr-only {
-    position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
-    overflow: hidden; clip: rect(0,0,0,0); border: 0;
-}
-
-/* --- GRID DE CARDS (Galeria Interativa) --- */
+/* =========================================
+   VITRINES HOLOGRÁFICAS (Image Cards)
+   ========================================= */
 .image-buttons-list {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 25px;
-    width: 100%;
+    display: grid; grid-template-columns: 1fr; gap: 30px; width: 100%;
+    justify-items: center;
 }
 
-/* A Superfície Esculpida */
 .image-button {
-    display: block;
-    width: 100%;
-    border-radius: 28px;
-    overflow: hidden;
-    position: relative;
-    text-decoration: none;
+    display: block; width: 100%; max-width: 420px;
     aspect-ratio: 2.2 / 1;
-    background: rgba(10, 5, 20, 0.6);
-    border: 1px solid rgba(63, 26, 143, 0.5);
-    box-shadow: 0 15px 35px rgba(0,0,0,0.4);
-    transition: transform var(--ease-spring), box-shadow var(--ease-liquid), border-color var(--ease-liquid);
-    /* Força o hardware a suavizar as bordas durante o scale */
-    transform: translateZ(0); 
+    border-radius: var(--card-radius);
+    text-decoration: none; position: relative; overflow: hidden;
+    /* Corpo do vidro */
+    background: var(--glass-surface);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-top-color: rgba(255,255,255,0.2);
+    box-shadow: 0 15px 35px rgba(0,0,0,0.4), inset 0 0 20px rgba(0,0,0,0.5);
+    transition: all var(--transition-holographic);
 }
 
-/* Gradiente overlay interno */
+/* Efeito de refração no card */
 .image-button::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(to top, rgba(5,2,15,0.8) 0%, rgba(31,120,209,0.1) 100%);
-    z-index: 1;
-    transition: opacity var(--ease-liquid);
-}
-
-/* Brilho dinâmico varrendo o card (revelado no hover) */
-.image-button::after {
-    content: '';
-    position: absolute;
-    top: 0; left: -100%;
-    width: 50%; height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent);
-    transform: skewX(-25deg);
-    z-index: 2;
-    transition: left 0.6s ease;
+    content: ''; position: absolute; inset: 0; z-index: 2;
+    background: linear-gradient(105deg, transparent 20%, rgba(255,255,255,0.1) 25%, transparent 30%);
+    background-size: 200% 200%; background-position: -100% 0;
+    transition: background-position 0.6s ease;
     pointer-events: none;
 }
 
-.image-button img {
-    width: 100%; height: 100%;
-    display: block;
-    object-fit: cover;
-    border-radius: inherit;
-    opacity: 0.65;
-    filter: saturate(0.5) contrast(1.1);
-    transition: all 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
-    transform: scale(1.02); /* Previne margens brancas ao animar */
+/* O Véu Escuro Interno */
+.image-button::after {
+    content: ''; position: absolute; inset: 0; z-index: 1;
+    background: linear-gradient(0deg, rgba(31,120,209,0.3) 0%, rgba(0,0,0,0.6) 100%);
+    transition: opacity var(--transition-holographic);
 }
 
-/* Exceção mobile onde o hover não existe perfeitamente */
-html.is-desktop .image-button img { opacity: 0.7; }
+.image-button img {
+    width: 100%; height: 100%; object-fit: cover;
+    filter: saturate(0.5) blur(2px); transform: scale(1.05);
+    transition: all var(--transition-holographic);
+}
 
-/* Interação Mágica */
+/* Interação de Revelação */
 .image-button:hover {
     transform: translateY(-8px) scale(1.02);
-    box-shadow: 0 25px 50px rgba(0,0,0,0.6), 0 0 40px rgba(31,120,209,0.3);
-    border-color: rgba(31,120,209,0.6);
-    z-index: 10;
+    border-color: var(--color-cyan-glow);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.6), 0 0 30px rgba(0, 229, 255, 0.2);
 }
-.image-button:hover::before { opacity: 0.6; }
-.image-button:hover::after { left: 150%; }
-.image-button:hover img {
-    opacity: 1;
-    filter: saturate(1.1) contrast(1);
-    transform: scale(1.08);
-}
-.image-button:active { transform: scale(0.98); }
+.image-button:hover::before { background-position: 100% 0; }
+.image-button:hover::after { opacity: 0; }
+.image-button:hover img { filter: saturate(1.1) blur(0); transform: scale(1); }
 
-.image-button .ripple {
-    position: absolute; border-radius: 50%;
-    background: radial-gradient(circle, rgba(255,255,255,0.6) 0%, transparent 60%);
-    transform: scale(0); animation: ripple-animation 0.6s ease-out;
-    pointer-events: none; z-index: 3; mix-blend-mode: overlay;
-}
-@keyframes ripple-animation { to { transform: scale(4); opacity: 0; } }
-
-/* --- BOTÃO INFERIOR (CTA Index adaptado) --- */
-.cta-button {
-    display: flex; align-items: center; justify-content: center;
-    width: 100%; max-width: 400px; height: 68px; margin-top: 10px;
-    background: linear-gradient(135deg, var(--color-electric-blue), var(--color-deep-purple));
-    color: #fff; font-weight: 700; font-size: 1.05rem; letter-spacing: 0.15em;
-    text-transform: uppercase; text-decoration: none;
-    border-radius: 100px;
-    box-shadow: 0 15px 30px rgba(31,120,209,0.2), inset 0 2px 5px rgba(255,255,255,0.2);
-    border: 1px solid rgba(255,255,255,0.1);
-    transition: all var(--ease-spring);
-    position: relative; overflow: hidden;
-}
-.cta-button::before {
-    content: ''; position: absolute; inset: 0;
-    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
-    transform: translateX(-100%); transition: transform 0.6s ease;
-}
-.cta-button:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 20px 40px rgba(31,120,209,0.4), 0 0 20px rgba(63,26,143,0.5);
-    letter-spacing: 0.2em;
-}
-.cta-button:hover::before { transform: translateX(100%); }
-.cta-button:active { transform: scale(0.96); }
-
-/* --- CONTROLES DE VÍDEO (Esconder nativos) --- */
-video::-webkit-media-controls { display: none !important; }
-video::-webkit-media-controls-panel { display: none !important; }
-.video-background video { animation: videoEmergency 0.1s 1.5s forwards; opacity: 0; }
-@keyframes videoEmergency { to { opacity: 0.5; } }
-
-/* --- RESPONSIVIDADE EM GRID --- */
-@media (max-width: 480px) {
-    .links-container { padding: 4vh 16px 8vh; width: 100%; }
-    .image-button { aspect-ratio: 2.5 / 1; border-radius: 20px; }
-    .social-icon { width: 44px; height: 44px; }
-}
+/* =========================================
+   RESPONSIVO E EXTRAS
+   ========================================= */
+.sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); border: 0; }
 
 @media (min-width: 481px) and (max-width: 1024px) {
-    .image-buttons-list { grid-template-columns: repeat(2, 1fr); gap: 24px; }
+    .image-buttons-list { grid-template-columns: repeat(2, 1fr); }
+    .image-button { aspect-ratio: 2/1; }
 }
-
 @media (min-width: 1025px) {
-    .image-buttons-list { grid-template-columns: repeat(3, 1fr); gap: 30px; }
-    .image-button { aspect-ratio: 16 / 9; /* Mais elegante em telas grandes */ border-radius: 24px; }
-    .social-icon { width: 54px; height: 54px; }
-    .social-icon svg { width: 22px; height: 22px; }
+    .image-buttons-list { grid-template-columns: repeat(3, 1fr); gap: 40px; }
+    .image-button { max-width: 100%; aspect-ratio: 16/9; }
 }
 
-/* Acessibilidade */
 @media (prefers-reduced-motion: reduce) {
-    *, ::before, ::after {
-        animation-duration: 0.01ms !important;
-        animation-iteration-count: 1 !important;
-        transition-duration: 0.01ms !important;
-        scroll-behavior: auto !important;
-    }
+    *, ::before, ::after { animation-play-state: paused !important; transition-duration: 0.01ms !important; }
 }

@@ -462,7 +462,7 @@ console.log('%c[Luciana Lima] main.js carregado (v5.1)', 'color: #0f0; font-size
         startHeartbeat();
         updateResponsiveAssets();
         setupScrollReveal();
-        setupVideoBackground(); // Ainda funciona com imagens? Sim, mas só se fossem vídeos. Como mudamos para img, não fará nada.
+        setupVideoBackground();
         document.addEventListener('click', async function () {
             if (!isTokenValid()) {
                 const stillValid = await ensureValidSession();

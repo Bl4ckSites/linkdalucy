@@ -9,21 +9,23 @@
     <meta name="rating" content="general">
     <meta name="theme-color" content="#1f78d1">
 
+    <!-- Open Graph / Preview em redes sociais -->
     <meta property="og:title" content="Luciana Lima">
     <meta property="og:description" content="Tudo de maravilhoso te espera aqui ✨">
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://linklucy.com">
-    <meta property="og:image" content="https://linklucy.com/imgs/profile-index-desktop.jpg">
-    <meta property="og:image:width" content="220">
-    <meta property="og:image:height" content="220">
+    <meta property="og:image" content="https://linklucy.com/imgs/og-preview.jpg">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
 
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="Luciana Lima">
     <meta name="twitter:description" content="Tudo de maravilhoso te espera aqui ✨">
-    <meta name="twitter:image" content="https://linklucy.com/imgs/profile-index-desktop.jpg">
+    <meta name="twitter:image" content="https://linklucy.com/imgs/og-preview.jpg">
 
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>✨</text></svg>">
 
+    <!-- Dados estruturados -->
     <script type="application/ld+json">
     {
         "@context": "https://schema.org",
@@ -49,6 +51,7 @@
     <link rel="stylesheet" href="css/animations.css">
 </head>
 <body>
+    <!-- Honeypot invisível -->
     <input type="text" id="hp-field" tabindex="-1" autocomplete="off" style="position:absolute;left:-9999px;top:-9999px;" aria-hidden="true">
     <a href="#" id="hp-link" style="display:none;" aria-hidden="true">.</a>
 
@@ -57,20 +60,21 @@
     <main class="container page-transition-in" id="main-content" role="main">
         <div class="profile-card-glass fade-in-scale" style="--delay: 0.1s;">
             <div class="profile-wrapper" role="img" aria-label="Foto de perfil de Luciana Lima">
-                <img src="imgs/profile-index-desktop.jpg" alt="Luciana Lima" class="profile-img profile-premium" width="220" height="220" loading="eager" data-responsive-img="index">
+                <img src="imgs/profile-index-desktop.jpg" alt="Luciana Lima" class="profile-img profile-premium spin-reveal" width="220" height="220" loading="eager" data-responsive-img="index">
             </div>
             <div class="title-glass-wrapper fade-in-up" style="--delay: 0.3s;">
-                <h1 class="name">Luciana Lima</h1>
+                <h1 class="name typewriter" style="width: 12ch;">Luciana Lima</h1>
             </div>
             <div class="desc-glass fade-in-up" style="--delay: 0.5s;">
                 <p class="desc-text">Tudo de maravilhoso te espera aqui ✨</p>
             </div>
         </div>
 
-        <button id="ctaButton" class="cta-button hover-lift press-spring fade-in-scale" aria-label="Quero ouvir mais" style="--delay: 0.7s;">QUERO OUVIR MAIS</button>
+        <button id="ctaButton" class="cta-button hover-lift click-press btn-ripple fade-in-scale" aria-label="Quero ouvir mais" style="--delay: 0.7s;">QUERO OUVIR MAIS</button>
         <p class="warning-text fade-in-up" style="--delay: 0.9s;">CONTEÚDO EXCLUSIVO — ACESSO SEGURO</p>
     </main>
 
+    <!-- Modal de verificação -->
     <div id="verifyModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
         <div class="modal-content">
             <h2 id="modalTitle">Confirmação</h2>

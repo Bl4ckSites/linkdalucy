@@ -8,13 +8,12 @@ console.log('%c[Luciana Lima] main.js carregado (v5.1)', 'color: #0f0; font-size
 (function () {
     'use strict';
 
-    // ==================== CONFIGURAÇÃO ====================
     const CONFIG = {
         BACKEND_URL: 'https://linkdalucy-1.onrender.com',
-        SCORE_THRESHOLD: 1,                // 1 interação humana já é suficiente
-        TOKEN_EXPIRY_SECONDS: 600,         // 10 minutos
-        HEARTBEAT_INTERVAL: 300000,        // 5 minutos
-        VALIDATION_TTL: 60 * 60 * 1000,    // 60 minutos
+        SCORE_THRESHOLD: 1,
+        TOKEN_EXPIRY_SECONDS: 600,
+        HEARTBEAT_INTERVAL: 300000,
+        VALIDATION_TTL: 60 * 60 * 1000,
     };
 
     const author = 'dense_66';
@@ -24,7 +23,6 @@ console.log('%c[Luciana Lima] main.js carregado (v5.1)', 'color: #0f0; font-size
     function warn(msg, data) { console.warn(`${logPrefix} ${msg}`, data || ''); }
     function error(msg, data) { console.error(`${logPrefix} ${msg}`, data || ''); }
 
-    // ==================== RELATÓRIO DE ERROS ====================
     window.addEventListener('error', function (event) {
         error(`Erro: ${event.message}`, { arquivo: event.filename, linha: event.lineno, coluna: event.colno, stack: event.error?.stack });
     });
@@ -32,7 +30,6 @@ console.log('%c[Luciana Lima] main.js carregado (v5.1)', 'color: #0f0; font-size
         error(`Rejeição: ${event.reason}`, { stack: event.reason?.stack });
     });
 
-    // ==================== FERRAMENTAS ====================
     function redirectTo(url) { window.location.href = url; }
 
     function getSessionId() {
@@ -47,7 +44,6 @@ console.log('%c[Luciana Lima] main.js carregado (v5.1)', 'color: #0f0; font-size
         return id;
     }
 
-    // ==================== LEMBRANÇA DE VALIDAÇÃO ====================
     function hasRecentValidation() {
         const lastValid = localStorage.getItem('lu_last_valid');
         if (!lastValid) return false;
@@ -65,26 +61,18 @@ console.log('%c[Luciana Lima] main.js carregado (v5.1)', 'color: #0f0; font-size
         log('Validação registrada com sucesso.');
     }
 
-    // ==================== CAMADA 3: DETECÇÃO DE AUTOMAÇÃO (SUPER SUAVE) ====================
     function detectAutomation() {
         if (hasRecentValidation()) {
             log('Validação recente – pulando verificação de automação.');
             return false;
         }
-
-        // Indicadores fortes de automação (não afetam WebViews legítimas)
         if (navigator.webdriver) return true;
         if (document.__selenium_unwrapped || document.__driver_evaluate || document.__webdriver_evaluate) return true;
         if (window.callPhantom || window._phantom || window.__nightmare) return true;
-
-        // A ausência de requestAnimationFrame é suspeita (mas WebViews reais têm)
         if (typeof requestAnimationFrame === 'undefined') return true;
-
-        // Removidas todas as verificações que afetavam navegadores in‑app
         return false;
     }
 
-    // ==================== CAMADA 5: SCORE COMPORTAMENTAL ====================
     const behavior = {
         score: 0, mouseMoves: 0, lastMouseX: null, lastMouseY: null,
         scrolls: 0, keys: 0, touches: 0, pageEnterTime: Date.now(), visible: true,
@@ -95,7 +83,7 @@ console.log('%c[Luciana Lima] main.js carregado (v5.1)', 'color: #0f0; font-size
         function addFirstInteraction() {
             if (!behavior.firstInteraction) {
                 behavior.firstInteraction = true;
-                behavior.score = Math.max(behavior.score, 1); // já garante pelo menos 1 ponto
+                behavior.score = Math.max(behavior.score, 1);
                 log('Primeira interação humana detectada.');
             }
         }
@@ -134,16 +122,12 @@ console.log('%c[Luciana Lima] main.js carregado (v5.1)', 'color: #0f0; font-size
 
     function getBehaviorScore() {
         if (hasRecentValidation()) return CONFIG.SCORE_THRESHOLD + 1;
-
-        // Bônus por tempo na página (não obrigatório)
         const timeSpent = Date.now() - behavior.pageEnterTime;
         if (timeSpent > 1000) behavior.score += 0.5;
-
         log(`Pontuação comportamental: ${behavior.score.toFixed(1)}`);
         return behavior.score;
     }
 
-    // ==================== HONEYPOT (acessível) ====================
     function setupHoneypot() {
         const hpField = document.getElementById('hp-field');
         const hpLink = document.getElementById('hp-link');
@@ -160,7 +144,6 @@ console.log('%c[Luciana Lima] main.js carregado (v5.1)', 'color: #0f0; font-size
         }
     }
 
-    // ==================== FINGERPRINT (apenas para estatísticas) ====================
     function getFingerprint() {
         const canvas = document.createElement('canvas');
         canvas.width = 200; canvas.height = 60;
@@ -181,7 +164,6 @@ console.log('%c[Luciana Lima] main.js carregado (v5.1)', 'color: #0f0; font-size
         };
     }
 
-    // ==================== OBTENÇÃO DE JWT ====================
     async function requestToken() {
         const fingerprint = getFingerprint(); const sessionId = getSessionId();
         try {
@@ -208,7 +190,6 @@ console.log('%c[Luciana Lima] main.js carregado (v5.1)', 'color: #0f0; font-size
         }
     }
 
-    // ==================== VALIDAÇÃO DO TOKEN ====================
     function isTokenValid() {
         const token = sessionStorage.getItem('jwt');
         const exp = sessionStorage.getItem('jwt_exp');
@@ -223,13 +204,11 @@ console.log('%c[Luciana Lima] main.js carregado (v5.1)', 'color: #0f0; font-size
     function clearSessionAndRedirect() {
         sessionStorage.removeItem('jwt');
         sessionStorage.removeItem('jwt_exp');
-        redirectTo('index.html'); // permite revalidar
+        redirectTo('index.html');
     }
 
-    // ==================== GARANTIA DE SESSÃO (FALLBACK LOCAL) ====================
     async function ensureValidSession() {
         if (isTokenValid()) return true;
-        // Tenta refresh
         const token = sessionStorage.getItem('jwt');
         if (token) {
             try {
@@ -245,7 +224,6 @@ console.log('%c[Luciana Lima] main.js carregado (v5.1)', 'color: #0f0; font-size
                 }
             } catch (e) {}
         }
-        // Fallback: se já validado recentemente, gera token local temporário
         if (hasRecentValidation()) {
             log('Usuário validado anteriormente – concedendo acesso offline.');
             sessionStorage.setItem('jwt', 'local-fallback-token');
@@ -255,7 +233,6 @@ console.log('%c[Luciana Lima] main.js carregado (v5.1)', 'color: #0f0; font-size
         return false;
     }
 
-    // ==================== HEARTBEAT RESILIENTE ====================
     let countdownInterval = null, timeLeft = CONFIG.TOKEN_EXPIRY_SECONDS;
     function startHeartbeat() {
         countdownInterval = setInterval(() => {
@@ -286,7 +263,6 @@ console.log('%c[Luciana Lima] main.js carregado (v5.1)', 'color: #0f0; font-size
         }, CONFIG.HEARTBEAT_INTERVAL);
     }
 
-    // ==================== EFEITOS ====================
     function setupMagneticEffect() {
         if (window.matchMedia('(max-width: 1024px)').matches) return;
         document.querySelectorAll('.image-button').forEach(card => {
@@ -336,7 +312,6 @@ console.log('%c[Luciana Lima] main.js carregado (v5.1)', 'color: #0f0; font-size
         });
     }
 
-    // ==================== SOM E RIPPLE ====================
     const SoundManager = (() => {
         let ctx = null, audioBuffer = null;
         const audioFiles = ['audio/click.mp3', 'audio/click.ogg', 'audio/click.wav'];
@@ -416,27 +391,21 @@ console.log('%c[Luciana Lima] main.js carregado (v5.1)', 'color: #0f0; font-size
         }, { passive: true });
     }
 
-    // ==================== FALLBACK DE VISIBILIDADE ====================
     function forceVisibility() {
         log('Aplicando fallback de visibilidade...');
-        // Torna visíveis elementos que deveriam ter animado
         document.querySelectorAll('.reveal-el, .fade-in-scale, .fade-in-up, .fade-in-down, .page-transition-in').forEach(el => {
             el.style.opacity = '1';
             el.style.transform = 'none';
             el.style.filter = 'none';
-            el.classList.add('visible'); // para reveal-el
-            // Remove classes de animação para evitar conflitos
+            el.classList.add('visible');
             el.classList.remove('fade-in-scale', 'fade-in-up', 'fade-in-down', 'page-transition-in');
         });
-        // Garante que o modal possa ser exibido se necessário
         const modal = document.getElementById('verifyModal');
-        if (modal) modal.style.display = ''; // remove inline display se houver
+        if (modal) modal.style.display = '';
     }
 
-    // Executa o fallback após 2 segundos, garantindo que mesmo se as animações CSS falharem, o conteúdo apareça
     setTimeout(forceVisibility, 2000);
 
-    // ==================== PÁGINA INICIAL ====================
     function setupIndexPage() {
         log('Configurando página inicial...');
         const ctaButton = document.getElementById('ctaButton');
@@ -482,7 +451,6 @@ console.log('%c[Luciana Lima] main.js carregado (v5.1)', 'color: #0f0; font-size
         });
     }
 
-    // ==================== PÁGINA DE LINKS ====================
     async function setupLinksPage() {
         log('Configurando página de links...');
         const valid = await ensureValidSession();
@@ -494,7 +462,7 @@ console.log('%c[Luciana Lima] main.js carregado (v5.1)', 'color: #0f0; font-size
         startHeartbeat();
         updateResponsiveAssets();
         setupScrollReveal();
-        setupVideoBackground();
+        setupVideoBackground(); // Ainda funciona com imagens? Sim, mas só se fossem vídeos. Como mudamos para img, não fará nada.
         document.addEventListener('click', async function () {
             if (!isTokenValid()) {
                 const stillValid = await ensureValidSession();
@@ -503,7 +471,6 @@ console.log('%c[Luciana Lima] main.js carregado (v5.1)', 'color: #0f0; font-size
         });
     }
 
-    // ==================== SCROLL REVEAL (COM FALLBACK) ====================
     function setupScrollReveal() {
         const revealEls = document.querySelectorAll('.reveal-el');
         if (!revealEls.length) return;
@@ -526,7 +493,6 @@ console.log('%c[Luciana Lima] main.js carregado (v5.1)', 'color: #0f0; font-size
         revealEls.forEach(el => observer.observe(el));
     }
 
-    // ==================== INICIALIZAÇÃO ====================
     function init() {
         log('Inicializando...');
         setupGlobalTracking();

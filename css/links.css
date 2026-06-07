@@ -1,6 +1,6 @@
 /* ============================================================
    LINKS.CSS – Página de Links (links.html)
-   Design Premium – Glassmorphism Cinematográfico
+   Refinamento Premium – Cristal, Luz e Profundidade
    Luciana Lima – Cards de imagem com grid responsivo
    ============================================================ */
 
@@ -11,10 +11,10 @@
     --color-accent-soft: rgba(31, 120, 209, 0.35);
     --color-purple: #3f1a8f;
     --color-purple-soft: rgba(63, 26, 143, 0.3);
-    --glass-bg: rgba(255, 255, 255, 0.05);
-    --glass-border: rgba(120, 120, 255, 0.15);
-    --glass-reflex: linear-gradient(180deg, rgba(255,255,255,0.12) 0%, rgba(255,255,255,0) 40%);
-    --glow-azul: 0 0 20px rgba(31,120,209,0.25), 0 0 60px rgba(31,120,209,0.15);
+    --glass-bg: rgba(255, 255, 255, 0.04);
+    --glass-border: rgba(255, 255, 255, 0.08);
+    --glass-highlight: rgba(255, 255, 255, 0.15);
+    --glow-azul-intenso: 0 0 30px rgba(31,120,209,0.5);
     --shadow-card: 0 8px 32px rgba(0,0,0,0.4);
     --transition-smooth: 0.4s cubic-bezier(0.16, 1, 0.3, 1);
     --profile-size: clamp(120px, 22vw, 200px);
@@ -40,15 +40,16 @@ body {
     font-family: var(--font-body);
     min-height: 100vh;
     min-height: 100dvh;
-    background: #05070d; /* fallback */
+    background: #05070d;
     position: relative;
     display: flex;
     align-items: flex-start;
     justify-content: center;
     overflow-x: hidden;
+    color: #fff;
 }
 
-/* Fallback de visibilidade */
+/* Fallback */
 @keyframes emergencyVisible { to { visibility: visible; } }
 body { animation: emergencyVisible 0.1s 3s forwards; }
 
@@ -60,9 +61,7 @@ body { animation: emergencyVisible 0.1s 3s forwards; }
     overflow: hidden;
 }
 
-.video-mobile,
-.video-tablet,
-.video-desktop {
+.video-mobile, .video-tablet, .video-desktop {
     display: none;
     position: absolute;
     top: 50%;
@@ -84,14 +83,14 @@ body { animation: emergencyVisible 0.1s 3s forwards; }
 @media (min-width: 481px) and (max-width: 1024px) { .video-tablet { display: block; } }
 @media (min-width: 1025px) { .video-desktop { display: block; } }
 
-/* Camada cinematográfica sobre o vídeo */
+/* Overlay leve sobre vídeo (fundo bem visível) */
 body::before {
     content: '';
     position: fixed;
     inset: 0;
-    background: linear-gradient(135deg, rgba(0,0,0,0.5) 0%, rgba(0,0,0,0.25) 50%, rgba(0,0,0,0.5) 100%);
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
+    background: rgba(0,0,0,0.25);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
     z-index: 0;
     pointer-events: none;
 }
@@ -101,33 +100,35 @@ body::after {
     content: '';
     position: fixed;
     inset: 0;
-    z-index: -1;
+    z-index: 0;
     background:
-        radial-gradient(ellipse at 30% 20%, rgba(31,120,209,0.12) 0%, transparent 60%),
-        radial-gradient(ellipse at 70% 60%, rgba(63,26,143,0.15) 0%, transparent 50%),
-        radial-gradient(ellipse at 50% 80%, rgba(31,120,209,0.08) 0%, transparent 50%);
-    filter: blur(120px);
+        radial-gradient(ellipse at 30% 20%, rgba(31,120,209,0.1) 0%, transparent 50%),
+        radial-gradient(ellipse at 70% 60%, rgba(63,26,143,0.12) 0%, transparent 50%),
+        radial-gradient(ellipse at 50% 80%, rgba(31,120,209,0.06) 0%, transparent 50%);
+    filter: blur(80px);
     pointer-events: none;
 }
 
-/* Partículas decorativas (mesmo estilo da index) */
-.particles {
+/* Partículas discretas */
+.links-container::before {
+    content: '';
     position: fixed;
     inset: 0;
     z-index: 0;
     pointer-events: none;
     background-image:
-        radial-gradient(1px 1px at 20% 30%, rgba(255,255,255,0.3), transparent),
-        radial-gradient(1px 1px at 80% 70%, rgba(31,120,209,0.4), transparent),
-        radial-gradient(2px 2px at 50% 50%, rgba(255,255,255,0.2), transparent);
-    background-size: 200px 200px;
-    animation: drift 20s linear infinite;
-    opacity: 0.3;
+        radial-gradient(1px 1px at 15% 25%, rgba(255,255,255,0.4), transparent),
+        radial-gradient(1px 1px at 75% 70%, rgba(31,120,209,0.5), transparent),
+        radial-gradient(1.5px 1.5px at 50% 50%, rgba(255,255,255,0.25), transparent),
+        radial-gradient(1px 1px at 90% 15%, rgba(31,120,209,0.3), transparent);
+    background-size: 220px 220px;
+    animation: drift 25s linear infinite;
+    opacity: 0.4;
 }
 
 @keyframes drift {
-    from { background-position: 0 0; }
-    to { background-position: 200px 200px; }
+    0% { background-position: 0 0; }
+    100% { background-position: 220px 220px; }
 }
 
 .skip-link {
@@ -158,73 +159,76 @@ body::after {
     padding: clamp(2rem, 5vh, 3rem) 20px 60px;
 }
 
-/* Cartão de perfil com vidro */
+/* Cartão de perfil */
 .profile-card-glass {
     background: var(--glass-bg);
     backdrop-filter: blur(24px) saturate(180%);
     -webkit-backdrop-filter: blur(24px) saturate(180%);
     border: 1px solid var(--glass-border);
-    border-radius: 30px;
-    padding: 25px;
+    border-radius: 32px;
+    padding: 28px 25px;
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 14px;
+    gap: 16px;
     width: 100%;
-    box-shadow: var(--shadow-card), var(--glow-azul);
+    box-shadow: var(--shadow-card), inset 0 1px 0 var(--glass-highlight);
     position: relative;
+    overflow: hidden;
 }
 
-/* Foto de perfil premium (links) */
+.profile-card-glass::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 50%;
+    background: linear-gradient(180deg, rgba(255,255,255,0.08) 0%, transparent 100%);
+    border-radius: 32px 32px 0 0;
+    pointer-events: none;
+}
+
+/* ===== FOTO DE PERFIL CRISTAL ===== */
+.profile-wrapper-links {
+    position: relative;
+    display: inline-block;
+}
+
+.profile-wrapper-links::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: calc(var(--profile-size) + 14px);
+    height: calc(var(--profile-size) + 14px);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    border: 2px solid rgba(255, 255, 255, 0.25);
+    box-shadow:
+        0 0 20px rgba(31,120,209,0.3),
+        inset 0 0 20px rgba(31,120,209,0.2);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    z-index: 0;
+    pointer-events: none;
+}
+
 .profile-img-links {
     width: var(--profile-size);
     height: var(--profile-size);
     border-radius: 50%;
     object-fit: cover;
     display: block;
-    background: #f0f0f0;
-    border: 3px solid var(--color-accent);
+    background: #111;
+    border: 2px solid rgba(255,255,255,0.5);
     box-shadow:
-        0 0 25px rgba(31,120,209,0.5),
-        0 0 60px rgba(31,120,209,0.2),
-        inset 0 0 20px rgba(255,255,255,0.1);
-    transition: transform var(--transition-smooth);
-    animation: profileFloat 6s ease-in-out infinite;
+        0 0 30px rgba(31,120,209,0.4),
+        inset 0 0 25px rgba(31,120,209,0.3);
     position: relative;
     z-index: 2;
-}
-
-/* Moldura roxa interna (pseudo-elemento do cartão) */
-.profile-card-glass::after {
-    content: '';
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: calc(var(--profile-size) + 12px);
-    height: calc(var(--profile-size) + 12px);
-    border-radius: 50%;
-    transform: translate(-50%, -50%);
-    border: 2px solid var(--color-purple-soft);
-    box-shadow: 0 0 15px rgba(63,26,143,0.4);
-    z-index: 1;
-    pointer-events: none;
-}
-
-/* Coroa sobre a foto */
-.profile-wrapper-links {
-    position: relative;
-    display: inline-block;
-}
-.profile-wrapper-links::before {
-    content: '👑';
-    position: absolute;
-    top: -18px;
-    left: 50%;
-    transform: translateX(-50%);
-    font-size: 1.6rem;
-    filter: drop-shadow(0 0 6px rgba(255,215,0,0.6));
-    z-index: 3;
-    animation: floatCrown 4s ease-in-out infinite;
+    animation: profileFloat 6s ease-in-out infinite;
+    transition: transform var(--transition-smooth);
 }
 
 @keyframes profileFloat {
@@ -232,31 +236,46 @@ body::after {
     50% { transform: translateY(-6px); }
 }
 
-@keyframes floatCrown {
-    0%, 100% { transform: translateX(-50%) translateY(0); }
-    50% { transform: translateX(-50%) translateY(-3px); }
+.profile-wrapper-links::before {
+    content: '👑';
+    position: absolute;
+    top: -20px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 1.8rem;
+    z-index: 3;
+    filter: drop-shadow(0 0 8px rgba(31,120,209,0.7)) 
+            drop-shadow(0 0 2px rgba(255,255,255,0.6));
+    animation: crownFloat 4s ease-in-out infinite;
 }
 
-/* Nome com linha gradiente */
+@keyframes crownFloat {
+    0%, 100% { transform: translateX(-50%) translateY(0); }
+    50% { transform: translateX(-50%) translateY(-4px); }
+}
+
+/* Nome e linha */
 .title-glass-wrapper {
-    background: rgba(25,25,25,.30);
-    backdrop-filter: blur(18px);
-    -webkit-backdrop-filter: blur(18px);
-    border: 1px solid rgba(255,255,255,.08);
+    background: rgba(20, 20, 30, 0.35);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border: 1px solid rgba(255,255,255,0.06);
     border-radius: 20px;
-    padding: 14px 25px;
-    box-shadow: 0 8px 30px rgba(0,0,0,.20);
+    padding: 12px 28px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.25);
     display: inline-block;
 }
 
 .name-links {
     font-family: var(--font-display);
-    font-size: var(--name-size);
     font-weight: 700;
-    color: #ffffff;
+    font-size: var(--name-size);
+    color: #fff;
     line-height: 1.1;
-    letter-spacing: 0.02em;
-    text-shadow: 0 2px 15px rgba(0,0,0,0.6);
+    letter-spacing: 0.03em;
+    text-shadow:
+        0 2px 10px rgba(0,0,0,0.6),
+        0 0 20px rgba(31,120,209,0.4);
     position: relative;
     display: inline-block;
 }
@@ -264,23 +283,35 @@ body::after {
 .name-links::after {
     content: '';
     position: absolute;
-    bottom: -8px;
-    left: 10%;
-    width: 80%;
+    bottom: -10px;
+    left: 5%;
+    width: 90%;
     height: 2px;
-    background: linear-gradient(90deg, #1f78d1, #3f1a8f, #1f78d1);
-    box-shadow: 0 0 8px rgba(31,120,209,0.5);
+    background: linear-gradient(90deg, 
+        transparent 0%, 
+        rgba(31,120,209,0.7) 20%, 
+        #3f1a8f 50%, 
+        rgba(31,120,209,0.7) 80%, 
+        transparent 100%);
+    background-size: 200% 100%;
+    box-shadow: 0 0 12px rgba(31,120,209,0.5);
     border-radius: 2px;
+    animation: energyLine 8s linear infinite;
 }
 
-/* Ícones sociais como botões de vidro premium */
+@keyframes energyLine {
+    0% { background-position: 100% 0; }
+    100% { background-position: -100% 0; }
+}
+
+/* Ícones sociais – pequenos cristais */
 .social-icons {
     display: flex;
     gap: 20px;
     justify-content: center;
     align-items: center;
     flex-wrap: wrap;
-    margin-top: 4px;
+    margin-top: 6px;
 }
 
 .social-icon {
@@ -290,28 +321,23 @@ body::after {
     width: 52px;
     height: 52px;
     border-radius: 50%;
-    background: var(--glass-bg);
-    backdrop-filter: blur(12px) saturate(180%);
-    -webkit-backdrop-filter: blur(12px) saturate(180%);
-    border: 1px solid var(--glass-border);
+    background: rgba(255,255,255,0.05);
+    backdrop-filter: blur(14px) saturate(180%);
+    -webkit-backdrop-filter: blur(14px) saturate(180%);
+    border: 1px solid rgba(255,255,255,0.15);
     color: #fff;
     text-decoration: none;
-    transition: transform var(--transition-smooth), background 0.3s, box-shadow 0.3s;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.3), 0 0 15px rgba(31,120,209,0.15);
+    transition: all var(--transition-smooth);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.4), 0 0 12px rgba(31,120,209,0.1);
     position: relative;
     overflow: hidden;
-    -webkit-tap-highlight-color: transparent;
 }
 
-/* Reflexo de vidro nos ícones */
 .social-icon::before {
     content: '';
     position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 40%;
-    background: linear-gradient(180deg, rgba(255,255,255,0.2), transparent);
+    top: 0; left: 0; right: 0; height: 45%;
+    background: linear-gradient(180deg, rgba(255,255,255,0.2) 0%, transparent 100%);
     border-radius: 50% 50% 0 0;
     pointer-events: none;
     z-index: 1;
@@ -325,19 +351,13 @@ body::after {
 }
 
 .social-icon:hover {
-    transform: translateY(-4px) scale(1.12);
+    transform: translateY(-4px) scale(1.1);
     background: rgba(31,120,209,0.2);
     border-color: rgba(31,120,209,0.6);
     box-shadow: 0 8px 25px rgba(31,120,209,0.5);
-    color: #fff;
 }
 
-.social-icon:focus-visible {
-    outline: 3px solid #fff;
-    outline-offset: 3px;
-}
-
-/* Grid de cards */
+/* ===== CARDS DE CONTEÚDO – VIDRO PREMIUM ===== */
 .image-buttons-list {
     display: grid;
     grid-template-columns: 1fr;
@@ -347,18 +367,17 @@ body::after {
     align-items: start;
 }
 
-/* Cards de vidro premium */
 .image-button {
     display: block;
     width: 100%;
     max-width: var(--card-max-width);
     border-radius: var(--card-border-radius);
     overflow: hidden;
-    background: var(--glass-bg);
-    backdrop-filter: blur(20px) saturate(180%);
-    -webkit-backdrop-filter: blur(20px) saturate(180%);
-    border: 1px solid var(--glass-border);
-    box-shadow: var(--shadow-card), 0 0 20px rgba(31,120,209,0.08);
+    background: rgba(255,255,255,0.04);
+    backdrop-filter: blur(16px) saturate(180%);
+    -webkit-backdrop-filter: blur(16px) saturate(180%);
+    border: 1px solid rgba(255,255,255,0.08);
+    box-shadow: var(--shadow-card), 0 0 20px rgba(31,120,209,0.06);
     transition: transform 0.4s cubic-bezier(0.16,1,0.3,1), box-shadow 0.4s ease, border-color 0.3s;
     text-decoration: none;
     cursor: pointer;
@@ -368,30 +387,22 @@ body::after {
     user-select: none;
 }
 
-/* Reflexo de vidro superior */
 .image-button::before {
     content: '';
     position: absolute;
     inset: 0;
-    background: var(--glass-reflex);
+    background: linear-gradient(180deg, rgba(255,255,255,0.1) 0%, transparent 50%);
     z-index: 2;
     pointer-events: none;
+    border-radius: inherit;
 }
 
-/* Brilho diagonal no hover */
 .image-button::after {
     content: '';
     position: absolute;
-    top: -50%;
-    left: -60%;
-    width: 200%;
-    height: 200%;
-    background: linear-gradient(
-        45deg,
-        transparent 30%,
-        rgba(255,255,255,0.1) 50%,
-        transparent 70%
-    );
+    top: -50%; left: -60%;
+    width: 200%; height: 200%;
+    background: linear-gradient(45deg, transparent 30%, rgba(255,255,255,0.1) 50%, transparent 70%);
     opacity: 0;
     transition: opacity 0.5s;
     z-index: 3;
@@ -422,19 +433,19 @@ body::after {
 .image-button:hover img {
     opacity: 1;
     filter: brightness(1) contrast(1) saturate(1) hue-rotate(0deg);
-    transform: scale(1.05);
+    transform: scale(1.04);
 }
 
 .image-button:hover {
-    transform: translateY(-8px) scale(1.04);
-    box-shadow: 0 20px 40px rgba(0,0,0,0.5), 0 0 40px rgba(31,120,209,0.3);
+    transform: translateY(-6px) scale(1.02);
+    box-shadow: 0 25px 45px rgba(0,0,0,0.6), 0 0 35px rgba(31,120,209,0.3);
     border-color: rgba(31,120,209,0.5);
 }
 
 .image-button:active {
     transform: scale(0.97);
     filter: brightness(0.95);
-    transition: transform 0.12s ease, filter 0.12s ease;
+    transition: transform 0.12s ease;
 }
 
 .image-button:focus-visible {
@@ -442,7 +453,7 @@ body::after {
     outline-offset: 4px;
 }
 
-/* Ripple nos cards */
+/* Ripple */
 .image-button .ripple {
     position: absolute;
     border-radius: 50%;
@@ -457,18 +468,13 @@ body::after {
     to { transform: scale(4); opacity: 0; }
 }
 
-/* Controles de vídeo escondidos */
 video::-webkit-media-controls { display: none !important; }
 video::-webkit-media-controls-panel { display: none !important; }
 
 /* Responsivo */
 @media (max-width: 480px) {
     .links-container { padding: 1.5rem 16px 40px; gap: 1rem; }
-    .image-button {
-        --card-border-radius: 22px;
-        --card-max-width: 90%;
-        aspect-ratio: 2.8 / 1;
-    }
+    .image-button { --card-border-radius: 22px; --card-max-width: 90%; aspect-ratio: 2.8 / 1; }
     .social-icon { width: 46px; height: 46px; }
     .name-links { font-size: 2.5rem; }
     .profile-card-glass { padding: 20px; gap: 12px; }
@@ -493,11 +499,8 @@ video::-webkit-media-controls-panel { display: none !important; }
     .image-button { --card-max-width: 420px; }
 }
 
-/* Fallback de visibilidade do vídeo */
 .video-background video {
     animation: videoEmergency 0.1s 1.5s forwards;
     opacity: 0;
 }
-@keyframes videoEmergency {
-    to { opacity: 1; }
-}
+@keyframes videoEmergency { to { opacity: 1; } }

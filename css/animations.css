@@ -4,7 +4,6 @@ Versão Multi‑dispositivo: Mobile · Tablet · Desktop
 Luciana Lima – por dense_66
 ============================================================ */
 
-/* ---------- Variáveis Globais ---------- */
 :root {
 --dur-fast: 0.25s;
 --dur-normal: 0.45s;
@@ -41,9 +40,6 @@ Luciana Lima – por dense_66
 }
 }
 
-/* ============================================================
-   ANIMAÇÕES DE ENTRADA
-============================================================ */
 .fade-in-up {
 opacity: 0;
 transform: translateY(var(--slide-distance));
@@ -100,7 +96,6 @@ from { opacity: 0; transform: scale(0.9); }
 to   { opacity: 1; transform: scale(1); }
 }
 
-/* Scroll reveal (usado na links.html) */
 .reveal-el {
 opacity: 0;
 transform: translateY(25px) scale(0.97);
@@ -126,7 +121,6 @@ transform: translateY(0) scale(1);
 .reveal-el[data-delay="11"] { transition-delay: 1.1s; }
 .reveal-el[data-delay="12"] { transition-delay: 1.2s; }
 
-/* Page transitions */
 .page-transition-out {
 animation: pageExit 0.4s ease forwards;
 }
@@ -142,7 +136,6 @@ animation: pageEnter 0.5s ease forwards;
 100% { opacity: 1; transform: scale(1); filter: blur(0); }
 }
 
-/* Foto de perfil com giro inicial */
 .spin-reveal {
 animation: spinReveal 1s var(--easing-spring) forwards;
 }
@@ -151,7 +144,7 @@ from { opacity: 0; transform: perspective(600px) rotateY(90deg) scale(0.8); }
 to   { opacity: 1; transform: perspective(600px) rotateY(0deg) scale(1); }
 }
 
-/* Typewriter - AGORA RESPEITA A LARGURA DEFINIDA */
+/* Typewriter sem delay conflitante */
 .typewriter {
 display: inline-block;
 overflow: hidden;
@@ -160,20 +153,16 @@ border-right: 3px solid currentColor;
 width: 0;
 animation: typing 2s steps(30, end) forwards,
            blinkCursor 0.8s step-end infinite;
-animation-delay: var(--delay, 0s);
 }
 @keyframes typing {
 from { width: 0; }
-to { width: var(--typewriter-width, 100%); }  /* CORRIGIDO */
+to { width: var(--typewriter-width, 100%); }
 }
 @keyframes blinkCursor {
 0%, 100% { border-color: transparent; }
 50% { border-color: currentColor; }
 }
 
-/* ============================================================
-   ANIMAÇÕES DE MICROINTERAÇÃO (CLIQUES)
-============================================================ */
 .btn-ripple {
 position: relative;
 overflow: hidden;
@@ -211,9 +200,6 @@ animation: popBurst 0.3s ease-out;
 100% { transform: scale(1); }
 }
 
-/* ============================================================
-   EFEITOS GLASS E LEVEZA
-============================================================ */
 .glass-panel {
 background: rgba(255,255,255,0.1);
 backdrop-filter: blur(8px);
@@ -235,7 +221,6 @@ animation: bgBreathe 6s ease-in-out infinite;
 50% { opacity: 0.95; transform: scale(1.02); }
 }
 
-/* Deriva lateral para planos de fundo */
 .drift {
 animation: drift 20s linear infinite;
 }
@@ -244,9 +229,6 @@ from { transform: translateX(0); }
 to { transform: translateX(-5%); }
 }
 
-/* ============================================================
-   ANIMAÇÕES EXTRAS (já existentes, mantidas)
-============================================================ */
 .fade-in-up-big {
 opacity: 0;
 transform: translateY(50px);
@@ -345,9 +327,6 @@ animation: jelloHorizontal 0.9s both;
 100% { transform: scale3d(1,1,1); }
 }
 
-/* ============================================================
-   AJUSTES RESPONSIVOS PARA ANIMAÇÕES PESADAS
-============================================================ */
 @media (max-width: 480px) {
 .page-transition-out {
 animation: pageExitMobile 0.3s ease forwards;
@@ -387,9 +366,383 @@ animation: pageEnterTablet 0.5s ease forwards;
 }
 }
 
-/* ============================================================
-   RESPEITO À ACESSIBILIDADE (prefers-reduced-motion)
+@media (prefers-reduced-motion: reduce) {
+*,
+*::before,
+*::after {
+animation-duration: 0.01ms !important;
+animation-iteration-count: 1 !important;
+transition-duration: 0.01ms !important;
+scroll-behavior: auto !important;
+}
+}/* ============================================================
+ANIMATION.CSS – Sistema Avançado de Animações e Microinterações
+Versão Multi‑dispositivo: Mobile · Tablet · Desktop
+Luciana Lima – por dense_66
 ============================================================ */
+
+:root {
+--dur-fast: 0.25s;
+--dur-normal: 0.45s;
+--dur-slow: 0.7s;
+--easing-out: cubic-bezier(0.23, 1, 0.32, 1);
+--easing-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+--slide-distance: 40px;
+--card-slide-distance: 60px;
+--float-amplitude: 8px;
+--float-duration: 5s;
+}
+
+@media (min-width: 481px) and (max-width: 1024px) {
+:root {
+--dur-fast: 0.3s;
+--dur-normal: 0.5s;
+--dur-slow: 0.8s;
+--slide-distance: 30px;
+--card-slide-distance: 45px;
+--float-amplitude: 5px;
+--float-duration: 6s;
+}
+}
+
+@media (max-width: 480px) {
+:root {
+--dur-fast: 0.35s;
+--dur-normal: 0.55s;
+--dur-slow: 0.9s;
+--slide-distance: 20px;
+--card-slide-distance: 30px;
+--float-amplitude: 3px;
+--float-duration: 8s;
+}
+}
+
+.fade-in-up {
+opacity: 0;
+transform: translateY(var(--slide-distance));
+animation: fadeInUp var(--dur-normal) var(--easing-out) forwards;
+}
+.fade-in-down {
+opacity: 0;
+transform: translateY(calc(var(--slide-distance) * -1));
+animation: fadeInDown var(--dur-normal) var(--easing-out) forwards;
+}
+.fade-in-left {
+opacity: 0;
+transform: translateX(calc(var(--slide-distance) * -1));
+animation: fadeInLeft var(--dur-normal) var(--easing-out) forwards;
+}
+.fade-in-right {
+opacity: 0;
+transform: translateX(var(--slide-distance));
+animation: fadeInRight var(--dur-normal) var(--easing-out) forwards;
+}
+.fade-in-scale {
+opacity: 0;
+transform: scale(0.9);
+animation: fadeInScale var(--dur-normal) var(--easing-out) forwards;
+}
+
+.fade-in-up,
+.fade-in-down,
+.fade-in-left,
+.fade-in-right,
+.fade-in-scale {
+animation-delay: var(--delay, 0s);
+will-change: transform, opacity;
+}
+
+@keyframes fadeInUp {
+from { opacity: 0; transform: translateY(var(--slide-distance)); }
+to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes fadeInDown {
+from { opacity: 0; transform: translateY(calc(var(--slide-distance) * -1)); }
+to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes fadeInLeft {
+from { opacity: 0; transform: translateX(calc(var(--slide-distance) * -1)); }
+to   { opacity: 1; transform: translateX(0); }
+}
+@keyframes fadeInRight {
+from { opacity: 0; transform: translateX(var(--slide-distance)); }
+to   { opacity: 1; transform: translateX(0); }
+}
+@keyframes fadeInScale {
+from { opacity: 0; transform: scale(0.9); }
+to   { opacity: 1; transform: scale(1); }
+}
+
+.reveal-el {
+opacity: 0;
+transform: translateY(25px) scale(0.97);
+transition: opacity 0.45s var(--easing-out), transform 0.45s var(--easing-out);
+will-change: transform, opacity;
+}
+.reveal-el.visible {
+opacity: 1;
+transform: translateY(0) scale(1);
+}
+
+.reveal-el[data-delay="0"] { transition-delay: 0s; }
+.reveal-el[data-delay="1"] { transition-delay: 0.1s; }
+.reveal-el[data-delay="2"] { transition-delay: 0.2s; }
+.reveal-el[data-delay="3"] { transition-delay: 0.3s; }
+.reveal-el[data-delay="4"] { transition-delay: 0.4s; }
+.reveal-el[data-delay="5"] { transition-delay: 0.5s; }
+.reveal-el[data-delay="6"] { transition-delay: 0.6s; }
+.reveal-el[data-delay="7"] { transition-delay: 0.7s; }
+.reveal-el[data-delay="8"] { transition-delay: 0.8s; }
+.reveal-el[data-delay="9"] { transition-delay: 0.9s; }
+.reveal-el[data-delay="10"] { transition-delay: 1.0s; }
+.reveal-el[data-delay="11"] { transition-delay: 1.1s; }
+.reveal-el[data-delay="12"] { transition-delay: 1.2s; }
+
+.page-transition-out {
+animation: pageExit 0.4s ease forwards;
+}
+@keyframes pageExit {
+0%   { opacity: 1; transform: scale(1); filter: blur(0); }
+100% { opacity: 0; transform: scale(0.96); filter: blur(4px); }
+}
+.page-transition-in {
+animation: pageEnter 0.5s ease forwards;
+}
+@keyframes pageEnter {
+0%   { opacity: 0; transform: scale(1.02); filter: blur(2px); }
+100% { opacity: 1; transform: scale(1); filter: blur(0); }
+}
+
+.spin-reveal {
+animation: spinReveal 1s var(--easing-spring) forwards;
+}
+@keyframes spinReveal {
+from { opacity: 0; transform: perspective(600px) rotateY(90deg) scale(0.8); }
+to   { opacity: 1; transform: perspective(600px) rotateY(0deg) scale(1); }
+}
+
+/* Typewriter sem delay conflitante */
+.typewriter {
+display: inline-block;
+overflow: hidden;
+white-space: nowrap;
+border-right: 3px solid currentColor;
+width: 0;
+animation: typing 2s steps(30, end) forwards,
+           blinkCursor 0.8s step-end infinite;
+}
+@keyframes typing {
+from { width: 0; }
+to { width: var(--typewriter-width, 100%); }
+}
+@keyframes blinkCursor {
+0%, 100% { border-color: transparent; }
+50% { border-color: currentColor; }
+}
+
+.btn-ripple {
+position: relative;
+overflow: hidden;
+}
+.btn-ripple::after {
+content: "";
+position: absolute;
+inset: 0;
+background: radial-gradient(circle, rgba(255,255,255,0.5) 10%, transparent 10%);
+background-position: center;
+background-repeat: no-repeat;
+opacity: 0;
+transition: transform 0.5s, opacity 1s;
+transform: scale(10);
+}
+.btn-ripple:active::after {
+transform: scale(0);
+opacity: 1;
+transition: 0s;
+}
+
+.click-press {
+transition: transform 0.15s var(--easing-spring);
+}
+.click-press:active {
+transform: scale(0.95);
+}
+
+.click-pop:active {
+animation: popBurst 0.3s ease-out;
+}
+@keyframes popBurst {
+0% { transform: scale(1); }
+30% { transform: scale(1.15); }
+100% { transform: scale(1); }
+}
+
+.glass-panel {
+background: rgba(255,255,255,0.1);
+backdrop-filter: blur(8px);
+-webkit-backdrop-filter: blur(8px);
+border: 1px solid rgba(255,255,255,0.2);
+transition: background 0.4s, backdrop-filter 0.4s, border-color 0.4s;
+}
+.glass-panel:hover {
+background: rgba(255,255,255,0.18);
+backdrop-filter: blur(12px);
+border-color: rgba(255,255,255,0.35);
+}
+
+.bg-breathe {
+animation: bgBreathe 6s ease-in-out infinite;
+}
+@keyframes bgBreathe {
+0%, 100% { opacity: 0.85; transform: scale(1); }
+50% { opacity: 0.95; transform: scale(1.02); }
+}
+
+.drift {
+animation: drift 20s linear infinite;
+}
+@keyframes drift {
+from { transform: translateX(0); }
+to { transform: translateX(-5%); }
+}
+
+.fade-in-up-big {
+opacity: 0;
+transform: translateY(50px);
+animation: fadeInUpBig 0.6s var(--easing-out) forwards;
+}
+@keyframes fadeInUpBig {
+to { opacity: 1; transform: translateY(0); }
+}
+
+.zoom-in {
+opacity: 0;
+transform: scale(0.7);
+animation: zoomIn 0.5s var(--easing-out) forwards;
+}
+@keyframes zoomIn {
+to { opacity: 1; transform: scale(1); }
+}
+
+.rotate-in {
+opacity: 0;
+transform: perspective(600px) rotateY(20deg);
+animation: rotateIn 0.6s var(--easing-out) forwards;
+}
+@keyframes rotateIn {
+to { opacity: 1; transform: perspective(600px) rotateY(0deg); }
+}
+
+.swing {
+animation: swing 1s ease-in-out infinite;
+transform-origin: top center;
+}
+@keyframes swing {
+20% { transform: rotate(15deg); }
+40% { transform: rotate(-10deg); }
+60% { transform: rotate(5deg); }
+80% { transform: rotate(-5deg); }
+100% { transform: rotate(0deg); }
+}
+
+.glow-pulse {
+animation: glowPulse 2s ease-in-out infinite;
+}
+@keyframes glowPulse {
+0%, 100% { box-shadow: 0 0 10px rgba(255,255,255,0.2); }
+50% { box-shadow: 0 0 25px rgba(255,255,255,0.5); }
+}
+
+.slide-left-bounce {
+animation: slideLeftBounce 0.7s var(--easing-spring) forwards;
+}
+@keyframes slideLeftBounce {
+from { opacity: 0; transform: translateX(-60px); }
+60% { opacity: 1; transform: translateX(8px); }
+80% { transform: translateX(-3px); }
+to { transform: translateX(0); }
+}
+
+.puff-in {
+animation: puffIn 0.5s var(--easing-out) forwards;
+}
+@keyframes puffIn {
+0% { opacity: 0; transform: scale(0.5); filter: blur(4px); }
+100% { opacity: 1; transform: scale(1); filter: blur(0); }
+}
+
+.fade-in-rotate {
+opacity: 0;
+transform: translateY(30px) rotate(-5deg);
+animation: fadeInRotate 0.6s var(--easing-out) forwards;
+}
+@keyframes fadeInRotate {
+to { opacity: 1; transform: translateY(0) rotate(0); }
+}
+
+.heartbeat {
+animation: heartbeat 1.5s ease-in-out infinite;
+}
+@keyframes heartbeat {
+0% { transform: scale(1); }
+14% { transform: scale(1.3); }
+28% { transform: scale(1); }
+42% { transform: scale(1.3); }
+70% { transform: scale(1); }
+}
+
+.jello-horizontal {
+animation: jelloHorizontal 0.9s both;
+}
+@keyframes jelloHorizontal {
+0% { transform: scale3d(1,1,1); }
+30% { transform: scale3d(1.25,0.75,1); }
+40% { transform: scale3d(0.75,1.25,1); }
+50% { transform: scale3d(1.15,0.85,1); }
+65% { transform: scale3d(0.95,1.05,1); }
+75% { transform: scale3d(1.05,0.95,1); }
+100% { transform: scale3d(1,1,1); }
+}
+
+@media (max-width: 480px) {
+.page-transition-out {
+animation: pageExitMobile 0.3s ease forwards;
+}
+@keyframes pageExitMobile {
+0%   { opacity: 1; transform: scale(1); }
+100% { opacity: 0; transform: scale(0.98); }
+}
+.page-transition-in {
+animation: pageEnterMobile 0.35s ease forwards;
+}
+@keyframes pageEnterMobile {
+0%   { opacity: 0; transform: scale(1.01); }
+100% { opacity: 1; transform: scale(1); }
+}
+.jello-horizontal,
+.swing {
+animation: none;
+transition: opacity 0.2s;
+}
+}
+
+@media (min-width: 481px) and (max-width: 1024px) {
+.page-transition-out {
+animation: pageExitTablet 0.4s ease forwards;
+}
+@keyframes pageExitTablet {
+0%   { opacity: 1; transform: scale(1); }
+100% { opacity: 0; transform: scale(0.97); }
+}
+.page-transition-in {
+animation: pageEnterTablet 0.5s ease forwards;
+}
+@keyframes pageEnterTablet {
+0%   { opacity: 0; transform: scale(1.02); }
+100% { opacity: 1; transform: scale(1); }
+}
+}
+
 @media (prefers-reduced-motion: reduce) {
 *,
 *::before,

@@ -1,13 +1,10 @@
 /* ============================================================
    LINKS.CSS – Página de Links (links.html)
    Estética: Vitrines Holográficas / Reflexos Neon
-   Decisões criativas:
-   - Os vídeos rodam em segundo plano criando um fluxo cinético sob um véu escuro.
-   - Os cards de imagem parecem placas de vidro físicas; o hover revela a imagem por completo através do embaçamento.
-   - Ícones sociais agem como gotas de metal líquido.
+   Correção: animações partem de opacity:1, fallback seguro
    ============================================================ */
 
-/* Esconde o body para bots maliciosos (classe adicionada novamente pelo antiBot.js) */
+/* Controle de ocultação removido pelo script inline */
 .no-js-hide body {
     visibility: hidden;
 }
@@ -15,17 +12,14 @@
 :root {
     --font-body: 'Montserrat', sans-serif;
     --font-display: 'Cormorant Garamond', serif;
-    
     --color-brand-blue: #1f78d1;
     --color-brand-purple: #3f1a8f;
     --color-cyan-glow: #00e5ff;
-    
     --glass-surface: rgba(15, 15, 20, 0.4);
     --transition-holographic: 0.6s cubic-bezier(0.16, 1, 0.3, 1);
-    
     --profile-size: clamp(120px, 20vw, 180px);
     --name-size: clamp(2.8rem, 10vw, 4rem);
-    --desc-size: clamp(0.9rem, 2.5vw, 1.1rem);  /* ADICIONADO */
+    --desc-size: clamp(0.9rem, 2.5vw, 1.1rem);
     --card-radius: 28px;
 }
 
@@ -39,28 +33,28 @@ body {
     background: #000;
     display: flex; align-items: flex-start; justify-content: center;
     overflow-x: hidden;
+    opacity: 1; /* visível por padrão */
+    visibility: visible;
 }
 
-/* =========================================
-   O VÉU DO VÍDEO (Preservando a Mídia)
-   ========================================= */
 .video-background {
     position: fixed; inset: 0; z-index: -2; overflow: hidden;
 }
+
 .video-mobile, .video-tablet, .video-desktop {
     display: none; position: absolute;
     top: 50%; left: 50%; min-width: 100%; min-height: 100%;
-    transform: translate(-50%, -50%) scale(1.05); /* Escala sutil para evitar bordas */
+    transform: translate(-50%, -50%) scale(1.05);
     object-fit: cover; opacity: 0;
     transition: opacity 1s ease;
 }
+
 .video-mobile.loaded, .video-tablet.loaded, .video-desktop.loaded { opacity: 1; }
 
 @media (max-width: 480px) { .video-mobile { display: block; } }
 @media (min-width: 481px) and (max-width: 1024px) { .video-tablet { display: block; } }
 @media (min-width: 1025px) { .video-desktop { display: block; } }
 
-/* A névoa sobre o vídeo - Dá o tom luxuoso */
 body::before {
     content: ''; position: fixed; inset: 0;
     background: radial-gradient(ellipse at top, rgba(31,120,209,0.15) 0%, transparent 60%),
@@ -78,9 +72,6 @@ body::before {
     padding: clamp(2rem, 5vh, 4rem) 20px 80px;
 }
 
-/* =========================================
-   HEADER DE LINKS: VIDRO E LUZ
-   ========================================= */
 .profile-card-glass {
     background: linear-gradient(180deg, rgba(255,255,255,0.04), transparent);
     backdrop-filter: blur(20px);
@@ -103,9 +94,8 @@ body::before {
     50% { transform: translateY(-5px) scale(1.02); filter: drop-shadow(0 0 25px rgba(0,229,255,0.4)); }
 }
 
-.title-glass-wrapper {
-    background: transparent;
-}
+.title-glass-wrapper { background: transparent; }
+
 .name-links {
     font-family: var(--font-display); font-size: var(--name-size);
     background: linear-gradient(to bottom right, #fff, var(--color-cyan-glow));
@@ -113,7 +103,6 @@ body::before {
     text-shadow: 0 10px 30px rgba(0,229,255,0.2);
 }
 
-/* CORRIGIDO: remove display none para mostrar o texto */
 .desc-glass {
     background: rgba(255,255,255,.08);
     backdrop-filter: blur(10px);
@@ -123,6 +112,7 @@ body::before {
     padding: 12px 18px;
     display: inline-block;
 }
+
 .desc-text {
     font-weight: 500;
     font-size: var(--desc-size);
@@ -133,10 +123,8 @@ body::before {
     margin: 0;
 }
 
-/* =========================================
-   ÍCONES SOCIAIS: GOTAS DE METAL LÍQUIDO
-   ========================================= */
 .social-icons { display: flex; gap: 20px; justify-content: center; flex-wrap: wrap; margin-top: 8px; }
+
 .social-icon {
     display: flex; align-items: center; justify-content: center;
     width: 56px; height: 56px; border-radius: 50%;
@@ -147,6 +135,7 @@ body::before {
     box-shadow: 0 5px 15px rgba(0,0,0,0.3), inset 0 2px 5px rgba(255,255,255,0.05);
     transition: all var(--transition-holographic);
 }
+
 .social-icon svg { width: 22px; height: 22px; transition: transform 0.3s; }
 
 .social-icon:hover {
@@ -155,11 +144,9 @@ body::before {
     border-color: rgba(255,255,255,0.4);
     box-shadow: 0 10px 25px rgba(0, 229, 255, 0.4), inset 0 2px 2px rgba(255,255,255,0.4);
 }
+
 .social-icon:hover svg { transform: scale(1.15); }
 
-/* =========================================
-   VITRINES HOLOGRÁFICAS (Image Cards)
-   ========================================= */
 .image-buttons-list {
     display: grid; grid-template-columns: 1fr; gap: 30px; width: 100%;
     justify-items: center;
@@ -170,7 +157,6 @@ body::before {
     aspect-ratio: 2.2 / 1;
     border-radius: var(--card-radius);
     text-decoration: none; position: relative; overflow: hidden;
-    /* Corpo do vidro */
     background: var(--glass-surface);
     backdrop-filter: blur(12px);
     border: 1px solid rgba(255,255,255,0.06);
@@ -179,7 +165,6 @@ body::before {
     transition: all var(--transition-holographic);
 }
 
-/* Efeito de refração no card */
 .image-button::before {
     content: ''; position: absolute; inset: 0; z-index: 2;
     background: linear-gradient(105deg, transparent 20%, rgba(255,255,255,0.1) 25%, transparent 30%);
@@ -188,7 +173,6 @@ body::before {
     pointer-events: none;
 }
 
-/* O Véu Escuro Interno */
 .image-button::after {
     content: ''; position: absolute; inset: 0; z-index: 1;
     background: linear-gradient(0deg, rgba(31,120,209,0.3) 0%, rgba(0,0,0,0.6) 100%);
@@ -201,30 +185,39 @@ body::before {
     transition: all var(--transition-holographic);
 }
 
-/* Interação de Revelação */
 .image-button:hover {
     transform: translateY(-8px) scale(1.02);
     border-color: var(--color-cyan-glow);
     box-shadow: 0 20px 40px rgba(0,0,0,0.6), 0 0 30px rgba(0, 229, 255, 0.2);
 }
+
 .image-button:hover::before { background-position: 100% 0; }
 .image-button:hover::after { opacity: 0; }
 .image-button:hover img { filter: saturate(1.1) blur(0); transform: scale(1); }
 
-/* =========================================
-   RESPONSIVO E EXTRAS
-   ========================================= */
 .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); border: 0; }
 
 @media (min-width: 481px) and (max-width: 1024px) {
     .image-buttons-list { grid-template-columns: repeat(2, 1fr); }
     .image-button { aspect-ratio: 2/1; }
 }
+
 @media (min-width: 1025px) {
     .image-buttons-list { grid-template-columns: repeat(3, 1fr); gap: 40px; }
     .image-button { max-width: 100%; aspect-ratio: 16/9; }
 }
 
+/* Respeito à preferência de redução de movimento – sem quebrar visibilidade */
 @media (prefers-reduced-motion: reduce) {
-    *, ::before, ::after { animation-play-state: paused !important; transition-duration: 0.01ms !important; }
+    *, *::before, *::after {
+        animation: none !important;
+        transition: none !important;
+    }
+    .reveal-el,
+    .page-transition-in,
+    .page-transition-out {
+        opacity: 1 !important;
+        transform: none !important;
+        visibility: visible !important;
+    }
 }

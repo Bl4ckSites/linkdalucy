@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Luciana Lima – Links Exclusivos</title>
     <meta name="description" content="Acesse conteúdos exclusivos da Luciana Lima">
-    <!-- Página de links não indexada para proteger as plataformas externas -->
     <meta name="robots" content="noindex, nofollow, noarchive, nosnippet, noimageindex, notranslate">
     <meta name="theme-color" content="#ff7b00">
 
@@ -33,11 +32,23 @@
     <link rel="stylesheet" href="css/animations.css">
 </head>
 <body>
-    <!-- Fundo com imagens estáticas (substituindo os vídeos) -->
+    <!-- Fundo em vídeo (três resoluções) -->
     <div class="video-background">
-        <img src="videos/bg-mobile.jpg"  class="video-mobile"  alt="Fundo decorativo" loading="lazy">
-        <img src="videos/bg-tablet.jpg"  class="video-tablet"  alt="Fundo decorativo" loading="lazy">
-        <img src="videos/bg-desktop.jpg" class="video-desktop" alt="Fundo decorativo" loading="lazy">
+        <video class="video-mobile" autoplay muted loop playsinline preload="auto" disablePictureInPicture>
+            <source src="videos/bg-mobile.mp4" type="video/mp4">
+            <source src="videos/bg-mobile.webm" type="video/webm">
+            <source src="videos/bg-mobile.ogv" type="video/ogg">
+        </video>
+        <video class="video-tablet" autoplay muted loop playsinline preload="auto" disablePictureInPicture>
+            <source src="videos/bg-tablet.mp4" type="video/mp4">
+            <source src="videos/bg-tablet.webm" type="video/webm">
+            <source src="videos/bg-tablet.ogv" type="video/ogg">
+        </video>
+        <video class="video-desktop" autoplay muted loop playsinline preload="auto" disablePictureInPicture>
+            <source src="videos/bg-desktop.mp4" type="video/mp4">
+            <source src="videos/bg-desktop.webm" type="video/webm">
+            <source src="videos/bg-desktop.ogv" type="video/ogg">
+        </video>
     </div>
 
     <a href="#links-main" class="skip-link">Pular para o conteúdo</a>
@@ -47,11 +58,9 @@
             <div class="profile-wrapper-links" role="img" aria-label="Foto de perfil de Luciana Lima">
                 <img src="imgs/profile-links-desktop.jpg" alt="Luciana Lima" class="profile-img-links" width="220" height="220" loading="eager" data-responsive-img="links">
             </div>
-
             <div class="title-glass-wrapper reveal-el" data-delay="1">
                 <h1 class="name-links">Luciana Lima</h1>
             </div>
-
             <div class="social-icons reveal-el" data-delay="2" role="navigation" aria-label="Redes sociais">
                 <a href="https://www.instagram.com/luluhzinhadopri" target="_blank" rel="noopener noreferrer" class="social-icon" aria-label="Instagram de Luciana Lima" data-platform="instagram">
                     <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor" aria-hidden="true"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
@@ -66,7 +75,6 @@
         </div>
 
         <div class="image-buttons-list">
-            <!-- Todos os textos e emojis foram neutralizados -->
             <a href="https://t.me/+xbfAAVb8R60xYjEx" target="_blank" rel="noopener noreferrer" class="image-button reveal-el" data-link="previas-gratis" aria-label="Acessar conteúdo exclusivo no Telegram" data-delay="3">
                 <img src="cards/previas-gratis.jpg" alt="Conteúdo Exclusivo" loading="lazy">
             </a>
@@ -79,7 +87,7 @@
             <a href="https://privacy.com.br/@luluhzinhasfd" target="_blank" rel="noopener noreferrer" class="image-button reveal-el" data-link="privacy-gratis" aria-label="Acessar conteúdo gratuito" data-delay="6">
                 <img src="cards/privacy-gratis.jpg" alt="Conteúdo Gratuito" loading="lazy">
             </a>
-            <a href="https://www.casadoscontos.com.br/perfil/308907" target="_blank" rel="noopener noreferrer" class="image-button reveal-el" data-link="contos-eroticos" aria-label="Acessar histórias exclusivas" data-delay="7">
+            <a href="https://www.casadoscontos.com.br/perfil/308907" target="_blank" rel="noopener noreferrer" class="image-button reveal-el" data-link="contos-exclusivos" aria-label="Acessar histórias exclusivas" data-delay="7">
                 <img src="cards/contos-eroticos.jpg" alt="Histórias Exclusivas" loading="lazy">
             </a>
             <a href="https://www.instagram.com/luluhzinhadopri" target="_blank" rel="noopener noreferrer" class="image-button reveal-el" data-link="instagram" aria-label="Acessar Instagram" data-delay="8">

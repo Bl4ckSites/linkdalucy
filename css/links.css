@@ -20,6 +20,7 @@
     
     --profile-size: clamp(120px, 20vw, 180px);
     --name-size: clamp(2.8rem, 10vw, 4rem);
+    --desc-size: clamp(0.9rem, 2.5vw, 1.1rem);  /* ADICIONADO */
     --card-radius: 28px;
 }
 
@@ -107,7 +108,25 @@ body::before {
     text-shadow: 0 10px 30px rgba(0,229,255,0.2);
 }
 
-.desc-glass { display: none; /* Mantendo minimalista caso vazio, se houver texto, usar estilo da index */ }
+/* CORRIGIDO: remove display none para mostrar o texto */
+.desc-glass {
+    background: rgba(255,255,255,.08);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255,255,255,.08);
+    border-radius: 16px;
+    padding: 12px 18px;
+    display: inline-block;
+}
+.desc-text {
+    font-weight: 500;
+    font-size: var(--desc-size);
+    color: #ffffff;
+    text-shadow: 0px 2px 10px rgba(0,0,0,.8);
+    line-height: 1.4;
+    max-width: 90%;
+    margin: 0;
+}
 
 /* =========================================
    ÍCONES SOCIAIS: GOTAS DE METAL LÍQUIDO

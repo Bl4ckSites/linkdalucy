@@ -7,6 +7,11 @@
    - Ícones sociais agem como gotas de metal líquido.
    ============================================================ */
 
+/* Esconde o body para bots maliciosos (classe adicionada novamente pelo antiBot.js) */
+.no-js-hide body {
+    visibility: hidden;
+}
+
 :root {
     --font-body: 'Montserrat', sans-serif;
     --font-display: 'Cormorant Garamond', serif;

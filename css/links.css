@@ -1,20 +1,20 @@
 /* ============================================================
-   LINKS.CSS – Página de Links (links.html) – REFINADO
+   LINKS.CSS – Página de Links (links.html) – HARMONIZADO
    Luciana Lima – Cards de imagem com grid responsivo – por dense_66
    ============================================================ */
 
 :root {
     --font-body: 'Montserrat', sans-serif;
     --font-display: 'Cormorant Garamond', serif;
-    --color-name: #ff7b00;
+    --color-accent: #1f78d1;
+    --color-accent-soft: rgba(31, 120, 209, 0.35);
+    --color-accent-glow: rgba(31, 120, 209, 0.5);
+    --color-purple-border: rgba(80, 60, 180, 0.35);
     --transition-card: transform 0.3s ease, box-shadow 0.3s ease;
     --profile-size: clamp(120px, 22vw, 200px);
     --name-size: clamp(2.8rem, 10vw, 3.5rem);
     --card-border-radius: 28px;
     --card-max-width: 380px;
-    
-    --color-primary: rgba(120, 90, 255, 1);
-    --color-primary-soft: rgba(120, 90, 255, 0.35);
 }
 
 *,
@@ -44,7 +44,7 @@ body {
     background: #000;
 }
 
-/* Fallback de visibilidade caso o antiBot.js falhe */
+/* Fallback de visibilidade */
 @keyframes emergencyVisible {
     to { visibility: visible; }
 }
@@ -52,12 +52,13 @@ body {
     animation: emergencyVisible 0.1s 3s forwards;
 }
 
+/* Fundo com respiração sutil */
 body::after {
     content: '';
     position: fixed;
     inset: 0;
     z-index: -1;
-    background: radial-gradient(ellipse at 50% 30%, rgba(120,90,255,0.12) 0%, transparent 60%);
+    background: radial-gradient(ellipse at 50% 30%, rgba(31,120,209,0.08) 0%, transparent 60%);
     animation: bgBreathe 30s ease-in-out infinite;
     pointer-events: none;
 }
@@ -98,22 +99,21 @@ body::after {
 @media (max-width: 480px) {
     .video-mobile { display: block; }
 }
-
 @media (min-width: 481px) and (max-width: 1024px) {
     .video-tablet { display: block; }
 }
-
 @media (min-width: 1025px) {
     .video-desktop { display: block; }
 }
 
+/* Overlay escuro como na index */
 body::before {
     content: '';
     position: fixed;
     inset: 0;
-    background: rgba(0,0,0,0.08);
-    backdrop-filter: blur(2px);
-    -webkit-backdrop-filter: blur(2px);
+    background: rgba(0,0,0,0.30);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
     z-index: 0;
     pointer-events: none;
 }
@@ -122,8 +122,8 @@ body::before {
     position: absolute;
     top: -40px;
     left: 0;
-    background: #ff7b00;
-    color: #000;
+    background: var(--color-accent);
+    color: #fff;
     padding: 8px 16px;
     z-index: 1000;
     transition: top 0.2s;
@@ -146,11 +146,17 @@ body::before {
     padding: clamp(2rem, 5vh, 3rem) 20px 60px;
 }
 
+/* Containers com borda roxa escura */
+.profile-card-glass,
+.title-glass-wrapper,
+.desc-glass {
+    border: 1px solid var(--color-purple-border);
+}
+
 .profile-card-glass {
     background: rgba(255,255,255,.05);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    border: 1px solid rgba(255,255,255,.08);
+    backdrop-filter: blur(12px); /* blur reduzido */
+    -webkit-backdrop-filter: blur(12px);
     border-radius: 30px;
     padding: 25px;
     display: flex;
@@ -184,7 +190,6 @@ body::before {
     background: rgba(25,25,25,.30);
     backdrop-filter: blur(18px);
     -webkit-backdrop-filter: blur(18px);
-    border: 1px solid rgba(255,255,255,.08);
     border-radius: 20px;
     padding: 14px 25px;
     box-shadow: 0 8px 30px rgba(0,0,0,.20);
@@ -197,6 +202,25 @@ body::before {
     color: #ffffff;
     line-height: 1.1;
     text-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.desc-glass {
+    background: rgba(255,255,255,.08);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-radius: 16px;
+    padding: 12px 18px;
+    display: inline-block;
+}
+
+.desc-text {
+    font-weight: 500;
+    font-size: var(--desc-size);
+    color: #ffffff;
+    text-shadow: 0px 2px 10px rgba(0,0,0,.8);
+    line-height: 1.4;
+    max-width: 90%;
+    margin: 0;
 }
 
 .social-icons {
@@ -231,16 +255,29 @@ body::before {
 }
 .social-icon svg { width: 22px; height: 22px; }
 
+/* Hover com azul da index */
 .social-icon:hover {
     transform: translateY(-3px) scale(1.1);
-    background: rgba(120, 90, 255, 0.25);
+    background: rgba(31,120,209,0.25);
     color: #fff;
-    box-shadow: 0 8px 20px rgba(120, 90, 255, 0.4);
+    box-shadow: 0 8px 20px rgba(31,120,209,0.4);
     opacity: 1;
 }
 .social-icon:focus-visible {
     outline: 3px solid #fff;
     outline-offset: 3px;
+}
+
+/* Texto acessível oculto */
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0,0,0,0);
+    border: 0;
 }
 
 .image-buttons-list {
@@ -268,7 +305,8 @@ body::before {
     -webkit-tap-highlight-color: transparent;
     user-select: none;
     aspect-ratio: 2.45 / 1;
-    border: 1px solid rgba(255,255,255,0.1);
+    border: 1px solid var(--color-purple-border); /* borda roxa sutil */
+    background: rgba(0,0,0,0.2); /* leve fundo para o vidro funcionar */
     backdrop-filter: blur(16px);
     -webkit-backdrop-filter: blur(16px);
 }
@@ -279,7 +317,7 @@ body::before {
     inset: 0;
     background: linear-gradient(
         180deg,
-        rgba(120,90,255,0.08) 0%,
+        rgba(31,120,209,0.08) 0%,
         rgba(0,0,0,0) 100%
     );
     z-index: 1;
@@ -311,8 +349,8 @@ html.is-desktop .image-button img {
 .image-button:hover {
     transform: translateY(-4px) scale(1.02);
     box-shadow: 0 20px 40px rgba(0,0,0,0.3), 
-                0 0 25px var(--color-primary-soft);
-    border-color: rgba(120, 90, 255, 0.5);
+                0 0 25px var(--color-accent-soft);
+    border-color: rgba(31,120,209,0.5);
 }
 .image-button:active {
     transform: scale(0.97);
@@ -338,9 +376,48 @@ html.is-desktop .image-button img {
     to { transform: scale(4); opacity: 0; }
 }
 
+/* Botão CTA herdado da index */
+.cta-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 80%;
+    max-width: 420px;
+    height: 72px;
+    background: var(--color-accent);
+    color: #fff;
+    font-weight: 700;
+    font-size: clamp(1rem, 3vw, 1.2rem);
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    text-decoration: none;
+    border-radius: 60px;
+    box-shadow: 0 10px 28px rgba(31,120,209,0.25);
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    transition: box-shadow 0.3s ease, transform 0.1s ease;
+    z-index: 2;
+    -webkit-tap-highlight-color: transparent;
+    user-select: none;
+    animation: pulse 8s ease-in-out infinite;
+    border: 1px solid rgba(255,255,255,0.1);
+}
+.cta-button:hover {
+    box-shadow: 0 16px 40px var(--color-accent-glow);
+    transform: translateY(-2px) scale(1.02);
+}
+.cta-button:active { transform: scale(0.96); }
+
+@keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.03); }
+}
+
 video::-webkit-media-controls { display: none !important; }
 video::-webkit-media-controls-panel { display: none !important; }
 
+/* Responsivo */
 @media (max-width: 480px) {
     .links-container { padding: 1.5rem 16px 40px; gap: 1rem; }
     .image-button {

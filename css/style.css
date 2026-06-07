@@ -1,14 +1,10 @@
 /* ============================================================
    STYLE.CSS – Página Inicial (index.html)
    Estética: Luxo Líquido / Avant-Garde Glassmorphism
-   Decisões criativas: 
-   - Uso intensivo de box-shadows em camadas para simular refração de luz e anéis de vidro.
-   - Textos com gradientes metálicos animados (background-clip).
-   - O fundo original se mantém vivo, envolto em um véu de cristal líquido (backdrop-filter e auroras sutis).
-   - Animações orgânicas que simulam respiração e flutuação no espaço Z.
+   Correção: animações partem de opacity:1, fallback seguro
    ============================================================ */
 
-/* Esconde o body para bots maliciosos (classe adicionada novamente pelo antiBot.js) */
+/* Controle de ocultação removido pelo script inline */
 .no-js-hide body {
     visibility: hidden;
 }
@@ -16,24 +12,16 @@
 :root {
     --font-body: 'Montserrat', sans-serif;
     --font-display: 'Cormorant Garamond', serif;
-    
-    /* Cores da Marca & Expansões Atmosféricas */
     --color-brand-blue: #1f78d1;
     --color-brand-purple: #3f1a8f;
     --color-cyan-glow: #00e5ff;
     --color-silver-light: #e0e5ec;
-    
-    /* Superfícies de Vidro */
     --glass-bg-heavy: rgba(10, 10, 15, 0.45);
     --glass-bg-light: rgba(255, 255, 255, 0.03);
     --glass-border-top: rgba(255, 255, 255, 0.15);
     --glass-border-bot: rgba(63, 26, 143, 0.3);
-    
-    /* Sombras e Profundidade */
     --shadow-abyss: 0 30px 60px rgba(0, 0, 0, 0.6);
     --shadow-glow: 0 0 40px rgba(31, 120, 209, 0.15);
-    
-    /* Tipografia e Dimensões */
     --profile-size: clamp(140px, 22vw, 210px);
     --name-size: clamp(3.2rem, 12vw, 5.5rem);
     --desc-size: clamp(0.95rem, 2.5vw, 1.15rem);
@@ -63,9 +51,10 @@ body {
     align-items: center;
     justify-content: center;
     overflow-x: hidden;
+    opacity: 1; /* visível por padrão */
+    visibility: visible; /* garantia extra */
 }
 
-/* O Véu Atmosférico - Preserva a imagem, mas a banha em mistério */
 body::before {
     content: '';
     position: fixed;
@@ -78,15 +67,6 @@ body::before {
     pointer-events: none;
 }
 
-/* Fallback de emergência integrado às auroras */
-@keyframes emergencyVisible {
-    to { visibility: visible; opacity: 1; }
-}
-body { opacity: 0; animation: emergencyVisible 0.8s 0.2s forwards ease-in-out; }
-
-/* =========================================
-   CONTAINERS & SUPERFÍCIES DE VIDRO
-   ========================================= */
 .container {
     position: relative;
     z-index: 1;
@@ -100,7 +80,6 @@ body { opacity: 0; animation: emergencyVisible 0.8s 0.2s forwards ease-in-out; }
     padding: 45px 0 5vh;
 }
 
-/* Vidro Premium com refração assimétrica */
 .profile-card-glass {
     background: linear-gradient(135deg, var(--glass-bg-light) 0%, rgba(255,255,255,0) 100%);
     backdrop-filter: blur(24px);
@@ -112,7 +91,6 @@ body { opacity: 0; animation: emergencyVisible 0.8s 0.2s forwards ease-in-out; }
     align-items: center;
     gap: 18px;
     width: 100%;
-    /* Borda simulando espessura de vidro */
     border: 1px solid transparent;
     border-top-color: var(--glass-border-top);
     border-left-color: rgba(255, 255, 255, 0.08);
@@ -123,7 +101,6 @@ body { opacity: 0; animation: emergencyVisible 0.8s 0.2s forwards ease-in-out; }
     overflow: hidden;
 }
 
-/* Brilho interno dinâmico no card */
 .profile-card-glass::after {
     content: '';
     position: absolute;
@@ -139,18 +116,14 @@ body { opacity: 0; animation: emergencyVisible 0.8s 0.2s forwards ease-in-out; }
     100% { transform: rotate(360deg); }
 }
 
-/* =========================================
-   PERFIL: O ELEMENTO ESCULTÓRICO
-   ========================================= */
 .profile-img {
     width: var(--profile-size);
     height: var(--profile-size);
     border-radius: 50%;
     object-fit: cover;
     background: #000;
-    /* Anéis de refração e glowing organic */
     border: none;
-    box-shadow: 0 0 0 2px rgba(255,255,255,0.05), 
+    box-shadow: 0 0 0 2px rgba(255,255,255,0.05),
                 0 0 0 8px rgba(31, 120, 209, 0.1),
                 0 0 0 16px rgba(63, 26, 143, 0.05),
                 0 15px 35px rgba(0,0,0,0.5),
@@ -163,7 +136,7 @@ body { opacity: 0; animation: emergencyVisible 0.8s 0.2s forwards ease-in-out; }
 
 .profile-img:hover {
     transform: scale(1.05) translateY(-5px);
-    box-shadow: 0 0 0 2px rgba(255,255,255,0.2), 
+    box-shadow: 0 0 0 2px rgba(255,255,255,0.2),
                 0 0 0 10px rgba(0, 229, 255, 0.15),
                 0 0 0 20px rgba(31, 120, 209, 0.08),
                 0 20px 40px rgba(0,0,0,0.6);
@@ -174,9 +147,6 @@ body { opacity: 0; animation: emergencyVisible 0.8s 0.2s forwards ease-in-out; }
     50% { transform: translateY(-8px); }
 }
 
-/* =========================================
-   TIPOGRAFIA DE LUXO
-   ========================================= */
 .title-glass-wrapper {
     background: rgba(0, 0, 0, 0.2);
     backdrop-filter: blur(12px);
@@ -192,14 +162,7 @@ body { opacity: 0; animation: emergencyVisible 0.8s 0.2s forwards ease-in-out; }
     font-weight: 500;
     font-size: var(--name-size);
     line-height: 1;
-    /* Metal líquido no texto */
-    background: linear-gradient(
-        to right, 
-        #ffffff 20%, 
-        var(--color-silver-light) 40%, 
-        var(--color-cyan-glow) 60%, 
-        #ffffff 80%
-    );
+    background: linear-gradient(to right, #ffffff 20%, var(--color-silver-light) 40%, var(--color-cyan-glow) 60%, #ffffff 80%);
     background-size: 200% auto;
     color: transparent;
     -webkit-background-clip: text;
@@ -228,9 +191,6 @@ body { opacity: 0; animation: emergencyVisible 0.8s 0.2s forwards ease-in-out; }
     line-height: 1.5;
 }
 
-/* =========================================
-   BOTÃO CTA: NÚCLEO DE ENERGIA
-   ========================================= */
 .cta-button {
     display: flex;
     align-items: center;
@@ -247,7 +207,6 @@ body { opacity: 0; animation: emergencyVisible 0.8s 0.2s forwards ease-in-out; }
     text-decoration: none;
     border-radius: 60px;
     border: 1px solid rgba(255, 255, 255, 0.2);
-    /* Sombras que imitam emissão de luz */
     box-shadow: 0 10px 30px rgba(31, 120, 209, 0.4), inset 0 2px 2px rgba(255,255,255,0.3);
     position: relative;
     overflow: hidden;
@@ -293,17 +252,21 @@ body { opacity: 0; animation: emergencyVisible 0.8s 0.2s forwards ease-in-out; }
     border: 1px solid rgba(255,255,255,0.05);
 }
 
-/* =========================================
-   MODAL DE VIDRO
-   ========================================= */
 .modal {
-    display: none; position: fixed; z-index: 1000; inset: 0;
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    inset: 0;
     background-color: rgba(0,0,0,0.8);
     backdrop-filter: blur(15px);
     -webkit-backdrop-filter: blur(15px);
-    align-items: center; justify-content: center;
+    align-items: center;
+    justify-content: center;
 }
-.modal.active { display: flex; }
+
+.modal.active {
+    display: flex;
+}
 
 .modal-content {
     background: linear-gradient(135deg, rgba(31,31,40,0.9), rgba(15,15,20,0.95));
@@ -311,7 +274,8 @@ body { opacity: 0; animation: emergencyVisible 0.8s 0.2s forwards ease-in-out; }
     box-shadow: var(--shadow-abyss), 0 0 50px rgba(63,26,143,0.3);
     border-radius: 32px;
     padding: 40px 30px;
-    max-width: 420px; width: 90%;
+    max-width: 420px;
+    width: 90%;
     text-align: center;
     color: #fff;
     animation: modalLiquidReveal 0.5s cubic-bezier(0.16, 1, 0.3, 1);
@@ -324,35 +288,66 @@ body { opacity: 0; animation: emergencyVisible 0.8s 0.2s forwards ease-in-out; }
 
 .modal-content h2 {
     font-family: var(--font-display);
-    font-size: 2.2rem; margin-bottom: 15px;
+    font-size: 2.2rem;
+    margin-bottom: 15px;
     background: linear-gradient(to right, #fff, var(--color-cyan-glow));
-    -webkit-background-clip: text; color: transparent;
+    -webkit-background-clip: text;
+    color: transparent;
 }
-.modal-content p { color: #a0a5b0; margin-bottom: 25px; line-height: 1.6; }
 
-/* =========================================
-   ACESSIBILIDADE E RESPONSIVO
-   ========================================= */
+.modal-content p {
+    color: #a0a5b0;
+    margin-bottom: 25px;
+    line-height: 1.6;
+}
+
 .skip-link {
-    position: absolute; top: -100px; left: 20px;
-    background: #fff; color: #000; padding: 12px 24px;
-    z-index: 2000; border-radius: 8px; font-weight: bold;
+    position: absolute;
+    top: -100px;
+    left: 20px;
+    background: #fff;
+    color: #000;
+    padding: 12px 24px;
+    z-index: 2000;
+    border-radius: 8px;
+    font-weight: bold;
     transition: top 0.3s;
 }
-.skip-link:focus { top: 20px; }
+
+.skip-link:focus {
+    top: 20px;
+}
 
 @media (max-width: 480px) {
     body { background: url('../imgs/bg-mobile.jpg') center / cover no-repeat fixed; }
     .profile-card-glass { padding: 30px 20px; border-radius: 32px; }
     .cta-button { height: 68px; font-size: 0.9rem; }
 }
+
 @media (min-width: 481px) and (max-width: 1024px) {
     body { background: url('../imgs/bg-tablet.jpg') center / cover no-repeat fixed; }
 }
+
 @media (min-width: 1025px) {
     body { background: url('../imgs/bg-desktop.jpg') center / cover no-repeat fixed; }
 }
 
+/* Respeito à preferência de redução de movimento – sem quebrar visibilidade */
 @media (prefers-reduced-motion: reduce) {
-    *, ::before, ::after { animation-play-state: paused !important; transition-duration: 0.01ms !important; }
+    *, *::before, *::after {
+        animation: none !important;
+        transition: none !important;
+    }
+    .fade-in-scale,
+    .fade-in-up,
+    .fade-in-down,
+    .fade-in-left,
+    .fade-in-right,
+    .page-transition-in,
+    .page-transition-out,
+    .reveal-el {
+        opacity: 1 !important;
+        transform: none !important;
+        visibility: visible !important;
+    }
 }

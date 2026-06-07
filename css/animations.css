@@ -4,6 +4,7 @@ Versão Multi‑dispositivo: Mobile · Tablet · Desktop
 Luciana Lima – por dense_66
 ============================================================ */
 
+/* ---------- Variáveis Globais ---------- */
 :root {
 --dur-fast: 0.25s;
 --dur-normal: 0.45s;
@@ -40,6 +41,9 @@ Luciana Lima – por dense_66
 }
 }
 
+/* ============================================================
+   ANIMAÇÕES DE ENTRADA
+============================================================ */
 .fade-in-up {
 opacity: 0;
 transform: translateY(var(--slide-distance));
@@ -96,6 +100,7 @@ from { opacity: 0; transform: scale(0.9); }
 to   { opacity: 1; transform: scale(1); }
 }
 
+/* Scroll reveal (usado na links.html) */
 .reveal-el {
 opacity: 0;
 transform: translateY(25px) scale(0.97);
@@ -119,6 +124,7 @@ transform: translateY(0) scale(1);
 .reveal-el[data-delay="9"] { transition-delay: 0.9s; }
 .reveal-el[data-delay="10"] { transition-delay: 1.0s; }
 
+/* Page transitions */
 .page-transition-out {
 animation: pageExit 0.4s ease forwards;
 }
@@ -134,16 +140,111 @@ animation: pageEnter 0.5s ease forwards;
 100% { opacity: 1; transform: scale(1); filter: blur(0); }
 }
 
-.profile-premium {
-animation: floatRotate var(--float-duration) ease-in-out infinite;
+/* Foto de perfil com giro inicial */
+.spin-reveal {
+animation: spinReveal 1s var(--easing-spring) forwards;
 }
-@keyframes floatRotate {
-0%, 100% { transform: translateY(0) rotate(0deg); }
-25%      { transform: translateY(calc(var(--float-amplitude) * -0.5)) rotate(0.5deg); }
-50%      { transform: translateY(calc(var(--float-amplitude) * -1)) rotate(0deg); }
-75%      { transform: translateY(calc(var(--float-amplitude) * -0.5)) rotate(-0.5deg); }
+@keyframes spinReveal {
+from { opacity: 0; transform: perspective(600px) rotateY(90deg) scale(0.8); }
+to   { opacity: 1; transform: perspective(600px) rotateY(0deg) scale(1); }
 }
 
+/* Typewriter */
+.typewriter {
+display: inline-block;
+overflow: hidden;
+white-space: nowrap;
+border-right: 3px solid currentColor;
+width: 0;
+animation: typing 2s steps(30, end) forwards,
+           blinkCursor 0.8s step-end infinite;
+animation-delay: var(--delay, 0s);
+}
+@keyframes typing {
+from { width: 0; }
+to { width: 100%; }
+}
+@keyframes blinkCursor {
+0%, 100% { border-color: transparent; }
+50% { border-color: currentColor; }
+}
+
+/* ============================================================
+   ANIMAÇÕES DE MICROINTERAÇÃO (CLIQUES)
+============================================================ */
+.btn-ripple {
+position: relative;
+overflow: hidden;
+}
+.btn-ripple::after {
+content: "";
+position: absolute;
+inset: 0;
+background: radial-gradient(circle, rgba(255,255,255,0.5) 10%, transparent 10%);
+background-position: center;
+background-repeat: no-repeat;
+opacity: 0;
+transition: transform 0.5s, opacity 1s;
+transform: scale(10);
+}
+.btn-ripple:active::after {
+transform: scale(0);
+opacity: 1;
+transition: 0s;
+}
+
+.click-press {
+transition: transform 0.15s var(--easing-spring);
+}
+.click-press:active {
+transform: scale(0.95);
+}
+
+.click-pop:active {
+animation: popBurst 0.3s ease-out;
+}
+@keyframes popBurst {
+0% { transform: scale(1); }
+30% { transform: scale(1.15); }
+100% { transform: scale(1); }
+}
+
+/* ============================================================
+   EFEITOS GLASS E LEVEZA
+============================================================ */
+.glass-panel {
+background: rgba(255,255,255,0.1);
+backdrop-filter: blur(8px);
+-webkit-backdrop-filter: blur(8px);
+border: 1px solid rgba(255,255,255,0.2);
+transition: background 0.4s, backdrop-filter 0.4s, border-color 0.4s;
+}
+.glass-panel:hover {
+background: rgba(255,255,255,0.18);
+backdrop-filter: blur(12px);
+border-color: rgba(255,255,255,0.35);
+}
+
+.bg-breathe {
+animation: bgBreathe 6s ease-in-out infinite;
+}
+@keyframes bgBreathe {
+0%, 100% { opacity: 0.85; transform: scale(1); }
+50% { opacity: 0.95; transform: scale(1.02); }
+}
+
+/* Deriva lateral para planos de fundo */
+.drift {
+animation: drift 20s linear infinite;
+}
+@keyframes drift {
+from { transform: translateX(0); }
+to { transform: translateX(-5%); }
+}
+
+/* ============================================================
+   ANIMAÇÕES EXTRAS (já existentes, mantidas)
+============================================================ */
 .fade-in-up-big {
 opacity: 0;
 transform: translateY(50px);
@@ -243,7 +344,7 @@ animation: jelloHorizontal 0.9s both;
 }
 
 /* ============================================================
-MOBILE (≤480px) – ajustes finos e economia de recursos
+   AJUSTES RESPONSIVOS PARA ANIMAÇÕES PESADAS
 ============================================================ */
 @media (max-width: 480px) {
 .page-transition-out {
@@ -267,9 +368,6 @@ transition: opacity 0.2s;
 }
 }
 
-/* ============================================================
-TABLET (481‑1024px) – experiência intermediária
-============================================================ */
 @media (min-width: 481px) and (max-width: 1024px) {
 .page-transition-out {
 animation: pageExitTablet 0.4s ease forwards;
@@ -285,127 +383,10 @@ animation: pageEnterTablet 0.5s ease forwards;
 0%   { opacity: 0; transform: scale(1.02); }
 100% { opacity: 1; transform: scale(1); }
 }
-.card-hover-lift {
-transition: transform 0.35s var(--easing-out), box-shadow 0.35s;
-}
-.card-hover-lift:hover {
-transform: translateY(-5px);
-box-shadow: 0 12px 20px rgba(0,0,0,0.08);
-}
 }
 
 /* ============================================================
-DESKTOP (≥1025px) – Animações incríveis e imersivas
-============================================================ */
-@media (min-width: 1025px) {
-.tilt-card {
-transition: transform 0.5s var(--easing-out), box-shadow 0.5s;
-transform-style: preserve-3d;
-perspective: 1200px;
-}
-.tilt-card:hover {
-transform: perspective(1000px) rotateX(4deg) rotateY(-4deg) scale(1.02);
-box-shadow: 0 25px 40px rgba(0,0,0,0.15);
-}
-.card-hover-lift {
-transition: transform 0.4s var(--easing-spring), box-shadow 0.4s;
-}
-.card-hover-lift:hover {
-transform: translateY(-12px);
-box-shadow: 0 30px 45px rgba(0,0,0,0.12), 0 0 20px rgba(255,255,255,0.3);
-}
-.text-glitch {
-position: relative;
-display: inline-block;
-}
-.text-glitch::before,
-.text-glitch::after {
-content: attr(data-text);
-position: absolute;
-top: 0;
-left: 0;
-width: 100%;
-height: 100%;
-background: inherit;
-clip: rect(0, 900px, 0, 0);
-}
-.text-glitch::before {
-left: 2px;
-text-shadow: -2px 0 red;
-animation: glitch-anim-1 2s infinite linear alternate-reverse;
-}
-.text-glitch::after {
-left: -2px;
-text-shadow: -2px 0 blue;
-animation: glitch-anim-2 3s infinite linear alternate-reverse;
-}
-@keyframes glitch-anim-1 {
-0% { clip: rect(42px, 9999px, 44px, 0); }
-20% { clip: rect(12px, 9999px, 59px, 0); }
-40% { clip: rect(85px, 9999px, 100px, 0); }
-60% { clip: rect(30px, 9999px, 70px, 0); }
-80% { clip: rect(5px, 9999px, 30px, 0); }
-100% { clip: rect(65px, 9999px, 90px, 0); }
-}
-@keyframes glitch-anim-2 {
-0% { clip: rect(20px, 9999px, 21px, 0); }
-20% { clip: rect(70px, 9999px, 90px, 0); }
-40% { clip: rect(10px, 9999px, 40px, 0); }
-60% { clip: rect(55px, 9999px, 80px, 0); }
-80% { clip: rect(95px, 9999px, 110px, 0); }
-100% { clip: rect(35px, 9999px, 60px, 0); }
-}
-.morph-gradient {
-background: linear-gradient(270deg, #ff0080, #ff8c00, #40e0d0, #8a2be2);
-background-size: 800% 800%;
-animation: gradientMorph 8s ease infinite;
-}
-@keyframes gradientMorph {
-0% { background-position: 0% 50%; }
-50% { background-position: 100% 50%; }
-100% { background-position: 0% 50%; }
-}
-.float-particle {
-position: absolute;
-animation: floatParticle calc(var(--float-duration) * 2) ease-in-out infinite;
-will-change: transform;
-}
-@keyframes floatParticle {
-0%, 100% { transform: translate(0, 0) scale(1); opacity: 0.8; }
-25% { transform: translate(10px, -15px) scale(1.05); opacity: 1; }
-50% { transform: translate(-5px, -25px) scale(0.95); opacity: 0.6; }
-75% { transform: translate(-10px, -10px) scale(1.02); opacity: 0.9; }
-}
-.stagger-fade-in > * {
-opacity: 0;
-transform: translateY(20px);
-animation: staggerItem 0.5s var(--easing-out) forwards;
-animation-delay: calc(var(--index, 0) * 0.1s);
-}
-@keyframes staggerItem {
-to { opacity: 1; transform: translateY(0); }
-}
-.stagger-fade-in > *:nth-child(1) { --index: 1; }
-.stagger-fade-in > *:nth-child(2) { --index: 2; }
-.stagger-fade-in > *:nth-child(3) { --index: 3; }
-.stagger-fade-in > *:nth-child(4) { --index: 4; }
-.stagger-fade-in > *:nth-child(5) { --index: 5; }
-.stagger-fade-in > *:nth-child(6) { --index: 6; }
-.stagger-fade-in > *:nth-child(7) { --index: 7; }
-.stagger-fade-in > *:nth-child(8) { --index: 8; }
-.stagger-fade-in > *:nth-child(9) { --index: 9; }
-.stagger-fade-in > *:nth-child(10) { --index: 10; }
-.dynamic-shadow {
-transition: box-shadow 0.3s ease, transform 0.3s ease;
-}
-.dynamic-shadow:hover {
-transform: translateY(-6px);
-box-shadow: 0 20px 30px rgba(0,0,0,0.2), 0 0 15px rgba(255,255,255,0.4);
-}
-}
-
-/* ============================================================
-REDUÇÃO DE MOVIMENTO (respeito à acessibilidade)
+   RESPEITO À ACESSIBILIDADE (prefers-reduced-motion)
 ============================================================ */
 @media (prefers-reduced-motion: reduce) {
 *,
@@ -416,47 +397,4 @@ animation-iteration-count: 1 !important;
 transition-duration: 0.01ms !important;
 scroll-behavior: auto !important;
 }
-}
-
-/* ============================================================
-NOVAS ANIMAÇÕES – POLIMENTO PREMIUM
-============================================================ */
-.stagger-fade-up {
-opacity: 0;
-transform: translateY(30px);
-animation: staggerFadeUp 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-}
-.stagger-fade-up:nth-child(1) { animation-delay: 0.1s; }
-.stagger-fade-up:nth-child(2) { animation-delay: 0.2s; }
-.stagger-fade-up:nth-child(3) { animation-delay: 0.3s; }
-.stagger-fade-up:nth-child(4) { animation-delay: 0.4s; }
-.stagger-fade-up:nth-child(5) { animation-delay: 0.5s; }
-.stagger-fade-up:nth-child(6) { animation-delay: 0.6s; }
-.stagger-fade-up:nth-child(7) { animation-delay: 0.7s; }
-.stagger-fade-up:nth-child(8) { animation-delay: 0.8s; }
-
-@keyframes staggerFadeUp {
-from {
-opacity: 0;
-transform: translateY(30px);
-}
-to {
-opacity: 1;
-transform: translateY(0);
-}
-}
-
-.parallax-hover {
-transition: transform 0.4s cubic-bezier(0.16,1,0.3,1);
-}
-.parallax-hover:hover {
-transform: translateY(-4px);
-}
-.parallax-hover:hover img {
-transform: scale(1.05);
-}
-
-@keyframes bgBreathe {
-0%, 100% { opacity: 0.6; transform: scale(1); }
-50% { opacity: 1; transform: scale(1.05); }
 }

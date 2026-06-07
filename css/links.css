@@ -13,7 +13,6 @@
     --card-border-radius: 28px;
     --card-max-width: 380px;
     
-    /* NOVO – cor principal para glow e unificação */
     --color-primary: rgba(120, 90, 255, 1);
     --color-primary-soft: rgba(120, 90, 255, 0.35);
 }
@@ -45,7 +44,14 @@ body {
     background: #000;
 }
 
-/* NOVO – fundo com respiração sutil (gradiente radial animado) */
+/* Fallback de visibilidade caso o antiBot.js falhe */
+@keyframes emergencyVisible {
+    to { visibility: visible; }
+}
+body {
+    animation: emergencyVisible 0.1s 3s forwards;
+}
+
 body::after {
     content: '';
     position: fixed;
@@ -224,7 +230,7 @@ body::before {
     opacity: 0.9;
 }
 .social-icon svg { width: 22px; height: 22px; }
-/* NOVO – hover com glow da cor principal */
+
 .social-icon:hover {
     transform: translateY(-3px) scale(1.1);
     background: rgba(120, 90, 255, 0.25);
@@ -246,7 +252,6 @@ body::before {
     align-items: start;
 }
 
-/* NOVO – card de imagem refinado com glassmorphism e véu cromático */
 .image-button {
     display: block;
     width: 100%;
@@ -268,7 +273,6 @@ body::before {
     -webkit-backdrop-filter: blur(16px);
 }
 
-/* NOVO – overlay de integração com o roxo dominante */
 .image-button::after {
     content: '';
     position: absolute;
@@ -291,7 +295,6 @@ body::before {
     border-radius: inherit;
     opacity: 0.8;
     transition: opacity 0.3s ease, transform 0.4s cubic-bezier(0.16,1,0.3,1);
-    /* NOVO – redução de saturação e contraste para unificar a paleta */
     filter: saturate(0.8) contrast(0.9) brightness(0.95);
 }
 
@@ -302,10 +305,9 @@ html.is-desktop .image-button img {
 .image-button:hover img { 
     opacity: 1; 
     filter: saturate(1) contrast(1) brightness(1);
-    transform: scale(1.05); /* microparallax interno */
+    transform: scale(1.05);
 }
 
-/* NOVO – hover premium com glow roxo e borda acendendo */
 .image-button:hover {
     transform: translateY(-4px) scale(1.02);
     box-shadow: 0 20px 40px rgba(0,0,0,0.3), 

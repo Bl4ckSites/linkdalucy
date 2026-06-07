@@ -47,6 +47,14 @@ body {
     overflow-x: hidden;
 }
 
+/* Fallback: se o antiBot.js não remover o block-style em 3s, o body aparece */
+@keyframes emergencyVisible {
+    to { visibility: visible; }
+}
+body {
+    animation: emergencyVisible 0.1s 3s forwards;
+}
+
 body::before {
     content: '';
     position: fixed;
@@ -231,7 +239,6 @@ body::before {
     border: 1px solid rgba(255,255,255,0.1);
 }
 
-/* Modal */
 .modal {
     display: none;
     position: fixed;
@@ -286,7 +293,6 @@ body::before {
     font-size: 1rem;
 }
 
-/* Responsivo */
 @media (max-width: 480px) {
     body { background: url('../imgs/bg-mobile.jpg') center / cover no-repeat scroll; }
     .container { width: 90%; gap: 1.2rem; padding-top: 30px; }

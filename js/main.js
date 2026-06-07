@@ -1,9 +1,8 @@
 /**
  * Luciana Lima – Script principal com proteção multicamadas
- * Versão 5.1.0 – Com fallback de visibilidade para garantir exibição do conteúdo
- * Criado por: dense_66
+ * Versão 5.1.1 – Corrigido fallback de crypto.randomUUID
  */
-console.log('%c[Luciana Lima] main.js carregado (v5.1)', 'color: #0f0; font-size: 16px;');
+console.log('%c[Luciana Lima] main.js carregado (v5.1.1)', 'color: #0f0; font-size: 16px;');
 
 (function () {
     'use strict';
@@ -35,10 +34,14 @@ console.log('%c[Luciana Lima] main.js carregado (v5.1)', 'color: #0f0; font-size
     function getSessionId() {
         let id = sessionStorage.getItem('ssid');
         if (!id) {
-            id = crypto.randomUUID ? crypto.randomUUID() : 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => {
-                const r = Math.random() * 16 | 0;
-                return (c === 'x' ? r : (r & 0x3 | 0x8)).toString(16);
-            });
+            if (typeof crypto !== 'undefined' && crypto.randomUUID) {
+                id = crypto.randomUUID();
+            } else {
+                id = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => {
+                    const r = Math.random() * 16 | 0;
+                    return (c === 'x' ? r : (r & 0x3 | 0x8)).toString(16);
+                });
+            }
             sessionStorage.setItem('ssid', id);
         }
         return id;
@@ -475,11 +478,19 @@ console.log('%c[Luciana Lima] main.js carregado (v5.1)', 'color: #0f0; font-size
         const revealEls = document.querySelectorAll('.reveal-el');
         if (!revealEls.length) return;
         if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-            revealEls.forEach(el => el.classList.add('visible'));
+            revealEls.forEach(el => {
+                el.classList.add('visible');
+                el.style.opacity = '1';
+                el.style.transform = 'none';
+            });
             return;
         }
         if (!('IntersectionObserver' in window)) {
-            revealEls.forEach(el => el.classList.add('visible'));
+            revealEls.forEach(el => {
+                el.classList.add('visible');
+                el.style.opacity = '1';
+                el.style.transform = 'none';
+            });
             return;
         }
         const observer = new IntersectionObserver((entries) => {

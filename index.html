@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-BR" class="no-js-hide">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,7 +9,6 @@
     <meta name="rating" content="general">
     <meta name="theme-color" content="#1f78d1">
 
-    <!-- Open Graph / Preview em redes sociais -->
     <meta property="og:title" content="Luciana Lima">
     <meta property="og:description" content="Tudo de maravilhoso te espera aqui ✨">
     <meta property="og:type" content="website">
@@ -25,7 +24,6 @@
 
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>✨</text></svg>">
 
-    <!-- Dados estruturados -->
     <script type="application/ld+json">
     {
         "@context": "https://schema.org",
@@ -44,14 +42,18 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
 
-    <style id="block-style">body{visibility:hidden;}</style>
     <script src="js/antiBot.js"></script>
 
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/animations.css">
 </head>
 <body>
-    <!-- Honeypot invisível -->
+    <noscript>
+        <style>
+            .no-js-hide body { visibility: visible !important; opacity: 1 !important; }
+        </style>
+    </noscript>
+
     <input type="text" id="hp-field" tabindex="-1" autocomplete="off" style="position:absolute;left:-9999px;top:-9999px;" aria-hidden="true">
     <a href="#" id="hp-link" style="display:none;" aria-hidden="true">.</a>
 
@@ -63,7 +65,7 @@
                 <img src="imgs/profile-index-desktop.jpg" alt="Luciana Lima" class="profile-img profile-premium spin-reveal" width="220" height="220" loading="eager" data-responsive-img="index">
             </div>
             <div class="title-glass-wrapper fade-in-up" style="--delay: 0.3s;">
-                <h1 class="name typewriter" style="width: 12ch;">Luciana Lima</h1>
+                <h1 class="name typewriter" style="--typewriter-width: 12ch;">Luciana Lima</h1>
             </div>
             <div class="desc-glass fade-in-up" style="--delay: 0.5s;">
                 <p class="desc-text">Tudo de maravilhoso te espera aqui ✨</p>
@@ -74,7 +76,6 @@
         <p class="warning-text fade-in-up" style="--delay: 0.9s;">CONTEÚDO EXCLUSIVO — ACESSO SEGURO</p>
     </main>
 
-    <!-- Modal de verificação -->
     <div id="verifyModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
         <div class="modal-content">
             <h2 id="modalTitle">Confirmação</h2>

@@ -1,24 +1,20 @@
 /**
- * antiBot.js – Proteção total + permissão para indexadores + bloqueio de redes sociais
- * Versão 6.0 — Remove "no-js-hide" antes de tudo; bloqueia facebot, twitterbot, etc.
+ * antiBot.js – Proteção contra bots maliciosos e de redes sociais.
+ * Versão 7.0 – NÃO remove conteúdo de humanos nem bloqueia indexadores.
  */
 (function() {
     'use strict';
 
-    const docEl = document.documentElement;
-    // Remove IMEDIATAMENTE a classe que esconde o body.
-    // Assim, humanos nunca veem tela branca.
-    docEl.classList.remove('no-js-hide');
-
+    // O conteúdo já está visível graças ao script inline no HTML.
     const ua = navigator.userAgent.toLowerCase();
 
-    // 1. Bots de indexação CONFIÁVEIS — acesso livre
+    // 1. Indexadores confiáveis – acesso livre
     if (/googlebot|bingbot|duckduckbot|slurp|yandex|baidu/i.test(ua)) {
         console.log('[AntiBot] Indexador permitido.');
         return;
     }
 
-    // 2. Bots de redes sociais e scrapers — BLOQUEAR (inclusive facebot)
+    // 2. Bots de redes sociais e scrapers maliciosos
     const maliciousBots = /facebot|twitterbot|rogerbot|linkedinbot|embedly|quora link preview|outbrain|pinterest|prerender|whatsapp|telegrambot|discordbot|slackbot|google-structured-data-testing-tool/i;
     const isMaliciousUA = maliciousBots.test(ua);
 
@@ -26,20 +22,14 @@
     const isHeadless = /headless|phantom|selenium|webdriver|puppeteer|playwright/i.test(ua) ||
                        navigator.webdriver === true;
 
-    // 4. Qualquer outro bot genérico (crawler/spider) também bloqueamos
-    const genericBot = /bot|crawler|spider/i.test(ua);
-
-    if (isMaliciousUA || isHeadless || genericBot) {
+    if (isMaliciousUA || isHeadless) {
         console.log('[AntiBot] Bot malicioso ou de rede social bloqueado.');
-        // Reaplica a classe de ocultação
-        docEl.classList.add('no-js-hide');
-        if (document.body) {
-            document.body.innerHTML = '';
-        }
+        // Apenas re‑aplica a classe de ocultação, sem limpar o body
+        document.documentElement.classList.add('no-js-hide');
         return;
     }
 
-    // 5. Conteúdo restrito, se houver
+    // 4. Conteúdo restrito, se existir
     var encDiv = document.getElementById('enc-data');
     if (encDiv) {
         var cipher = encDiv.getAttribute('data-cipher');

@@ -1,10 +1,9 @@
 /* ============================================================
    STYLE.CSS – Página Inicial (index.html)
    Estética: Luxo Líquido / Avant-Garde Glassmorphism
-   Correção: animações partem de opacity:1, fallback seguro
+   Blur reduzido, tons de azul equilibrados
    ============================================================ */
 
-/* Controle de ocultação removido pelo script inline */
 .no-js-hide body {
     visibility: hidden;
 }
@@ -51,18 +50,18 @@ body {
     align-items: center;
     justify-content: center;
     overflow-x: hidden;
-    opacity: 1; /* visível por padrão */
-    visibility: visible; /* garantia extra */
+    opacity: 1;
+    visibility: visible;
 }
 
 body::before {
     content: '';
     position: fixed;
     inset: 0;
-    background: radial-gradient(circle at 50% 0%, rgba(31, 120, 209, 0.1) 0%, transparent 70%),
-                linear-gradient(180deg, rgba(63, 26, 143, 0.15) 0%, rgba(0, 0, 0, 0.85) 100%);
-    backdrop-filter: blur(8px) saturate(130%);
-    -webkit-backdrop-filter: blur(8px) saturate(130%);
+    background: radial-gradient(circle at 50% 0%, rgba(31, 120, 209, 0.08) 0%, transparent 70%),
+                linear-gradient(180deg, rgba(63, 26, 143, 0.1) 0%, rgba(0, 0, 0, 0.8) 100%);
+    backdrop-filter: blur(4px) saturate(120%);
+    -webkit-backdrop-filter: blur(4px) saturate(120%);
     z-index: 0;
     pointer-events: none;
 }
@@ -82,8 +81,8 @@ body::before {
 
 .profile-card-glass {
     background: linear-gradient(135deg, var(--glass-bg-light) 0%, rgba(255,255,255,0) 100%);
-    backdrop-filter: blur(24px);
-    -webkit-backdrop-filter: blur(24px);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
     border-radius: 40px;
     padding: 35px 25px;
     display: flex;
@@ -149,8 +148,8 @@ body::before {
 
 .title-glass-wrapper {
     background: rgba(0, 0, 0, 0.2);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
     border-radius: 20px;
     padding: 12px 28px;
     border: 1px solid rgba(255, 255, 255, 0.05);
@@ -162,7 +161,7 @@ body::before {
     font-weight: 500;
     font-size: var(--name-size);
     line-height: 1;
-    background: linear-gradient(to right, #ffffff 20%, var(--color-silver-light) 40%, var(--color-cyan-glow) 60%, #ffffff 80%);
+    background: linear-gradient(to right, #ffffff 20%, #d0d8ff 40%, #a0d0ff 60%, #ffffff 80%);
     background-size: 200% auto;
     color: transparent;
     -webkit-background-clip: text;
@@ -246,7 +245,7 @@ body::before {
     text-transform: uppercase;
     color: rgba(255,255,255,0.6);
     background: rgba(0,0,0,0.3);
-    backdrop-filter: blur(8px);
+    backdrop-filter: blur(6px);
     padding: 8px 20px;
     border-radius: 12px;
     border: 1px solid rgba(255,255,255,0.05);
@@ -258,8 +257,8 @@ body::before {
     z-index: 1000;
     inset: 0;
     background-color: rgba(0,0,0,0.8);
-    backdrop-filter: blur(15px);
-    -webkit-backdrop-filter: blur(15px);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
     align-items: center;
     justify-content: center;
 }
@@ -290,7 +289,7 @@ body::before {
     font-family: var(--font-display);
     font-size: 2.2rem;
     margin-bottom: 15px;
-    background: linear-gradient(to right, #fff, var(--color-cyan-glow));
+    background: linear-gradient(to right, #ffffff, #a0d0ff);
     -webkit-background-clip: text;
     color: transparent;
 }
@@ -332,7 +331,6 @@ body::before {
     body { background: url('../imgs/bg-desktop.jpg') center / cover no-repeat fixed; }
 }
 
-/* Respeito à preferência de redução de movimento – sem quebrar visibilidade */
 @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after {
         animation: none !important;

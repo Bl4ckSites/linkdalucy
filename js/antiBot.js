@@ -66,3 +66,13 @@
     }
     console.log('[AntiBot] Verificação concluída – humano confirmado.');
 })();
+
+// Garantia de exibição (Timeout de segurança)
+window.addEventListener('load', function() {
+    setTimeout(function() {
+        const blockStyle = document.getElementById('block-style');
+        if (blockStyle) {
+            blockStyle.remove(); // Remove o bloqueio se ele ainda existir
+        }
+    }, 3000); // Força a exibição após 3 segundos, caso o script trave
+});

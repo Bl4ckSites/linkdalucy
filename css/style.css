@@ -1,36 +1,38 @@
 /* ============================================================
    STYLE.CSS – Página Inicial (index.html)
-   Vanguarda: Cristal Líquido & Luxo Atmosférico
-   Cores Mestra: Azul (#1f78d1) | Roxo Escuro (#3f1a8f)
+   Estética: Luxo Líquido / Avant-Garde Glassmorphism
+   Decisões criativas: 
+   - Uso intensivo de box-shadows em camadas para simular refração de luz e anéis de vidro.
+   - Textos com gradientes metálicos animados (background-clip).
+   - O fundo original se mantém vivo, envolto em um véu de cristal líquido (backdrop-filter e auroras sutis).
+   - Animações orgânicas que simulam respiração e flutuação no espaço Z.
    ============================================================ */
 
 :root {
     --font-body: 'Montserrat', sans-serif;
     --font-display: 'Cormorant Garamond', serif;
     
-    /* Paleta de Luz e Sombra */
-    --color-electric-blue: #1f78d1;
-    --color-deep-purple: #3f1a8f;
-    --color-glow-cyan: rgba(0, 229, 255, 0.4);
-    --color-text-premium: #f8f9fa;
+    /* Cores da Marca & Expansões Atmosféricas */
+    --color-brand-blue: #1f78d1;
+    --color-brand-purple: #3f1a8f;
+    --color-cyan-glow: #00e5ff;
+    --color-silver-light: #e0e5ec;
     
-    /* Vidro Esculpido */
-    --glass-bg: linear-gradient(145deg, rgba(255,255,255,0.03) 0%, rgba(63, 26, 143, 0.05) 100%);
-    --glass-border: rgba(255, 255, 255, 0.1);
-    --glass-highlight: inset 0 1px 1px rgba(255, 255, 255, 0.2);
+    /* Superfícies de Vidro */
+    --glass-bg-heavy: rgba(10, 10, 15, 0.45);
+    --glass-bg-light: rgba(255, 255, 255, 0.03);
+    --glass-border-top: rgba(255, 255, 255, 0.15);
+    --glass-border-bot: rgba(63, 26, 143, 0.3);
     
-    /* Sombras Volumétricas */
-    --shadow-ambient: 0 20px 50px rgba(10, 5, 20, 0.5);
-    --shadow-neon: 0 0 30px rgba(31, 120, 209, 0.2), 0 0 60px rgba(63, 26, 143, 0.15);
+    /* Sombras e Profundidade */
+    --shadow-abyss: 0 30px 60px rgba(0, 0, 0, 0.6);
+    --shadow-glow: 0 0 40px rgba(31, 120, 209, 0.15);
     
-    /* Medidas Fluidas */
-    --profile-size: clamp(140px, 22vw, 220px);
+    /* Tipografia e Dimensões */
+    --profile-size: clamp(140px, 22vw, 210px);
     --name-size: clamp(3.2rem, 12vw, 5.5rem);
     --desc-size: clamp(0.95rem, 2.5vw, 1.15rem);
-    
-    /* Easing de Alta Performance (Apple-like) */
-    --ease-liquid: 0.6s cubic-bezier(0.16, 1, 0.3, 1);
-    --ease-bounce: 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+    --transition-liquid: 0.5s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 *, *::before, *::after {
@@ -45,90 +47,57 @@ html {
     -moz-osx-font-smoothing: grayscale;
 }
 
-/* --- O VÉU ATMOSFÉRICO --- */
 body {
     font-family: var(--font-body);
     min-height: 100vh;
     min-height: 100dvh;
     background: url('../imgs/bg-mobile.jpg') center / cover no-repeat fixed;
-    background-color: #05020a; /* Fundo base ultra-escuro */
+    background-color: #050505;
     position: relative;
     display: flex;
     align-items: center;
     justify-content: center;
     overflow-x: hidden;
-    color: var(--color-text-premium);
 }
 
-/* O véu sobre o fundo: mantém a arte visível, mas adiciona mistério e profundidade */
+/* O Véu Atmosférico - Preserva a imagem, mas a banha em mistério */
 body::before {
     content: '';
     position: fixed;
     inset: 0;
-    background: radial-gradient(circle at 50% 0%, rgba(31, 120, 209, 0.15), transparent 60%),
-                radial-gradient(circle at 50% 100%, rgba(63, 26, 143, 0.25), rgba(5, 2, 10, 0.6) 100%);
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
+    background: radial-gradient(circle at 50% 0%, rgba(31, 120, 209, 0.1) 0%, transparent 70%),
+                linear-gradient(180deg, rgba(63, 26, 143, 0.15) 0%, rgba(0, 0, 0, 0.85) 100%);
+    backdrop-filter: blur(8px) saturate(130%);
+    -webkit-backdrop-filter: blur(8px) saturate(130%);
     z-index: 0;
     pointer-events: none;
 }
 
-/* Luzes ocultas que respiram no fundo (Aurora digital) */
-body::after {
-    content: '';
-    position: fixed;
-    width: 200vw;
-    height: 200vh;
-    top: -50%;
-    left: -50%;
-    background: radial-gradient(circle at 50% 50%, rgba(31,120,209,0.03), transparent 40%);
-    animation: auroraBreathe 20s ease-in-out infinite alternate;
-    pointer-events: none;
-    z-index: 0;
+/* Fallback de emergência integrado às auroras */
+@keyframes emergencyVisible {
+    to { visibility: visible; opacity: 1; }
 }
+body { opacity: 0; animation: emergencyVisible 0.8s 0.2s forwards ease-in-out; }
 
-@keyframes auroraBreathe {
-    0% { transform: rotate(0deg) scale(0.8); opacity: 0.5; }
-    100% { transform: rotate(10deg) scale(1.1); opacity: 1; }
-}
-
-@keyframes emergencyVisible { to { visibility: visible; } }
-body { animation: emergencyVisible 0.1s 3s forwards; }
-
-/* Acessibilidade - Pulo de Navegação */
-.skip-link {
-    position: absolute;
-    top: -100px;
-    left: 20px;
-    background: var(--color-electric-blue);
-    color: #fff;
-    padding: 12px 24px;
-    z-index: 9999;
-    border-radius: 12px;
-    text-decoration: none;
-    font-weight: 700;
-    transition: top var(--ease-bounce);
-    box-shadow: var(--shadow-neon);
-}
-.skip-link:focus { top: 20px; }
-
-/* --- ESTRUTURA PRINCIPAL --- */
+/* =========================================
+   CONTAINERS & SUPERFÍCIES DE VIDRO
+   ========================================= */
 .container {
     position: relative;
     z-index: 1;
-    width: 88%;
+    width: 85%;
     max-width: 650px;
     display: flex;
     flex-direction: column;
     align-items: center;
     text-align: center;
-    gap: clamp(1.5rem, 4vw, 2.5rem);
-    padding: 5vh 0;
+    gap: clamp(1.2rem, 3.5vw, 2.5rem);
+    padding: 45px 0 5vh;
 }
 
-/* --- LENTES E CRISTAIS (Cards) --- */
+/* Vidro Premium com refração assimétrica */
 .profile-card-glass {
-    background: var(--glass-bg);
+    background: linear-gradient(135deg, var(--glass-bg-light) 0%, rgba(255,255,255,0) 100%);
     backdrop-filter: blur(24px);
     -webkit-backdrop-filter: blur(24px);
     border-radius: 40px;
@@ -138,54 +107,61 @@ body { animation: emergencyVisible 0.1s 3s forwards; }
     align-items: center;
     gap: 18px;
     width: 100%;
-    box-shadow: var(--shadow-ambient), var(--glass-highlight);
-    border: 1px solid rgba(63, 26, 143, 0.4);
+    /* Borda simulando espessura de vidro */
+    border: 1px solid transparent;
+    border-top-color: var(--glass-border-top);
+    border-left-color: rgba(255, 255, 255, 0.08);
+    border-bottom-color: var(--glass-border-bot);
+    border-right-color: rgba(63, 26, 143, 0.1);
+    box-shadow: var(--shadow-abyss), inset 0 1px 0 rgba(255,255,255,0.1);
     position: relative;
     overflow: hidden;
-    transition: transform var(--ease-liquid), box-shadow var(--ease-liquid);
 }
 
-/* Linha de energia invisível que cruza o card */
-.profile-card-glass::before {
+/* Brilho interno dinâmico no card */
+.profile-card-glass::after {
     content: '';
     position: absolute;
-    top: 0; left: -100%;
-    width: 50%; height: 1px;
-    background: linear-gradient(90deg, transparent, var(--color-electric-blue), transparent);
-    animation: energyLine 8s linear infinite;
-    opacity: 0.5;
+    top: -50%; left: -50%;
+    width: 200%; height: 200%;
+    background: radial-gradient(circle at 50% 50%, rgba(0, 229, 255, 0.03), transparent 60%);
+    animation: rotateGlow 15s linear infinite;
+    pointer-events: none;
 }
 
-@keyframes energyLine {
-    0% { left: -100%; }
-    20%, 100% { left: 200%; }
+@keyframes rotateGlow {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
 }
 
-/* --- A ESCULTURA DO PERFIL --- */
+/* =========================================
+   PERFIL: O ELEMENTO ESCULTÓRICO
+   ========================================= */
 .profile-img {
     width: var(--profile-size);
     height: var(--profile-size);
     border-radius: 50%;
     object-fit: cover;
-    display: block;
     background: #000;
-    /* Anéis de luz concêntricos simulando refração */
-    box-shadow: 
-        0 0 0 4px rgba(255,255,255,0.05),
-        0 0 20px rgba(31, 120, 209, 0.4),
-        0 0 60px rgba(63, 26, 143, 0.6),
-        inset 0 0 20px rgba(0,0,0,0.5);
-    border: 1px solid rgba(255,255,255,0.2);
-    transition: transform var(--ease-bounce), box-shadow var(--ease-liquid);
+    /* Anéis de refração e glowing organic */
+    border: none;
+    box-shadow: 0 0 0 2px rgba(255,255,255,0.05), 
+                0 0 0 8px rgba(31, 120, 209, 0.1),
+                0 0 0 16px rgba(63, 26, 143, 0.05),
+                0 15px 35px rgba(0,0,0,0.5),
+                inset 0 0 20px rgba(255,255,255,0.2);
     animation: levitate 6s ease-in-out infinite;
+    transition: transform var(--transition-liquid), box-shadow var(--transition-liquid);
+    position: relative;
+    z-index: 2;
 }
 
 .profile-img:hover {
     transform: scale(1.05) translateY(-5px);
-    box-shadow: 
-        0 0 0 2px rgba(255,255,255,0.2),
-        0 0 30px var(--color-electric-blue),
-        0 0 80px var(--color-deep-purple);
+    box-shadow: 0 0 0 2px rgba(255,255,255,0.2), 
+                0 0 0 10px rgba(0, 229, 255, 0.15),
+                0 0 0 20px rgba(31, 120, 209, 0.08),
+                0 20px 40px rgba(0,0,0,0.6);
 }
 
 @keyframes levitate {
@@ -193,9 +169,17 @@ body { animation: emergencyVisible 0.1s 3s forwards; }
     50% { transform: translateY(-8px); }
 }
 
-/* --- TIPOGRAFIA DE LUXO --- */
+/* =========================================
+   TIPOGRAFIA DE LUXO
+   ========================================= */
 .title-glass-wrapper {
-    padding: 10px 0;
+    background: rgba(0, 0, 0, 0.2);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-radius: 20px;
+    padding: 12px 28px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    box-shadow: inset 0 2px 15px rgba(255,255,255,0.02);
 }
 
 .name {
@@ -203,204 +187,167 @@ body { animation: emergencyVisible 0.1s 3s forwards; }
     font-weight: 500;
     font-size: var(--name-size);
     line-height: 1;
-    letter-spacing: -0.02em;
-    /* Efeito de prata líquida refletindo a luz ambiente */
-    background: linear-gradient(180deg, #ffffff 0%, #aab4d6 100%);
-    -webkit-background-clip: text;
+    /* Metal líquido no texto */
+    background: linear-gradient(
+        to right, 
+        #ffffff 20%, 
+        var(--color-silver-light) 40%, 
+        var(--color-cyan-glow) 60%, 
+        #ffffff 80%
+    );
+    background-size: 200% auto;
     color: transparent;
-    text-shadow: 0 15px 30px rgba(0,0,0,0.8); /* Mantém legibilidade contra fundos claros do vídeo/imagem */
-    position: relative;
+    -webkit-background-clip: text;
+    background-clip: text;
+    animation: textShine 8s linear infinite;
+    text-shadow: 0 4px 20px rgba(0,0,0,0.3);
 }
 
-/* Se houver coroa (👑) no texto, o drop-shadow no wrapper fará ela brilhar organicamente */
-.title-glass-wrapper {
-    filter: drop-shadow(0 0 15px rgba(255,215,0,0.15));
+@keyframes textShine {
+    to { background-position: 200% center; }
 }
 
 .desc-glass {
-    background: rgba(0, 0, 0, 0.2);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    border-radius: 20px;
-    padding: 12px 24px;
-    border: 1px solid rgba(255,255,255,0.05);
-    box-shadow: inset 0 2px 10px rgba(63, 26, 143, 0.1);
+    background: linear-gradient(180deg, rgba(255,255,255,0.05), transparent);
+    border-radius: 16px;
+    padding: 10px 20px;
+    border-top: 1px solid rgba(255,255,255,0.1);
 }
 
 .desc-text {
     font-weight: 400;
     font-size: var(--desc-size);
-    color: rgba(255, 255, 255, 0.85);
-    letter-spacing: 0.03em;
+    color: var(--color-silver-light);
+    letter-spacing: 0.5px;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.8);
     line-height: 1.5;
 }
 
-/* --- BOTÃO DE CHAMADA (O Objeto Magnético) --- */
+/* =========================================
+   BOTÃO CTA: NÚCLEO DE ENERGIA
+   ========================================= */
 .cta-button {
     display: flex;
     align-items: center;
     justify-content: center;
     width: 85%;
-    max-width: 420px;
-    height: 72px;
-    background: linear-gradient(135deg, var(--color-electric-blue), var(--color-deep-purple));
+    max-width: 440px;
+    height: 76px;
+    background: linear-gradient(135deg, var(--color-brand-blue), var(--color-brand-purple));
     color: #fff;
     font-weight: 600;
-    font-size: clamp(0.95rem, 3vw, 1.1rem);
-    letter-spacing: 0.2em;
+    font-size: clamp(1.05rem, 3vw, 1.25rem);
+    letter-spacing: 5px;
     text-transform: uppercase;
     text-decoration: none;
-    border-radius: 100px; /* Pílula perfeita */
-    box-shadow: 0 10px 30px rgba(31, 120, 209, 0.3), inset 0 2px 4px rgba(255,255,255,0.3);
-    border: 1px solid rgba(255,255,255,0.15);
-    cursor: pointer;
+    border-radius: 60px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    /* Sombras que imitam emissão de luz */
+    box-shadow: 0 10px 30px rgba(31, 120, 209, 0.4), inset 0 2px 2px rgba(255,255,255,0.3);
     position: relative;
     overflow: hidden;
-    transition: all var(--ease-bounce);
+    transition: all var(--transition-liquid);
     z-index: 2;
     -webkit-tap-highlight-color: transparent;
 }
 
-/* Reflexo interno dinâmico */
-.cta-button::after {
+.cta-button::before {
     content: '';
     position: absolute;
     top: 0; left: -100%;
-    width: 50%; height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+    width: 100%; height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
     transform: skewX(-20deg);
-    transition: left 0.7s cubic-bezier(0.19, 1, 0.22, 1);
+    transition: left 0.7s ease;
 }
 
 .cta-button:hover {
-    transform: translateY(-4px) scale(1.02);
-    box-shadow: 0 15px 40px rgba(31, 120, 209, 0.5), 0 0 20px rgba(63, 26, 143, 0.6);
-    border-color: rgba(255,255,255,0.4);
-    letter-spacing: 0.25em; /* Expansão sutil da tipografia */
+    transform: translateY(-3px) scale(1.01);
+    box-shadow: 0 15px 45px rgba(0, 229, 255, 0.4), inset 0 2px 2px rgba(255,255,255,0.5);
+    border-color: rgba(255,255,255,0.5);
 }
 
-.cta-button:hover::after { left: 150%; }
+.cta-button:hover::before {
+    left: 200%;
+}
 
 .cta-button:active {
-    transform: scale(0.97) translateY(0);
-    box-shadow: 0 5px 15px rgba(31, 120, 209, 0.3);
+    transform: scale(0.98);
 }
 
-.cta-button:focus-visible {
-    outline: 2px solid var(--color-electric-blue);
-    outline-offset: 6px;
-}
-
-.cta-button .ripple {
-    position: absolute;
-    border-radius: 50%;
-    background: radial-gradient(circle, rgba(255,255,255,0.8) 0%, transparent 70%);
-    transform: scale(0);
-    animation: ripple-liquid 0.8s cubic-bezier(0.16, 1, 0.3, 1);
-    pointer-events: none;
-    mix-blend-mode: overlay;
-}
-
-@keyframes ripple-liquid {
-    to { transform: scale(4); opacity: 0; }
-}
-
-/* --- TEXTO DE AVISO (HUD Sci-Fi Premium) --- */
 .warning-text {
-    font-family: monospace;
-    font-size: 0.75rem;
-    letter-spacing: 0.3em;
+    font-weight: 500;
+    font-size: 12px;
+    letter-spacing: 4px;
     text-transform: uppercase;
-    color: rgba(255,255,255,0.5);
+    color: rgba(255,255,255,0.6);
     background: rgba(0,0,0,0.3);
+    backdrop-filter: blur(8px);
     padding: 8px 20px;
-    border-radius: 8px;
-    border-bottom: 1px solid var(--color-deep-purple);
-    backdrop-filter: blur(4px);
-    -webkit-backdrop-filter: blur(4px);
-    transition: color var(--ease-liquid);
+    border-radius: 12px;
+    border: 1px solid rgba(255,255,255,0.05);
 }
-.warning-text:hover { color: rgba(255,255,255,0.9); }
 
-/* --- MODAL DE VIDRO FUMÊ --- */
+/* =========================================
+   MODAL DE VIDRO
+   ========================================= */
 .modal {
-    display: none;
-    position: fixed;
-    z-index: 1000;
-    inset: 0;
-    background-color: rgba(5, 2, 10, 0.7);
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
-    align-items: center;
-    justify-content: center;
+    display: none; position: fixed; z-index: 1000; inset: 0;
+    background-color: rgba(0,0,0,0.8);
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    align-items: center; justify-content: center;
 }
 .modal.active { display: flex; }
 
 .modal-content {
-    background: var(--glass-bg);
-    border: 1px solid var(--color-deep-purple);
-    border-radius: 30px;
-    padding: 40px 35px;
-    max-width: 420px;
-    width: 90%;
+    background: linear-gradient(135deg, rgba(31,31,40,0.9), rgba(15,15,20,0.95));
+    border: 1px solid var(--glass-border-bot);
+    box-shadow: var(--shadow-abyss), 0 0 50px rgba(63,26,143,0.3);
+    border-radius: 32px;
+    padding: 40px 30px;
+    max-width: 420px; width: 90%;
     text-align: center;
-    box-shadow: 0 30px 60px rgba(0,0,0,0.8), var(--glass-highlight);
-    animation: modalEmerge 0.5s cubic-bezier(0.16, 1, 0.3, 1);
-    position: relative;
-    overflow: hidden;
+    color: #fff;
+    animation: modalLiquidReveal 0.5s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-@keyframes modalEmerge {
-    0% { transform: scale(0.9) translateY(20px); opacity: 0; }
-    100% { transform: scale(1) translateY(0); opacity: 1; }
+@keyframes modalLiquidReveal {
+    0% { transform: scale(0.9) translateY(20px); opacity: 0; filter: blur(10px); }
+    100% { transform: scale(1) translateY(0); opacity: 1; filter: blur(0); }
 }
 
 .modal-content h2 {
     font-family: var(--font-display);
-    font-size: 2.2rem;
-    margin-bottom: 15px;
-    background: linear-gradient(135deg, #fff, var(--color-electric-blue));
-    -webkit-background-clip: text;
-    color: transparent;
+    font-size: 2.2rem; margin-bottom: 15px;
+    background: linear-gradient(to right, #fff, var(--color-cyan-glow));
+    -webkit-background-clip: text; color: transparent;
 }
-.modal-content p {
-    font-size: 0.95rem;
-    line-height: 1.6;
-    color: rgba(255,255,255,0.7);
-    margin-bottom: 30px;
-}
-.modal-content .cta-button {
-    width: 100%;
-    height: 60px;
-    font-size: 0.9rem;
-}
+.modal-content p { color: #a0a5b0; margin-bottom: 25px; line-height: 1.6; }
 
-/* --- RESPONSIVIDADE --- */
+/* =========================================
+   ACESSIBILIDADE E RESPONSIVO
+   ========================================= */
+.skip-link {
+    position: absolute; top: -100px; left: 20px;
+    background: #fff; color: #000; padding: 12px 24px;
+    z-index: 2000; border-radius: 8px; font-weight: bold;
+    transition: top 0.3s;
+}
+.skip-link:focus { top: 20px; }
+
 @media (max-width: 480px) {
     body { background: url('../imgs/bg-mobile.jpg') center / cover no-repeat fixed; }
-    .container { width: 92%; padding-top: 4vh; }
     .profile-card-glass { padding: 30px 20px; border-radius: 32px; }
-    .name { font-size: 2.8rem; }
-    .cta-button { height: 64px; font-size: 0.85rem; width: 100%; }
+    .cta-button { height: 68px; font-size: 0.9rem; }
 }
-
 @media (min-width: 481px) and (max-width: 1024px) {
     body { background: url('../imgs/bg-tablet.jpg') center / cover no-repeat fixed; }
-    .container { max-width: 520px; }
 }
-
 @media (min-width: 1025px) {
     body { background: url('../imgs/bg-desktop.jpg') center / cover no-repeat fixed; }
-    .container { max-width: 600px; }
-    .name { font-size: 5rem; }
 }
 
-/* Acessibilidade: Redução de movimento */
 @media (prefers-reduced-motion: reduce) {
-    *, ::before, ::after {
-        animation-duration: 0.01ms !important;
-        animation-iteration-count: 1 !important;
-        transition-duration: 0.01ms !important;
-        scroll-behavior: auto !important;
-    }
+    *, ::before, ::after { animation-play-state: paused !important; transition-duration: 0.01ms !important; }
 }

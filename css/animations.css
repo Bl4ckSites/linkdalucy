@@ -155,8 +155,7 @@ to   { opacity: 1; transform: perspective(600px) rotateY(0deg) scale(1); }
   position: relative;
   display: inline-block;
   white-space: nowrap;
-  color: inherit;
-  /* O texto está sempre visível, mas mascarado por clip-path */
+  /* cor herdada do .name (gradiente cinza/branco) */
   clip-path: inset(0 100% 0 0);
   animation: revealText 2s steps(30, end) forwards;
 }

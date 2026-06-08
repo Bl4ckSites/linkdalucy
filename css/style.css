@@ -161,7 +161,7 @@ body::before {
     font-weight: 500;
     font-size: var(--name-size);
     line-height: 1;
-    background: linear-gradient(to right, #ffffff 20%, #d0d8ff 40%, #a0d0ff 60%, #ffffff 80%);
+    background: linear-gradient(to right, #b0b0b0 0%, #d0d0d0 30%, #f0f0f0 60%, #ffffff 100%);
     background-size: 200% auto;
     color: transparent;
     -webkit-background-clip: text;

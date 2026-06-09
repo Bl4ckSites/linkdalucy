@@ -1,0 +1,328 @@
+/* ============================================================
+   BASE.CSS – Estilos compartilhados entre index.html e links.html
+   ============================================================ */
+
+/* ----- OCULTAÇÃO INICIAL (antiBot) ----- */
+.no-js-hide body {
+    visibility: hidden;
+}
+
+/* ----- RESET ----- */
+*, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html {
+    font-size: 16px;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    scroll-behavior: smooth;
+}
+
+/* ----- VARIÁVEIS GLOBAIS ----- */
+:root {
+    --font-body: 'Montserrat', sans-serif;
+    --font-display: 'Cormorant Garamond', serif;
+    --color-brand-blue: #1f78d1;
+    --color-brand-purple: #3f1a8f;
+    --color-cyan-glow: #00e5ff;
+    --color-silver-light: #e0e5ec;
+    --glass-bg-light: rgba(255, 255, 255, 0.03);
+    --glass-border-top: rgba(255, 255, 255, 0.15);
+    --glass-border-bot: rgba(63, 26, 143, 0.3);
+    --shadow-abyss: 0 30px 60px rgba(0, 0, 0, 0.6);
+    --transition-liquid: 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* ----- BODY ----- */
+body {
+    font-family: var(--font-body);
+    min-height: 100vh;
+    min-height: 100dvh;
+    background-color: #050505;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    overflow-x: hidden;
+    opacity: 1;
+    visibility: visible;
+}
+
+/* ----- SKIP LINK (acessibilidade) ----- */
+.skip-link {
+    position: absolute;
+    top: -100px;
+    left: 20px;
+    background: #fff;
+    color: #000;
+    padding: 12px 24px;
+    z-index: 2000;
+    border-radius: 8px;
+    font-weight: bold;
+    transition: top 0.3s;
+    text-decoration: none;
+}
+.skip-link:focus {
+    top: 20px;
+}
+
+/* ----- CONTAINER PRINCIPAL (compartilhado) ----- */
+.links-container,
+.container {
+    position: relative;
+    z-index: 1;
+    width: 95%;
+    max-width: 1100px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: clamp(1.5rem, 3vw, 2.5rem);
+    padding: clamp(2rem, 5vh, 4rem) 20px 80px;
+}
+
+/* ----- CARD DE VIDRO (compartilhado) ----- */
+.profile-card-glass {
+    background: linear-gradient(135deg, var(--glass-bg-light), transparent);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-radius: 40px;
+    padding: 35px 25px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 18px;
+    width: 100%;
+    border: 1px solid transparent;
+    border-top-color: var(--glass-border-top);
+    border-bottom-color: var(--glass-border-bot);
+    box-shadow: var(--shadow-abyss), inset 0 1px 0 rgba(255,255,255,0.1);
+}
+
+/* ----- IMAGEM DE PERFIL (compartilhado) ----- */
+.profile-img,
+.profile-img-links {
+    border-radius: 50%;
+    object-fit: cover;
+    background: #000;
+    box-shadow: 0 10px 35px rgba(0,0,0,0.5);
+    transition: transform var(--transition-liquid);
+}
+
+/* ----- TITLE WRAPPER (compartilhado) ----- */
+.title-glass-wrapper {
+    background: rgba(0, 0, 0, 0.2);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    border-radius: 20px;
+    padding: 12px 28px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    box-shadow: inset 0 2px 15px rgba(255,255,255,0.02);
+}
+
+/* ----- DESCRIÇÃO (compartilhado) ----- */
+.desc-glass {
+    background: rgba(255,255,255,.06);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    border-radius: 16px;
+    padding: 12px 18px;
+    display: inline-block;
+    border: 1px solid rgba(255,255,255,.08);
+}
+.desc-text {
+    font-weight: 500;
+    font-size: clamp(0.95rem, 2.5vw, 1.15rem);
+    color: #fff;
+    text-shadow: 0px 2px 10px rgba(0,0,0,.8);
+    line-height: 1.5;
+    max-width: 90%;
+    margin: 0;
+}
+
+/* ----- BOTÃO CTA (compartilhado) ----- */
+.cta-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 85%;
+    max-width: 440px;
+    height: 76px;
+    background: linear-gradient(135deg, var(--color-brand-blue), var(--color-brand-purple));
+    color: #fff;
+    font-weight: 600;
+    font-size: clamp(1.05rem, 3vw, 1.25rem);
+    letter-spacing: 5px;
+    text-transform: uppercase;
+    text-decoration: none;
+    border-radius: 60px;
+    border: 1px solid rgba(255,255,255,0.2);
+    box-shadow: 0 10px 30px rgba(31,120,209,0.4);
+    cursor: pointer;
+    transition: all var(--transition-liquid);
+}
+.cta-button:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 15px 45px rgba(0,229,255,0.4);
+}
+.cta-button:active {
+    transform: scale(0.98);
+}
+
+/* ----- ÍCONES SOCIAIS (compartilhado) ----- */
+.social-icons {
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-top: 8px;
+}
+.social-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.03);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    border: 1px solid rgba(255,255,255,0.1);
+    color: #fff;
+    text-decoration: none;
+    transition: transform 0.3s, box-shadow 0.3s, background 0.3s;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+}
+.social-icon svg {
+    width: 22px;
+    height: 22px;
+    transition: transform 0.3s;
+}
+.social-icon:hover {
+    transform: translateY(-5px);
+    background: linear-gradient(135deg, var(--color-brand-blue), var(--color-brand-purple));
+    box-shadow: 0 10px 25px rgba(0,229,255,0.4);
+}
+.social-icon:hover svg {
+    transform: scale(1.15);
+}
+
+/* ----- MODAL (compartilhado) ----- */
+.modal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.8);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    z-index: 1000;
+    align-items: center;
+    justify-content: center;
+}
+.modal.active {
+    display: flex;
+}
+.modal-content {
+    background: rgba(20,20,30,0.9);
+    border: 1px solid var(--glass-border-bot);
+    border-radius: 32px;
+    padding: 40px 30px;
+    max-width: 420px;
+    width: 90%;
+    text-align: center;
+    color: #fff;
+}
+
+/* ----- TEXTO ACESSÍVEL OCULTO ----- */
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0,0,0,0);
+    border: 0;
+}
+
+/* ----- PREFERS-REDUCED-MOTION (global) ----- */
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        animation: none !important;
+        transition: none !important;
+    }
+    .reveal-el,
+    .fade-in-scale,
+    .fade-in-up,
+    .page-transition-in,
+    .page-transition-out {
+        opacity: 1 !important;
+        transform: none !important;
+        visibility: visible !important;
+    }
+    .typewriter {
+        clip-path: none !important;
+        animation: none !important;
+    }
+    .typewriter::after {
+        display: none;
+    }
+}
+
+/* ============================================================
+   OTIMIZAÇÕES RESPONSIVAS
+   ============================================================ */
+
+/* ----- TABLET (768px - 1199px) – redução moderada ----- */
+@media (min-width: 768px) and (max-width: 1199px) {
+    .profile-card-glass {
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+    }
+    .cta-button {
+        box-shadow: 0 8px 24px rgba(31,120,209,0.35);
+    }
+    .social-icon {
+        backdrop-filter: blur(4px);
+        -webkit-backdrop-filter: blur(4px);
+    }
+    .modal {
+        backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px);
+    }
+    .desc-glass {
+        backdrop-filter: blur(3px);
+        -webkit-backdrop-filter: blur(3px);
+    }
+}
+
+/* ----- MOBILE (até 767px) – redução suave ----- */
+@media (max-width: 767px) {
+    .profile-card-glass {
+        backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px);
+        border-radius: 32px;
+        padding: 25px 20px;
+    }
+    .title-glass-wrapper {
+        backdrop-filter: blur(4px);
+        -webkit-backdrop-filter: blur(4px);
+    }
+    .desc-glass {
+        backdrop-filter: blur(2px);
+        -webkit-backdrop-filter: blur(2px);
+    }
+    .social-icon {
+        backdrop-filter: blur(3px);
+        -webkit-backdrop-filter: blur(3px);
+    }
+    .modal {
+        backdrop-filter: blur(6px);
+        -webkit-backdrop-filter: blur(6px);
+    }
+    .cta-button {
+        height: 68px;
+        font-size: 0.9rem;
+    }
+}

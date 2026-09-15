@@ -257,3 +257,18 @@ body::before {
         font-size: 0.82rem;
     }
 }
+
+/* ============================================================
+   REDE DE SEGURANÇA — mesmo que sobre um div aninhado no HTML,
+   ele é ignorado no layout
+   ============================================================ */
+.image-buttons-list .image-buttons-list {
+    display: contents;
+}
+
+/* Garantia extra: todo card tem exatamente o mesmo tamanho */
+.image-buttons-list > .image-button {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+}

@@ -3,15 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-VBFN3FVBM4"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
 
-  gtag('config', 'G-VBFN3FVBM4');
-</script>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-VBFN3FVBM4"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-VBFN3FVBM4');
+    </script>
+
     <!-- SEO -->
     <title>Luciana Lima</title>
     <meta name="description" content="Conteúdos exclusivos da Luciana Lima. Acesse com segurança.">
@@ -71,6 +72,7 @@
     <link rel="stylesheet" href="css/base.css">
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/animations.css">
+    <link rel="stylesheet" href="css/links.css">
 </head>
 <body>
     <noscript>
@@ -83,22 +85,110 @@
     <a href="#" id="hp-link" style="display:none;" aria-hidden="true">.</a>
 
     <main class="container page-transition-in" id="main-content" role="main">
+
+        <!-- ===== PERFIL ===== -->
         <div class="profile-card-glass fade-in-scale" style="--delay: 0.1s;">
             <div class="profile-wrapper" role="img" aria-label="Foto de perfil de Luciana Lima">
-                <img src="imgs/profile-index-desktop.avif" alt="Luciana Lima" class="profile-img profile-premium spin-reveal" width="220" height="220" loading="eager" data-responsive-img="index">
+                <img src="imgs/profile-index-desktop.avif" alt="Luciana Lima"
+                     class="profile-img profile-premium spin-reveal"
+                     width="220" height="220" loading="eager" data-responsive-img="index">
             </div>
+
             <div class="title-glass-wrapper fade-in-up" style="--delay: 0.3s;">
                 <h1 class="name typewriter">Luciana Lima</h1>
             </div>
+
             <div class="desc-glass fade-in-up" style="--delay: 0.5s;">
                 <p class="desc-text">Tudo de maravilhoso te espera aqui ✨</p>
             </div>
         </div>
 
-        <button id="ctaButton" class="cta-button hover-lift click-press btn-ripple fade-in-scale" aria-label="Quero ouvir mais" style="--delay: 0.7s;">QUERO OUVIR MAIS</button>
-        <p class="warning-text fade-in-up" style="--delay: 0.9s;">CONTEÚDO EXCLUSIVO — ACESSO SEGURO</p>
+        <!-- ===== CARDS DE LINKS (3 ativos + ocultos preservados) ===== -->
+        <div class="image-buttons-list">
+
+            <!-- CARD 1 — FATAL FANS (destaque: levemente maior no mobile) -->
+            <a href="https://fatalfans.com/lucysafadinha" target="_blank" rel="noopener noreferrer"
+               class="image-button image-button--featured reveal-el"
+               data-link="fatalfans" aria-label="Conteúdo exclusivo no FatalFans" data-delay="4">
+                <img src="imgs/fatalfans.png" alt="Conteúdo Exclusivo" loading="lazy">
+            </a>
+
+            <!-- CARD 2 — PRÉVIAS GRÁTIS (Telegram) -->
+            <a href="https://t.me/+PpgYUi67ciNiYzU5" target="_blank" rel="noopener noreferrer"
+               class="image-button reveal-el"
+               data-link="previas-gratis" aria-label="Prévias grátis no Telegram" data-delay="4">
+                <img src="cards/previas-gratis.avif" alt="Prévias Grátis" loading="lazy">
+            </a>
+
+            <!-- CARD 3 — PRIVACY VIP -->
+            <a href="https://privacy.com.br/@Lucysafadinha" target="_blank" rel="noopener noreferrer"
+               class="image-button reveal-el"
+               data-link="privacy" aria-label="Plataforma exclusiva Privacy VIP" data-delay="5">
+                <img src="cards/privacy.avif" alt="Plataforma Exclusiva" loading="lazy">
+            </a>
+
+            <!-- ============================================================
+                 CARDS OCULTOS (preservados — basta descomentar para reativar)
+                 ============================================================ -->
+
+            <!-- PRIVACY GRÁTIS
+            <a href="https://privacy.com.br/@Lucylimagratis" target="_blank" rel="noopener noreferrer"
+               class="image-button reveal-el" data-link="privacy"
+               aria-label="Plataforma exclusiva" data-delay="5">
+                <img src="cards/privacy-gratis.avif" alt="Plataforma Exclusiva" loading="lazy">
+            </a>
+            -->
+
+            <!-- TELEGRAM VIP
+            <a href="https://t.me/Lucydopriv_bot" target="_blank" rel="noopener noreferrer"
+               class="image-button reveal-el" data-link="telegram-vip"
+               aria-label="Acesso VIP" data-delay="6">
+                <img src="cards/telegram-vip.avif" alt="Acesso VIP" loading="lazy">
+            </a>
+            -->
+
+            <!-- CONTOS ERÓTICOS
+            <a href="https://www.casadoscontos.com.br/perfil/308907" target="_blank" rel="noopener noreferrer"
+               class="image-button reveal-el" data-link="contos-exclusivos"
+               aria-label="Histórias exclusivas" data-delay="8">
+                <img src="cards/contos-eroticos.avif" alt="Histórias Exclusivas" loading="lazy">
+            </a>
+            -->
+
+            <!-- INSTAGRAM
+            <a href="https://www.instagram.com/lucyfadinha_?igsh=MTh1MGdsZ3NjcHo5aA%3D%3D&utm_source=qr"
+               target="_blank" rel="noopener noreferrer"
+               class="image-button reveal-el" data-link="instagram"
+               aria-label="Instagram" data-delay="9">
+                <img src="cards/instagram.avif" alt="Instagram" loading="lazy">
+            </a>
+            -->
+
+        </div>
+
+        <!-- ===== CTA ===== -->
+        <button id="ctaButton"
+                class="cta-button hover-lift click-press btn-ripple fade-in-scale"
+                aria-label="Quero ouvir mais" style="--delay: 0.7s;">
+            QUERO OUVIR MAIS
+        </button>
+
+        <p class="warning-text fade-in-up" style="--delay: 0.9s;">
+            CONTEÚDO EXCLUSIVO — ACESSO SEGURO
+        </p>
+
+        <!-- ===== BOTÃO VOLTAR AO INÍCIO (fixo, centralizado embaixo) ===== -->
+        <a href="#main-content" class="back-to-top" aria-label="Voltar ao início">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                 stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M12 19V5M5 12l7-7 7 7"/>
+            </svg>
+            <span>Voltar ao início</span>
+        </a>
+
     </main>
 
+    <!-- ===== MODAL ===== -->
     <div id="verifyModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
         <div class="modal-content">
             <h2 id="modalTitle">Confirmação</h2>

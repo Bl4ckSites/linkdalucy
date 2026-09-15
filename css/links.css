@@ -321,3 +321,40 @@ body::before {
         transform: translateY(-8px) scale(1.02);
     }
 }
+
+/* ============================================================
+   BLINDAGEM — garante que o grid ocupe toda a largura disponível
+   e que TODOS os cards tenham o mesmo tamanho
+   ============================================================ */
+
+/* 1) Grid se estica, ignorando align-items:center do .container */
+.container > .image-buttons-list,
+.links-container > .image-buttons-list {
+    align-self: stretch;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+/* 2) Todos os cards travados no mesmo tamanho */
+.image-buttons-list .image-button {
+    width: 100%;
+    max-width: 100%;
+    aspect-ratio: 4 / 3;      /* desktop/tablet */
+    overflow: hidden;
+    display: block;
+}
+
+.image-buttons-list .image-button img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;        /* 👈 impede distorção independente do formato .avif/.png */
+    display: block;
+}
+
+/* Mobile: mantém 1 por linha com proporção mais larga */
+@media (max-width: 767px) {
+    .image-buttons-list .image-button {
+        aspect-ratio: 2.2 / 1;
+        max-width: 440px;
+    }
+}

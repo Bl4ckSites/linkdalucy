@@ -296,3 +296,28 @@ body::before {
         aspect-ratio: 2.2 / 1; /* Mantém a proporção original no celular */
     }
 }
+
+/* ----- DESTAQUE: FatalFans levemente maior no mobile ----- */
+@media (max-width: 767px) {
+    .image-button--featured {
+        /* ocupa toda a largura disponível e cresce um pouco em altura */
+        max-width: 100%;
+        aspect-ratio: 2 / 1;      /* mais "alto" que os outros (2.2/1) */
+        transform: scale(1.03);   /* leve destaque visual */
+        transform-origin: center;
+    }
+    .image-button--featured:hover {
+        transform: translateY(-4px) scale(1.05);
+    }
+}
+
+/* No desktop, todos os 3 ficam do mesmo tamanho */
+@media (min-width: 1025px) {
+    .image-button--featured {
+        transform: none;          /* remove o destaque do mobile */
+        aspect-ratio: 4 / 3;      /* igual aos outros */
+    }
+    .image-button--featured:hover {
+        transform: translateY(-8px) scale(1.02);
+    }
+}

@@ -212,3 +212,87 @@ body::before {
         font-size: 0.82rem;
     }
 }
+
+
+/* ============================================================
+   LISTA DE CARDS — 3 cards
+   Mobile: 1 coluna   |   Desktop: 3 colunas
+   ============================================================ */
+.image-buttons-list {
+    display: grid;
+    /* Mobile: 1 coluna */
+    grid-template-columns: 1fr;
+    gap: 24px;
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 16px;
+    box-sizing: border-box;
+}
+
+.image-button {
+    width: 100%;
+    /* Força todos os cards a terem a mesma proporção */
+    aspect-ratio: 2.2 / 1; 
+    border-radius: var(--card-radius);
+    overflow: hidden;
+    background: rgba(15, 15, 20, 0.2);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    border: 1px solid rgba(255,255,255,0.06);
+    box-shadow: 0 15px 35px rgba(0,0,0,0.4);
+    transition: transform 0.3s, box-shadow 0.3s, border-color 0.3s;
+    text-decoration: none;
+    position: relative;
+    display: block; /* Garante que o link se comporte como bloco */
+}
+
+.image-button img {
+    width: 100%;
+    height: 100%;
+    /* O object-fit: cover é CRUCIAL para imagens de tamanhos diferentes não distorcerem */
+    object-fit: cover; 
+    display: block;
+    filter: saturate(0.8) brightness(0.9);
+    transition: filter 0.3s;
+}
+
+.image-button:hover {
+    transform: translateY(-8px) scale(1.02);
+    border-color: var(--cyan);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.6), 0 0 30px rgba(0,229,255,0.2);
+}
+.image-button:hover img {
+    filter: saturate(1.1) brightness(1);
+}
+
+/* ----- TABLET: 2 colunas ----- */
+@media (min-width: 481px) and (max-width: 1024px) {
+    .image-buttons-list {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 22px;
+    }
+}
+
+/* ----- DESKTOP: 3 colunas (3 cards lado a lado) ----- */
+@media (min-width: 1025px) {
+    .image-buttons-list {
+        /* O minmax(0, 1fr) é o segredo para as colunas ficarem exatamente do mesmo tamanho */
+        grid-template-columns: repeat(3, minmax(0, 1fr)); 
+        gap: 30px;
+    }
+    .image-button {
+        aspect-ratio: 4 / 3; /* Proporção mais quadrada para 3 colunas */
+    }
+}
+
+/* ----- MOBILE (até 480px) ----- */
+@media (max-width: 480px) {
+    .image-buttons-list {
+        grid-template-columns: 1fr; /* Garante 1 embaixo do outro */
+    }
+    .image-button {
+        max-width: 100%;
+        aspect-ratio: 2.2 / 1; /* Mantém a proporção original no celular */
+    }
+}

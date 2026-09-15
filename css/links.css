@@ -163,36 +163,3 @@ body::before {
         50% { transform: translateY(-3px); filter: drop-shadow(0 0 15px rgba(0,229,255,0.3)); }
     }
 }
-
-
-
-
-
-
-/* ============================================================
-   AJUSTE FINAL — 3 colunas iguais, sem faixa preta, proporção larga
-   ============================================================ */
-
-/* 1) Remove a faixa/borda escura do card */
-.image-button {
-    background: transparent;
-    border: none;
-    aspect-ratio: 2.1 / 1;   /* proporção larga que combina com as artes */
-}
-
-/* 2) Desktop: 3 colunas exatamente iguais, cards esticados */
-@media (min-width: 1025px) {
-    .image-buttons-list {
-        /* minmax(0, 1fr) impede que a imagem grande "empurre" a coluna */
-        grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
-        /* estica os cards para preencherem a célula inteira */
-        justify-items: stretch !important;
-        align-items: stretch;
-    }
-
-    .image-button {
-        width: 100% !important;
-        max-width: 100% !important;
-        aspect-ratio: 2.1 / 1 !important;
-    }
-}

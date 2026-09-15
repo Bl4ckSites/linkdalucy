@@ -5,27 +5,22 @@
 /* ----- VARIÁVEIS EXCLUSIVAS ----- */
 :root {
     --profile-size-links: clamp(120px, 20vw, 180px);
-    --name-size-links:    clamp(2.8rem, 10vw, 4rem);
-    --card-radius:        28px;
+    --name-size-links: clamp(2.8rem, 10vw, 4rem);
+    --card-radius: 28px;
 }
 
 /* ----- BODY (links) ----- */
 body {
     background: #000;
-    /* espaço para o botão "Voltar ao início" não cobrir o último card */
-    padding-bottom: 110px;
 }
 
-/* ============================================================
-   FUNDO EM VÍDEO
-   ============================================================ */
+/* ----- FUNDO EM VÍDEO ----- */
 .video-background {
     position: fixed;
     inset: 0;
     z-index: -2;
     overflow: hidden;
 }
-
 .video-mobile,
 .video-tablet,
 .video-desktop {
@@ -40,235 +35,295 @@ body {
     opacity: 0;
     transition: opacity 1s ease;
 }
-
 .video-mobile.loaded,
 .video-tablet.loaded,
 .video-desktop.loaded {
     opacity: 1;
 }
 
-@media (max-width: 480px)                         { .video-mobile  { display: block; } }
-@media (min-width: 481px) and (max-width: 1024px) { .video-tablet  { display: block; } }
-@media (min-width: 1025px)                        { .video-desktop { display: block; } }
+@media (max-width: 480px) { .video-mobile { display: block; } }
+@media (min-width: 481px) and (max-width: 1024px) { .video-tablet { display: block; } }
+@media (min-width: 1025px) { .video-desktop { display: block; } }
 
 body::before {
     content: '';
     position: fixed;
     inset: 0;
-    background:
-        radial-gradient(ellipse at top, rgba(31,120,209,0.1), transparent 60%),
-        linear-gradient(to bottom, rgba(0,0,0,0.2), rgba(0,0,0,0.7));
+    background: radial-gradient(ellipse at top, rgba(31,120,209,0.1), transparent 60%),
+                linear-gradient(to bottom, rgba(0,0,0,0.2), rgba(0,0,0,0.7));
     backdrop-filter: blur(3px);
     -webkit-backdrop-filter: blur(3px);
     z-index: -1;
 }
 
-/* ============================================================
-   FOTO DE PERFIL (links)
-   ============================================================ */
+/* ----- FOTO DE PERFIL (links) ----- */
 .profile-img-links {
-    width:  var(--profile-size-links);
+    width: var(--profile-size-links);
     height: var(--profile-size-links);
     box-shadow: 0 0 0 1px rgba(255,255,255,0.1), 0 10px 30px rgba(0,0,0,0.6);
     animation: floatHologram 7s ease-in-out infinite;
 }
 
 @keyframes floatHologram {
-    0%, 100% { transform: translateY(0) scale(1);       filter: drop-shadow(0 0 15px rgba(31,120,209,0.2)); }
-    50%      { transform: translateY(-5px) scale(1.02); filter: drop-shadow(0 0 25px rgba(0,229,255,0.4)); }
+    0%, 100% { transform: translateY(0) scale(1); filter: drop-shadow(0 0 15px rgba(31,120,209,0.2)); }
+    50% { transform: translateY(-5px) scale(1.02); filter: drop-shadow(0 0 25px rgba(0,229,255,0.4)); }
 }
 
-/* ============================================================
-   NOME (links)
-   ============================================================ */
+/* ----- NOME (links) ----- */
 .name-links {
     font-family: var(--font-display);
     font-size: var(--name-size-links);
     background: linear-gradient(to bottom right, #fff, var(--color-cyan-glow));
     -webkit-background-clip: text;
-    background-clip: text;
     color: transparent;
     text-shadow: 0 10px 30px rgba(0,229,255,0.2);
 }
 
-/* ============================================================
-   GRADE DE CARDS — versão limpa
-   Mobile: 1 coluna   |   Desktop: 3 colunas
-   Todas as imagens do mesmo tamanho, sem corte
-   ============================================================ */
-
+/* ----- CARDS DE IMAGEM ----- */
 .image-buttons-list {
     display: grid;
-    grid-template-columns: 1fr;              /* MOBILE: 1 por linha */
-    gap: 20px;
+    grid-template-columns: 1fr;
+    gap: 30px;
     width: 100%;
-    max-width: 1100px;
-    margin: 0 auto;
-    padding: 0;
-    align-self: stretch;                     /* ignora align-items:center do .container */
-    box-sizing: border-box;
+    justify-items: center;
 }
 
-/* ---- CARD ---- */
 .image-button {
-    display: flex;                            /* centraliza a imagem dentro do card */
-    align-items: center;
-    justify-content: center;
     width: 100%;
-    max-width: 100%;
-    aspect-ratio: 16 / 10;                    /* mesma proporção para TODOS os cards */
+    max-width: 420px;
+    aspect-ratio: 2.2 / 1;
     border-radius: var(--card-radius);
     overflow: hidden;
-    background: rgba(10, 10, 15, 0.5);        /* fundo escuro onde sobrar espaço */
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
+    background: rgba(15, 15, 20, 0.2);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    border: 1px solid rgba(255,255,255,0.06);
+    box-shadow: 0 15px 35px rgba(0,0,0,0.4);
+    transition: transform 0.3s, box-shadow 0.3s;
     text-decoration: none;
     position: relative;
-    transition: transform 0.3s, box-shadow 0.3s, border-color 0.3s;
 }
 
-/* ---- IMAGEM ---- */
 .image-button img {
     width: 100%;
     height: 100%;
-    object-fit: contain;                      /* 👈 NÃO corta a imagem */
-    object-position: center;
-    display: block;
-    filter: saturate(0.9) brightness(0.95);
-    transition: transform 0.3s, filter 0.3s;
+    object-fit: cover;
+    filter: saturate(0.8) brightness(0.9);
+    transition: filter 0.3s;
 }
 
-/* ---- HOVER ---- */
 .image-button:hover {
-    transform: translateY(-6px);
+    transform: translateY(-8px) scale(1.02);
     border-color: var(--color-cyan-glow);
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6),
-                0 0 25px rgba(0, 229, 255, 0.2);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.6), 0 0 30px rgba(0,229,255,0.2);
 }
 
 .image-button:hover img {
-    transform: scale(1.03);
-    filter: saturate(1.05) brightness(1);
+    filter: saturate(1.1) brightness(1);
 }
 
-/* ============================================================
-   BREAKPOINTS
-   ============================================================ */
-
-/* ---------- MOBILE (até 767px) — 1 coluna ---------- */
-@media (max-width: 767px) {
+/* ----- RESPONSIVO ----- */
+@media (min-width: 481px) and (max-width: 1024px) {
     .image-buttons-list {
-        grid-template-columns: 1fr;
-        gap: 16px;
+        grid-template-columns: repeat(2, 1fr);
     }
-
     .image-button {
-        aspect-ratio: 16 / 10;
+        aspect-ratio: 2/1;
     }
+}
 
+@media (min-width: 1025px) {
+    .image-buttons-list {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 40px;
+    }
+    .image-button {
+        max-width: 100%;
+        aspect-ratio: 16/9;
+    }
+}
+
+/* ----- OTIMIZAÇÕES MOBILE (até 767px) ----- */
+@media (max-width: 767px) {
     body::before {
         backdrop-filter: blur(2px);
         -webkit-backdrop-filter: blur(2px);
     }
-
     .image-button {
         backdrop-filter: blur(2px);
         -webkit-backdrop-filter: blur(2px);
         box-shadow: 0 10px 25px rgba(0,0,0,0.3);
     }
-
     .image-button:hover {
         transform: translateY(-4px);
-        box-shadow: 0 12px 28px rgba(0,0,0,0.4),
-                    0 0 15px rgba(0,229,255,0.15);
+        box-shadow: 0 12px 28px rgba(0,0,0,0.4), 0 0 15px rgba(0,229,255,0.15);
     }
-
     @keyframes floatHologram {
-        0%, 100% { transform: translateY(0);    filter: drop-shadow(0 0 8px  rgba(31,120,209,0.15)); }
-        50%      { transform: translateY(-3px); filter: drop-shadow(0 0 15px rgba(0,229,255,0.3)); }
+        0%, 100% { transform: translateY(0); filter: drop-shadow(0 0 8px rgba(31,120,209,0.15)); }
+        50% { transform: translateY(-3px); filter: drop-shadow(0 0 15px rgba(0,229,255,0.3)); }
     }
-}
-
-/* ---------- DESKTOP (a partir de 768px) — 3 colunas ---------- */
-@media (min-width: 768px) {
-    .image-buttons-list {
-        grid-template-columns: repeat(3, minmax(0, 1fr)); /* 3 colunas exatamente iguais */
-        gap: 24px;
-    }
-
-    .image-button {
-        aspect-ratio: 4 / 3;                  /* altura um pouco maior p/ caber a arte */
-    }
-}
-
-/* ============================================================
-   BOTÃO "VOLTAR AO INÍCIO" (fixo, centralizado embaixo)
+}/* ============================================================
+   LINKS.CSS – Estilos exclusivos da Página de Links (links.html)
    ============================================================ */
-.back-to-top {
+
+/* ----- VARIÁVEIS EXCLUSIVAS ----- */
+:root {
+    --profile-size-links: clamp(120px, 20vw, 180px);
+    --name-size-links: clamp(2.8rem, 10vw, 4rem);
+    --card-radius: 28px;
+}
+
+/* ----- BODY (links) ----- */
+body {
+    background: #000;
+}
+
+/* ----- FUNDO EM VÍDEO ----- */
+.video-background {
     position: fixed;
-    bottom: 24px;
+    inset: 0;
+    z-index: -2;
+    overflow: hidden;
+}
+.video-mobile,
+.video-tablet,
+.video-desktop {
+    display: none;
+    position: absolute;
+    top: 50%;
     left: 50%;
-    transform: translateX(-50%);
-    z-index: 100;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    padding: 12px 22px;
-    font-family: var(--font-display, system-ui, sans-serif);
-    font-size: 0.9rem;
-    font-weight: 600;
-    letter-spacing: 0.5px;
-    color: #fff;
-    background: rgba(15, 15, 20, 0.55);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    border: 1px solid rgba(0, 229, 255, 0.25);
-    border-radius: 999px;
-    text-decoration: none;
-    cursor: pointer;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), 0 0 20px rgba(0, 229, 255, 0.1);
-    transition: transform 0.3s, box-shadow 0.3s, border-color 0.3s, background 0.3s;
-    white-space: nowrap;
+    min-width: 100%;
+    min-height: 100%;
+    transform: translate(-50%, -50%) scale(1.05);
+    object-fit: cover;
+    opacity: 0;
+    transition: opacity 1s ease;
+}
+.video-mobile.loaded,
+.video-tablet.loaded,
+.video-desktop.loaded {
+    opacity: 1;
 }
 
-.back-to-top:hover,
-.back-to-top:focus-visible {
-    transform: translateX(-50%) translateY(-4px);
-    border-color: var(--color-cyan-glow);
-    background: rgba(15, 15, 20, 0.75);
-    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.6),
-                0 0 30px rgba(0, 229, 255, 0.35);
-    outline: none;
+@media (max-width: 480px) { .video-mobile { display: block; } }
+@media (min-width: 481px) and (max-width: 1024px) { .video-tablet { display: block; } }
+@media (min-width: 1025px) { .video-desktop { display: block; } }
+
+body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: radial-gradient(ellipse at top, rgba(31,120,209,0.1), transparent 60%),
+                linear-gradient(to bottom, rgba(0,0,0,0.2), rgba(0,0,0,0.7));
+    backdrop-filter: blur(3px);
+    -webkit-backdrop-filter: blur(3px);
+    z-index: -1;
 }
 
-.back-to-top svg {
-    flex-shrink: 0;
+/* ----- FOTO DE PERFIL (links) ----- */
+.profile-img-links {
+    width: var(--profile-size-links);
+    height: var(--profile-size-links);
+    box-shadow: 0 0 0 1px rgba(255,255,255,0.1), 0 10px 30px rgba(0,0,0,0.6);
+    animation: floatHologram 7s ease-in-out infinite;
 }
 
-@media (max-width: 767px) {
-    body {
-        padding-bottom: 96px;
-    }
-
-    .back-to-top {
-        bottom: 16px;
-        padding: 10px 18px;
-        font-size: 0.82rem;
-    }
+@keyframes floatHologram {
+    0%, 100% { transform: translateY(0) scale(1); filter: drop-shadow(0 0 15px rgba(31,120,209,0.2)); }
+    50% { transform: translateY(-5px) scale(1.02); filter: drop-shadow(0 0 25px rgba(0,229,255,0.4)); }
 }
 
-/* ============================================================
-   REDE DE SEGURANÇA — mesmo que sobre um div aninhado no HTML,
-   ele é ignorado no layout
-   ============================================================ */
-.image-buttons-list .image-buttons-list {
-    display: contents;
+/* ----- NOME (links) ----- */
+.name-links {
+    font-family: var(--font-display);
+    font-size: var(--name-size-links);
+    background: linear-gradient(to bottom right, #fff, var(--color-cyan-glow));
+    -webkit-background-clip: text;
+    color: transparent;
+    text-shadow: 0 10px 30px rgba(0,229,255,0.2);
 }
 
-/* Garantia extra: todo card tem exatamente o mesmo tamanho */
-.image-buttons-list > .image-button {
+/* ----- CARDS DE IMAGEM ----- */
+.image-buttons-list {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 30px;
     width: 100%;
-    max-width: 100%;
-    min-width: 0;
+    justify-items: center;
+}
+
+.image-button {
+    width: 100%;
+    max-width: 420px;
+    aspect-ratio: 2.2 / 1;
+    border-radius: var(--card-radius);
+    overflow: hidden;
+    background: rgba(15, 15, 20, 0.2);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    border: 1px solid rgba(255,255,255,0.06);
+    box-shadow: 0 15px 35px rgba(0,0,0,0.4);
+    transition: transform 0.3s, box-shadow 0.3s;
+    text-decoration: none;
+    position: relative;
+}
+
+.image-button img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    filter: saturate(0.8) brightness(0.9);
+    transition: filter 0.3s;
+}
+
+.image-button:hover {
+    transform: translateY(-8px) scale(1.02);
+    border-color: var(--color-cyan-glow);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.6), 0 0 30px rgba(0,229,255,0.2);
+}
+
+.image-button:hover img {
+    filter: saturate(1.1) brightness(1);
+}
+
+/* ----- RESPONSIVO ----- */
+@media (min-width: 481px) and (max-width: 1024px) {
+    .image-buttons-list {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    .image-button {
+        aspect-ratio: 2/1;
+    }
+}
+
+@media (min-width: 1025px) {
+    .image-buttons-list {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 40px;
+    }
+    .image-button {
+        max-width: 100%;
+        aspect-ratio: 16/9;
+    }
+}
+
+/* ----- OTIMIZAÇÕES MOBILE (até 767px) ----- */
+@media (max-width: 767px) {
+    body::before {
+        backdrop-filter: blur(2px);
+        -webkit-backdrop-filter: blur(2px);
+    }
+    .image-button {
+        backdrop-filter: blur(2px);
+        -webkit-backdrop-filter: blur(2px);
+        box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+    }
+    .image-button:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 12px 28px rgba(0,0,0,0.4), 0 0 15px rgba(0,229,255,0.15);
+    }
+    @keyframes floatHologram {
+        0%, 100% { transform: translateY(0); filter: drop-shadow(0 0 8px rgba(31,120,209,0.15)); }
+        50% { transform: translateY(-3px); filter: drop-shadow(0 0 15px rgba(0,229,255,0.3)); }
+    }
 }

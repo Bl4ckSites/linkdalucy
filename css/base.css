@@ -326,11 +326,3 @@ body {
         font-size: 0.9rem;
     }
 }
-
-
-/* ----- GARANTIA: grid de cards ocupa 100% do container ----- */
-.container > .image-buttons-list,
-.links-container > .image-buttons-list {
-    align-self: stretch;
-    width: 100%;
-}
